@@ -1,0 +1,115 @@
+/* ============================
+   ESTILOS CAPTURA ECA - CEAA
+   ============================ */
+
+body {
+    background: #f5f5f5;
+    font-family: "Segoe UI", sans-serif;
+}
+
+/* CONTENEDOR PRINCIPAL */
+.eca-wrapper {
+    background: #fff;
+    padding: 30px;
+    margin: 20px auto;
+    max-width: 1250px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0,0,0,.08);
+}
+
+/* TÍTULO */
+.eca-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 25px;
+    color: #7a0d1c; /* Vino institucional */
+}
+
+/* SUBTÍTULOS */
+.eca-subtitle {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin: 25px 0 10px;
+    color: #7a0d1c;
+}
+
+/* GRID FORMULARIO */
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+    margin-bottom: 20px;
+}
+
+.form-grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+    margin-bottom: 20px;
+}
+
+label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #444;
+}
+
+input, select, textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    margin-top: 4px;
+    background: #fafafa;
+}
+
+textarea {
+    resize: vertical;
+}
+
+/* BOTÓN PRINCIPAL */
+.btn-enviar {
+    width: 100%;
+    background: #7a0d1c;
+    padding: 14px;
+    text-align: center;
+    color: #fff;
+    font-size: 1rem;
+    font-weight: bold;
+    border: none;
+    border-radius: 6px;
+    margin-top: 30px;
+    cursor: pointer;
+    transition: .2s ease-in-out;
+}
+
+.btn-enviar:hover {
+    background: #5b0a15;
+}
+
+/* TABLAS PEQUEÑAS */
+.table-mini {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    font-size: .9rem;
+}
+
+.table-mini th {
+    background: #7a0d1c;
+    color: white;
+    padding: 8px;
+}
+
+.table-mini td {
+    padding: 8px;
+    border: 1px solid #ddd;
+}
+
+/* RESPONSIVO */
+@media (max-width: 900px) {
+    .form-grid, .form-grid-3 {
+        grid-template-columns: 1fr;
+    }
+}

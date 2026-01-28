@@ -1,0 +1,180 @@
+/* Reset */
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:Arial,Helvetica,sans-serif;height:100vh;overflow:auto;background:#f5f5f5}
+
+/* Estructura general */
+.wrapper{
+  display:flex;
+  flex-direction:column;
+  min-height:100vh;
+  padding-top:80px;        /* deja espacio para el header fijo */
+}
+#toggle{display:none}
+
+.toggle-menu{background:transparent;color:#fff;font-size:20px;padding:10px;cursor:pointer;z-index:10;position:relative}
+.icono-header{font-size:22px;color:#fff;margin-left:10px;margin-top:2px}
+
+/* Header superior */
+.header{
+  height:80px;
+  background:#7b1b3b;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 20px;
+
+  position:fixed;          /* fijo */
+  top:0;
+  left:0;
+  right:0;
+
+  z-index:1100;
+  color:#fff;
+}
+.header-left{display:flex;align-items:center;gap:10px}
+.header-img{max-height:53px;margin-left:auto;align-self:center}
+
+/* Sidebar */
+.barra-lateral{
+  position:fixed;top:80px;left:0;width:250px;height:calc(100% - 80px);
+  background:linear-gradient(180deg,#7b1b3b,#4C1223);color:#fff;padding:20px;overflow-y:auto;
+  transform:translateX(-100%);transition:transform .3s ease;z-index:1000;border-right:2px solid #BC955B
+}
+#toggle:checked ~ .barra-lateral{transform:translateX(0)}
+.usuario-lateral-icono{width:36px;height:36px;background:rgba(255,255,255,.15);display:grid;place-items:center;border-radius:10px;margin-bottom:6px}
+.adm{margin:6px 0 4px}
+.bienvenida{opacity:.95;margin-bottom:8px}
+
+/* Links */
+.barra-lateral a{
+  display:block;color:#fff;text-decoration:none;padding:12px;margin:10px 0;border-radius:8px;
+  background:rgba(255,255,255,.1);transition:.3s
+}
+.barra-lateral a.activo,.barra-lateral a:hover{background:#BC955B;transform:translateX(5px);font-weight:700}
+
+/* Botón cerrar */
+.cerrar{position:absolute;top:10px;right:20px;font-size:24px;cursor:pointer}
+
+/* Contenido */
+.contenido{padding:20px;transition:margin-left .3s ease;margin-left:0;overflow-y:auto;min-height:calc(100vh - 80px)}
+.portada-bienvenida{
+  width:100%;min-height:calc(100vh - 80px);background:#fff url('../img/Portada.png') no-repeat center;
+  background-size:contain;border-radius:16px;box-shadow:0 8px 24px rgba(0,0,0,.06)
+}
+
+
+/* Escritorio: sidebar visible por defecto */
+@media (min-width:768px){
+  #toggle:not(:checked) ~ .barra-lateral{transform:translateX(0)}
+  #toggle:not(:checked) ~ .contenido{margin-left:250px}
+  #toggle:checked ~ .barra-lateral{transform:translateX(-100%)}
+  #toggle:checked ~ .contenido{margin-left:0}
+}
+
+/* Móvil */
+@media (max-width:767px){
+  .barra-lateral{width:100%;top:80px;height:calc(100% - 80px)}
+  .contenido{margin-left:0 !important}
+  .portada-bienvenida{background-size:cover;background-position:center top}
+}
+
+/* Sutileza */
+.fade-in-up{animation:fadeInUp .4s ease both}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+/* ====== Cards, tablas y botones para módulos internos ====== */
+.card{
+  background:#fff;
+  border-radius:16px;
+  padding:16px 18px;
+  box-shadow:0 8px 24px rgba(0,0,0,.06);
+  margin:20px;
+}
+
+.card-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:10px;
+}
+.card-header h3{ margin:0; font-size:20px; }
+
+.table{
+  width:100%;
+  border-collapse:collapse;
+  background:#fff;
+  border-radius:12px;
+  overflow:hidden;
+}
+.table th,.table td{
+  padding:12px 14px;
+  border-bottom:1px solid #eee;
+  text-align:left;
+  font-size:15px;
+}
+.table th{
+  background:#fafafa;
+  font-weight:700;
+}
+.table tr:hover td{
+  background:#fafbfd;
+}
+
+/* contenedor responsive horizontal */
+@media (max-width: 768px){
+  .card{ padding:14px }
+  .table{ display:block; overflow-x:auto; white-space:nowrap; }
+}
+
+/* Botones */
+.btn{
+  background:#e5e7eb;
+  border:none;
+  padding:10px 14px;
+  border-radius:12px;
+  text-decoration:none;
+  color:#111;
+  cursor:pointer;
+  display:inline-block;
+  font-size:14px;
+}
+.btn:hover{ filter:brightness(0.96) }
+
+.btn-primary{
+  background:#cba65d;
+  color:#fff;
+}
+
+.btn-sm{
+  padding:6px 10px;
+  border-radius:10px;
+  background:#e5e7eb;
+  color:#111;
+  border:none;
+  text-decoration:none;
+  cursor:pointer;
+  font-size:13px;
+}
+.btn-sm:hover{ filter:brightness(0.96) }
+.btn-sm.danger{
+  background:#fca5a5;
+  color:#7f1d1d;
+}
+
+/* Grids y formularios usados en /users/form.php */
+.grid-2{ display:grid; grid-template-columns:1fr 1fr; gap:16px }
+@media (max-width: 900px){ .grid-2{ grid-template-columns:1fr } }
+
+label{ display:block; margin-bottom:6px; font-weight:600 }
+input[type="text"], input[type="email"], input[type="password"], select{
+  width:100%; padding:10px 12px; border:1px solid #e5e7eb; border-radius:10px; outline:none;
+  font-size:14px;
+}
+input:focus, select:focus{
+  border-color:#cbd5e1; box-shadow:0 0 0 4px rgba(203,213,225,.35);
+}
+
+.form-actions{
+  display:flex; justify-content:flex-end; gap:12px; margin-top:14px;
+}

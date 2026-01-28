@@ -1,0 +1,88 @@
+/* Fondo + overlay */
+body {
+  margin: 0;
+  padding: 0;
+  background: url('../img/fondo.jpg') no-repeat center center fixed;
+  background-size: cover;
+  font-family: 'Segoe UI', system-ui, -apple-system, Arial, sans-serif;
+}
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: -1;
+  opacity: 0;
+  animation: fadeInBackground .8s ease forwards;
+}
+@keyframes fadeInBackground { to { opacity: 1; } }
+
+/* Contenedor */
+.login-container {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+/* Tarjeta / formulario */
+form {
+  width: 100%;
+  max-width: 400px;
+  background: #fff;
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0 8px 24px rgba(0,0,0,.2);
+  opacity: 0;
+  animation: fadeInUp .6s ease forwards;
+}
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Logo + título */
+.logo-container { text-align: center; margin-bottom: 16px; }
+.logo-container img { max-width: 240px; height: auto; }
+h2 { text-align: center; color: #6c1d45; margin: 8px 0 18px; }
+
+/* Labels + inputs con icono */
+label { display: block; margin: 10px 0 6px; color: #6c1d45; font-weight: 600; }
+.input-icon {
+  display: flex; align-items: center; gap: 10px;
+  border: 2px solid #6c1d45; border-radius: 10px;
+  padding: 10px 12px; margin-bottom: 14px; background: #fff;
+}
+.input-icon i { color: #6c1d45; font-size: 16px; }
+.input-icon input {
+  border: 0; outline: 0; width: 100%;
+  font-size: 16px; color: #333; background: transparent; padding: 4px 0;
+}
+.input-icon input:focus { background: #fff8ef; transition: background-color .2s; }
+
+/* Botón */
+button {
+  width: 100%; padding: 12px; background: #cba65d; color: #fff;
+  border: 0; border-radius: 10px; font-size: 16px; font-weight: 700;
+  cursor: pointer; transition: background-color .2s ease;
+}
+button:hover { background: #b18e48; }
+
+/* Mensajes */
+.mensaje-exito, .mensaje-error {
+  padding: 10px; margin-bottom: 14px; border-radius: 8px; text-align: center; font-size: 14px;
+}
+.mensaje-exito { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+.mensaje-error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+
+/* Responsive */
+@media (max-width: 480px) {
+  form { max-width: 95%; padding: 22px; }
+  h2 { font-size: 18px; }
+  .logo-container img { max-width: 180px; }
+  .input-icon input { font-size: 15px; }
+  .input-icon i { font-size: 14px; }
+  button { font-size: 15px; padding: 10px; }
+}

@@ -1,0 +1,252 @@
+/* Fondo oscuro */
+.excel-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    backdrop-filter: blur(3px);
+    z-index: 9999;
+    justify-content: center;
+    align-items: center;
+}
+/* ============================
+   MODAL GLOBAL (FONDO)
+============================ */
+#editModal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.45);
+    backdrop-filter: blur(4px);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    padding: 20px;
+}
+
+/* ============================
+   CONTENEDOR DEL MODAL
+============================ */
+#editModal .excel-modal-content {
+    background: #ffffff;
+    width: 95%;
+    max-width: 550px;
+    max-height: 90vh;
+    overflow-y: auto;
+    border-radius: 16px;
+    padding: 25px 30px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    animation: modalFade 0.25s ease-out;
+}
+
+/* Animación de entrada */
+@keyframes modalFade {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Título */
+#editModal h3 {
+    margin-bottom: 20px;
+    color: #800033;
+    font-size: 22px;
+    font-weight: 700;
+}
+
+/* ============================
+   FORMULARIO
+============================ */
+#editModal form label {
+    font-weight: 600;
+    margin-top: 12px;
+    color: #800033;
+    display: block;
+}
+
+#editModal form input,
+#editModal form select,
+#editModal form textarea {
+    width: 100%;
+    padding: 10px 12px;
+    margin-top: 4px;
+    border: 1px solid #d9d9d9;
+    border-radius: 8px;
+    font-size: 15px;
+    background: #fff;
+    outline: none;
+    transition: border-color .2s ease, box-shadow .2s ease;
+}
+
+/* Inputs al enfocarse */
+#editModal form input:focus,
+#editModal form select:focus,
+#editModal form textarea:focus {
+    border-color: #800033;
+    box-shadow: 0 0 4px rgba(128,0,51,0.35);
+}
+
+/* ============================
+   BOTONES DEL MODAL
+============================ */
+.excel-modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 25px;
+}
+
+.btn-primario {
+    background: #800033;
+    color: #fff;
+    padding: 10px 18px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.btn-primario:hover {
+    background: #a10042;
+}
+
+.btn-secundario {
+    background: #dddddd;
+    color: #333;
+    padding: 10px 18px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.btn-secundario:hover {
+    background: #c7c7c7;
+}
+
+/* ============================
+   SCROLL INTERNOS
+============================ */
+#editModal .excel-modal-content::-webkit-scrollbar {
+    width: 7px;
+}
+
+#editModal .excel-modal-content::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 8px;
+}
+
+
+/* Contenido del modal */
+.excel-modal-content {
+    width: 420px;
+    background: white;
+    padding: 20px;
+    border-radius: 14px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    animation: modalShow .25s ease;
+}
+
+@keyframes modalShow {
+    from { transform: scale(.85); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+.excel-modal-content h3 {
+    margin-top: 0;
+    color: #800033;
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+
+.excel-modal-content label {
+    display: block;
+    margin: 10px 0 4px;
+    font-weight: 600;
+    color: #555;
+}
+
+.excel-modal-content select,
+.excel-modal-content input {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: .9rem;
+    background: #f8f8f8;
+}
+
+.excel-modal-actions {
+    margin-top: 18px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.excel-modal-actions button {
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.excel-modal-actions button:first-child {
+    background: #ddd;
+}
+
+.excel-modal-actions button:last-child {
+    background: #800033;
+    color: white;
+}
+/* MODAL */
+.excel-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 9000;
+}
+
+.excel-modal-content {
+    background: #fff;
+    width: 420px;
+    padding: 22px;
+    border-radius: 14px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+    animation: fadeIn .2s ease-out;
+}
+
+.excel-modal-content label {
+    display: block;
+    margin-top: 10px;
+    font-weight: 600;
+    color: #800033;
+}
+
+.excel-modal-content select,
+.excel-modal-content input {
+    width: 100%;
+    padding: 8px 10px;
+    margin-top: 4px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+}
+
+.excel-modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 18px;
+}
+
