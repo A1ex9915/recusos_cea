@@ -27,15 +27,21 @@ if (!$user) {
 
 $passBD = $user['password_hash'];
 
-// 3. Validar contraseña actual
-if ($actual !== $passBD) {
+// 3. Validar contraseña actual con password_verify
+if (!password_verify($actual, $passBD)) {
     header("Location: " . BASE_URI . "/index.php?controller=dashboard&action=perfil&msg=La contraseña actual es incorrecta");
     exit;
 }
 
-// 4. Actualizar contraseña
+// 4. Validar longitud mínima de nueva contraseña
+if (strlen($nueva) < 8) {
+    header("Location: " . BASE_URI . "/index.php?controller=dashboard&action=perfil&msg=La nueva contraseña debe tener mínimo 8 caracteres");
+    exit;
+}
+
+// 5. Actualizar contraseña con hash seguro
 $stmt = $pdo->prepare("UPDATE usuarios SET password_hash=?, actualizado_en=NOW() WHERE id=?");
-$stmt->execute([$nueva, $user_id]);
+$stmt->execute([password_hash($nueva, PASSWORD_DEFAULT), $user_id]);
 
 header("Location: " . BASE_URI . "/index.php?controller=dashboard&action=perfil&msg=Contraseña actualizada");
 exit;

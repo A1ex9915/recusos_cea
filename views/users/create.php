@@ -4,21 +4,40 @@
     <a class="btn" href="<?= BASE_URI ?>/index.php?controller=users&action=index">Volver</a>
   </div>
 
+  <?php if (isset($_SESSION['errores'])): ?>
+    <div class="alert alert-error">
+      <strong>Errores encontrados:</strong>
+      <ul>
+        <?php foreach ($_SESSION['errores'] as $error): ?>
+          <li><?= htmlspecialchars($error) ?></li>
+        <?php endforeach; ?>
+      </ul>
+    </div>
+    <?php unset($_SESSION['errores']); ?>
+  <?php endif; ?>
+
   <form method="post" action="<?= BASE_URI ?>/index.php?controller=users&action=store">
     <div class="grid-2">
       <div>
         <label>Nombre</label>
-        <input type="text" name="nombre" required placeholder="Nombre completo">
+        <input type="text" name="nombre" required placeholder="Nombre completo" value="<?= htmlspecialchars($_SESSION['old_input']['nombre'] ?? '') ?>">
+        <?php unset($_SESSION['old_input']['nombre']); ?>
       </div>
 
       <div>
         <label>Email</label>
-        <input type="email" name="email" required placeholder="correo@ejemplo.com">
+        <input type="email" name="email" required placeholder="correo@ejemplo.com" value="<?= htmlspecialchars($_SESSION['old_input']['email'] ?? '') ?>">
+        <?php unset($_SESSION['old_input']['email']); ?>
       </div>
 
       <div>
-        <label>Contraseña</label>
-        <input type="password" name="password" required>
+        <label>Contraseña (mínimo 8 caracteres)</label>
+        <input type="password" name="password" required minlength="8">
+      </div>
+
+      <div>
+        <label>Confirmar Contraseña</label>
+        <input type="password" name="password_confirm" required minlength="8">
       </div>
 
       <div>
@@ -40,7 +59,7 @@
 
     <div class="form-actions">
       <a class="btn" href="<?= BASE_URI ?>/index.php?controller=users&action=index">Cancelar</a>
-      <button class="btn-primary" type="submit">Crear</button>
+      <button class="btn-primary" type="submit">Crear Usuario</button>
     </div>
   </form>
 </div>

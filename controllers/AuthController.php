@@ -18,20 +18,20 @@ class AuthController {
 
     $user = User::findByEmail($email);
 
-    // Validar sin password_verify (comparación directa)
-    if ($user && $user['password_hash'] === $pass && $user['activo']) {
+    // Validar con password_verify para seguridad
+    if ($user && password_verify($pass, $user['password_hash']) && $user['activo']) {
         $_SESSION['user'] = [
-  'id'     => $user['id'],
-  'nombre' => $user['nombre'],
-  'email'  => $user['email'],
-  'rol_id' => $user['rol_id']
-];
+            'id'     => $user['id'],
+            'nombre' => $user['nombre'],
+            'email'  => $user['email'],
+            'rol_id' => $user['rol_id']
+        ];
 
         header('Location: index.php?controller=dashboard&action=inicio');
         exit;
     }
 
-    $_SESSION['flash'] = 'Credenciales inválidas o usuario inactivo';
+    $_SESSION['flash'] = 'Credenciales inválidas';
     header('Location: index.php?controller=auth&action=login');
     exit;
 }

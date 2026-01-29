@@ -5,6 +5,13 @@
 
   </div>
 
+  <?php if (isset($_SESSION['mensaje_exito'])): ?>
+    <div class="alert alert-success">
+      <strong><?= htmlspecialchars($_SESSION['mensaje_exito']) ?></strong>
+    </div>
+    <?php unset($_SESSION['mensaje_exito']); ?>
+  <?php endif; ?>
+
   <div style="overflow-x:auto;">
     <table class="table">
       <thead>
