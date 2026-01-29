@@ -35,7 +35,57 @@ class FormatoController
         $municipios = Municipio::listar();
         $organismos = Organismo::listar();
 
-        $this->render('index', compact('formatos', 'municipios', 'organismos'));
+        // Obtener datos para las gráficas
+        $pdo = DB::conn();
+        
+        // Inventario por Categoría
+        $stmt = $pdo->query("
+            SELECT COALESCE(c.nombre, 'Sin categoría') AS label, COUNT(r.id) AS total
+            FROM recursos r
+            LEFT JOIN categorias c ON c.id = r.categoria_id
+            GROUP BY c.nombre
+            ORDER BY total DESC
+        ");
+        $inventarioCategoria = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        // Inventario por Estado del Bien
+        $stmt = $pdo->query("
+            SELECT COALESCE(estado_bien, 'Sin estado') AS label, COUNT(*) AS total
+            FROM recursos
+            GROUP BY estado_bien
+            ORDER BY total DESC
+        ");
+        $inventarioEstado = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        // Inventario por Municipio
+        $stmt = $pdo->query("
+            SELECT COALESCE(m.nombre, 'Sin municipio asignado') AS label, COUNT(r.id) AS total
+            FROM recursos r
+            LEFT JOIN municipios m ON m.id = r.municipio_id
+            GROUP BY m.nombre
+            ORDER BY total DESC
+        ");
+        $inventarioMunicipio = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        // Fichas ECA por Municipio
+        $stmt = $pdo->query("
+            SELECT COALESCE(m.nombre, 'Sin municipio') AS label, COUNT(e.id) AS total
+            FROM eca_fichas e
+            LEFT JOIN municipios m ON m.id = e.municipio_id
+            GROUP BY m.nombre
+            ORDER BY total DESC
+        ");
+        $fichasECAMunicipio = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $this->render('index', compact(
+            'formatos', 
+            'municipios', 
+            'organismos',
+            'inventarioCategoria',
+            'inventarioEstado',
+            'inventarioMunicipio',
+            'fichasECAMunicipio'
+        ));
     }
 
     /** Formulario para crear un nuevo formato */

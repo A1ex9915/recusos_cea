@@ -48,7 +48,7 @@ $actionUrl = BASE_URI . '/index.php?controller=inventario&action=' . ($isEdit ? 
 
       <!-- ================== FILA 2 ================== -->
       <div class="form-row">
-        <div class="form-group" style="flex:1;">
+        <div class="form-group">
           <label>Categoría</label>
           <select name="categoria_id">
             <option value="">Selecciona una categoría</option>
@@ -60,6 +60,13 @@ $actionUrl = BASE_URI . '/index.php?controller=inventario&action=' . ($isEdit ? 
             <?php endforeach; ?>
           </select>
         </div>
+
+        <div class="form-group">
+          <label>Número de serie *</label>
+          <input type="number" name="numero_serie" required
+                 value="<?= htmlspecialchars($recurso['numero_serie'] ?? '') ?>"
+                 placeholder="Ej. 123456789">
+        </div>
       </div>
 
       <!-- ================== FILA 3 ================== -->
@@ -68,8 +75,8 @@ $actionUrl = BASE_URI . '/index.php?controller=inventario&action=' . ($isEdit ? 
           <label>Fuente del recurso *</label>
           <select name="tipo_fuente" required>
             <option value="">Selecciona...</option>
-            <option value="COMPRA"   <?= (($recurso['tipo_fuente'] ?? '') === 'COMPRA') ? 'selected':'' ?>>Compra</option>
-            <option value="DONACION" <?= (($recurso['tipo_fuente'] ?? '') === 'DONACION') ? 'selected':'' ?>>Donación</option>
+            <option value="Federal" <?= (($recurso['tipo_fuente'] ?? '') === 'Federal') ? 'selected':'' ?>>Federal</option>
+            <option value="Estatal" <?= (($recurso['tipo_fuente'] ?? '') === 'Estatal') ? 'selected':'' ?>>Estatal</option>
           </select>
         </div>
 
@@ -121,12 +128,12 @@ $actionUrl = BASE_URI . '/index.php?controller=inventario&action=' . ($isEdit ? 
 
         <div class="form-group">
           <label>Ubicación física</label>
-          <select name="ubicacion_id">
-            <option value="">Selecciona una ubicación</option>
-            <?php foreach ($ubicaciones as $u): ?>
-              <option value="<?= $u['id'] ?>"
-                <?= isset($recurso['ubicacion_id']) && $recurso['ubicacion_id'] == $u['id'] ? 'selected' : '' ?>>
-                <?= $u['nombre'] ?>
+          <select name="organismo_id">
+            <option value="">Selecciona un organismo operador</option>
+            <?php foreach ($organismos as $org): ?>
+              <option value="<?= $org['id'] ?>"
+                <?= isset($recurso['organismo_id']) && $recurso['organismo_id'] == $org['id'] ? 'selected' : '' ?>>
+                <?= htmlspecialchars($org['nombre']) ?>
               </option>
             <?php endforeach; ?>
           </select>
@@ -151,21 +158,13 @@ $actionUrl = BASE_URI . '/index.php?controller=inventario&action=' . ($isEdit ? 
         </div>
       </div>
 
-      <!-- ============ NUEVA FILA: MATERIAL ============ -->
+      <!-- ============ FILA: MATERIAL Y COLOR ============ -->
       <div class="form-row">
         <div class="form-group">
           <label>Material</label>
           <input type="text" name="material"
                  value="<?= htmlspecialchars($recurso['material'] ?? '') ?>"
                  placeholder="Ej. Madera, metal, plástico">
-        </div>
-      </div>
-
-      <div class="form-row">
-        <div class="form-group">
-          <label>Número de serie</label>
-          <input type="text" name="numero_serie"
-                 value="<?= htmlspecialchars($recurso['numero_serie'] ?? '') ?>">
         </div>
 
         <div class="form-group">

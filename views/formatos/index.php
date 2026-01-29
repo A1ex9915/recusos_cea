@@ -93,21 +93,25 @@
   border-radius:14px;
   padding:15px;
   box-shadow:0 3px 9px rgba(0,0,0,.08);
-  height:350px;          /* ALTURA FIJA PARA QUE NO SE ESTIRE */
+  height:380px;
   display:flex;
   flex-direction:column;
+  position:relative;
 }
 
 .chart-box h3{
   color:#7a0d1c;
-  font-size:18px;
+  font-size:16px;
   margin-bottom:10px;
+  flex-shrink:0;
 }
 
-/* CANVAS AJUSTADO */
+/* Contenedor del canvas */
 .chart-box canvas{
+  flex:1;
+  min-height:0;
   width:100% !important;
-  height:100% !important;  /* AJUSTA LA ALTURA ADENTRO DE LOS 350PX */
+  height:auto !important;
 }
 </style>
 
@@ -204,37 +208,105 @@ const estData    = <?= json_encode($inventarioEstado ?? []) ?>;
 const munData    = <?= json_encode($inventarioMunicipio ?? []) ?>;
 const ecaData    = <?= json_encode($fichasECAMunicipio ?? []) ?>;
 
-/* === Función para generar gráfica dinámica === */
-function crearGrafica(tipo, id, labels, values, color="#7a0d1c") {
+/* === Paleta de colores institucionales y complementarios === */
+const colores = [
+  '#7a0d1c', // Vino institucional
+  '#b91d2e', // Rojo
+  '#f39c12', // Naranja
+  '#27ae60', // Verde
+  '#3498db', // Azul
+  '#9b59b6', // Morado
+  '#e74c3c', // Rojo claro
+  '#1abc9c', // Turquesa
+  '#34495e', // Gris oscuro
+  '#f1c40f', // Amarillo
+  '#e67e22', // Naranja oscuro
+  '#2ecc71', // Verde claro
+  '#8e44ad', // Morado oscuro
+  '#c0392b', // Rojo oscuro
+  '#16a085', // Verde azulado
+];
 
-  new Chart(document.getElementById(id), {
+/* === Función para generar colores según la cantidad de datos === */
+function generarColores(cantidad) {
+  const resultado = [];
+  for (let i = 0; i < cantidad; i++) {
+    resultado.push(colores[i % colores.length]);
+  }
+  return resultado;
+}
+
+/* === Función para crear gráfica dinámica === */
+function crearGrafica(tipo, id, labels, values) {
+  const canvas = document.getElementById(id);
+  const ctx = canvas.getContext('2d');
+  
+  // Limpiar gráfica anterior si existe
+  if (canvas.chart) {
+    canvas.chart.destroy();
+  }
+
+  const coloresDatos = generarColores(labels.length);
+
+  canvas.chart = new Chart(ctx, {
     type: tipo,
     data: {
       labels: labels,
       datasets: [{
         label: "Total",
         data: values,
-        backgroundColor: color,
-        borderColor: color,
-        borderWidth: 1
+        backgroundColor: coloresDatos,
+        borderColor: coloresDatos,
+        borderWidth: 2
       }]
     },
     options: {
       responsive: true,
       maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          display: tipo === 'pie' || tipo === 'doughnut',
+          position: 'bottom',
+          labels: {
+            boxWidth: 12,
+            padding: 8,
+            font: {
+              size: 11
+            }
+          }
+        },
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              return context.label + ': ' + context.parsed.toLocaleString();
+            }
+          }
+        }
+      },
       scales: tipo === "pie" || tipo === "doughnut" ? {} : {
-        y: { beginAtZero: true }
+        y: { 
+          beginAtZero: true,
+          ticks: {
+            precision: 0
+          }
+        },
+        x: {
+          ticks: {
+            font: {
+              size: 10
+            },
+            maxRotation: 45,
+            minRotation: 0
+          }
+        }
       }
     }
   });
-
 }
 
 /* === Inicializar gráficas con el tipo seleccionado === */
 function cargarGraficas() {
   const tipo = document.getElementById("tipoGrafica").value;
-
-  document.querySelectorAll("canvas").forEach(c => c.replaceWith(c.cloneNode(true)));
 
   crearGrafica(tipo, "chartCategoria", catData.map(x=>x.label), catData.map(x=>x.total));
   crearGrafica(tipo, "chartEstado",    estData.map(x=>x.label), estData.map(x=>x.total));

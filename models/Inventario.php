@@ -73,7 +73,7 @@ class Inventario
         categoria_id, estado_bien, unidad_id,
         tipo_fuente, costo_unitario,
         cantidad_total, cantidad_disponible,
-        ubicacion_id, fecha_alta,
+        organismo_id, fecha_alta,
         marca, modelo, numero_serie, color,
         material
     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
@@ -94,12 +94,12 @@ $args = [
     (int)($p['cantidad_total'] ?? 0),
     (int)($p['cantidad_disponible'] ?? ($p['cantidad_total'] ?? 0)),
 
-    !empty($p['ubicacion_id']) ? (int)$p['ubicacion_id'] : null,
+    !empty($p['organismo_id']) ? (int)$p['organismo_id'] : null,
     $fechaAlta,
 
     $p['marca'] ?? null,
     $p['modelo'] ?? null,
-    $p['numero_serie'] ?? null,
+    !empty($p['numero_serie']) ? (int)$p['numero_serie'] : 0,
     $p['color'] ?? null,
     $p['material'] ?? null
 ];
@@ -125,7 +125,7 @@ $args = [
         categoria_id=?, estado_bien=?, unidad_id=?,
         tipo_fuente=?, costo_unitario=?,
         cantidad_total=?, cantidad_disponible=?,
-        ubicacion_id=?,
+        organismo_id=?,
         marca=?, modelo=?, numero_serie=?, color=?,
         material=?
     WHERE id=?
@@ -146,11 +146,11 @@ $args = [
     (int)($p['cantidad_total'] ?? 0),
     (int)($p['cantidad_disponible'] ?? ($p['cantidad_total'] ?? 0)),
 
-    !empty($p['ubicacion_id']) ? (int)$p['ubicacion_id'] : null,
+    !empty($p['organismo_id']) ? (int)$p['organismo_id'] : null,
 
     $p['marca'] ?? null,
     $p['modelo'] ?? null,
-    $p['numero_serie'] ?? null,
+    !empty($p['numero_serie']) ? (int)$p['numero_serie'] : 0,
     $p['color'] ?? null,
     $p['material'] ?? null,
 
