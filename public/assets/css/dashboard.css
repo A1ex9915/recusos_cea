@@ -36,24 +36,107 @@ body{font-family:Arial,Helvetica,sans-serif;height:100vh;overflow:auto;backgroun
 
 /* Sidebar */
 .barra-lateral{
-  position:fixed;top:80px;left:0;width:250px;height:calc(100% - 80px);
-  background:linear-gradient(180deg,#7b1b3b,#4C1223);color:#fff;padding:20px;overflow-y:auto;
-  transform:translateX(-100%);transition:transform .3s ease;z-index:1000;border-right:2px solid #BC955B
+  position:fixed;top:80px;left:0;width:80px;height:calc(100% - 80px);
+  background:linear-gradient(180deg,#7b1b3b,#4C1223);color:#fff;padding:15px 10px;overflow-y:auto;overflow-x:hidden;
+  transition:width .3s ease;z-index:1000;border-right:2px solid #BC955B
 }
-#toggle:checked ~ .barra-lateral{transform:translateX(0)}
-.usuario-lateral-icono{width:36px;height:36px;background:rgba(255,255,255,.15);display:grid;place-items:center;border-radius:10px;margin-bottom:6px}
-.adm{margin:6px 0 4px}
-.bienvenida{opacity:.95;margin-bottom:8px}
+
+/* Expandir al hover */
+.barra-lateral:hover{
+  width:250px;
+}
+
+/* Usuario info */
+.user-info{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-bottom:20px;
+  white-space:nowrap;
+}
+
+.usuario-lateral-icono{
+  min-width:40px;
+  width:40px;
+  height:40px;
+  background:rgba(255,255,255,.15);
+  display:grid;
+  place-items:center;
+  border-radius:10px;
+  flex-shrink:0;
+}
+
+.user-details{
+  opacity:0;
+  transition:opacity .3s ease;
+  overflow:hidden;
+}
+
+.barra-lateral:hover .user-details{
+  opacity:1;
+}
+
+.adm{margin:0 0 4px;font-size:14px}
+.bienvenida{opacity:.95;font-size:13px;margin:0}
 
 /* Links */
 .barra-lateral a{
-  display:block;color:#fff;text-decoration:none;padding:12px;margin:10px 0;border-radius:8px;
-  background:rgba(255,255,255,.1);transition:.3s
+  display:flex;
+  align-items:center;
+  gap:15px;
+  color:#fff;
+  text-decoration:none;
+  padding:12px;
+  margin:8px 0;
+  border-radius:8px;
+  background:rgba(255,255,255,.1);
+  transition:all .3s ease;
+  white-space:nowrap;
+  position:relative;
 }
-.barra-lateral a.activo,.barra-lateral a:hover{background:#BC955B;transform:translateX(5px);font-weight:700}
+
+.barra-lateral a i{
+  min-width:20px;
+  font-size:18px;
+  text-align:center;
+}
+
+.barra-lateral a .menu-text{
+  opacity:0;
+  transition:opacity .3s ease;
+}
+
+.barra-lateral:hover a .menu-text{
+  opacity:1;
+}
+
+.barra-lateral a.activo,
+.barra-lateral a:hover{
+  background:#BC955B;
+  transform:translateX(5px);
+  font-weight:700;
+}
 
 /* Botón cerrar */
-.cerrar{position:absolute;top:10px;right:20px;font-size:24px;cursor:pointer}
+.cerrar{
+  position:absolute;
+  top:10px;
+  right:20px;
+  font-size:24px;
+  cursor:pointer;
+  opacity:0;
+  transition:opacity .3s ease;
+}
+
+.barra-lateral:hover .cerrar{
+  opacity:1;
+}
+
+@media (max-width:767px){
+  .cerrar{
+    opacity:1;
+  }
+}
 
 /* Contenido */
 .contenido{padding:20px;transition:margin-left .3s ease;margin-left:0;overflow-y:auto;min-height:calc(100vh - 80px)}
@@ -63,19 +146,56 @@ body{font-family:Arial,Helvetica,sans-serif;height:100vh;overflow:auto;backgroun
 }
 
 
-/* Escritorio: sidebar visible por defecto */
+/* Escritorio: sidebar contraído por defecto */
 @media (min-width:768px){
-  #toggle:not(:checked) ~ .barra-lateral{transform:translateX(0)}
-  #toggle:not(:checked) ~ .contenido{margin-left:250px}
-  #toggle:checked ~ .barra-lateral{transform:translateX(-100%)}
-  #toggle:checked ~ .contenido{margin-left:0}
+  .barra-lateral{
+    width:80px;
+  }
+  
+  .contenido{
+    margin-left:80px;
+  }
+  
+  .barra-lateral:hover ~ .contenido{
+    margin-left:80px;
+  }
+  
+  #toggle:checked ~ .barra-lateral{
+    width:0;
+    padding:0;
+    border:none;
+  }
+  
+  #toggle:checked ~ .contenido{
+    margin-left:0;
+  }
 }
 
 /* Móvil */
 @media (max-width:767px){
-  .barra-lateral{width:100%;top:80px;height:calc(100% - 80px)}
-  .contenido{margin-left:0 !important}
-  .portada-bienvenida{background-size:cover;background-position:center top}
+  .barra-lateral{
+    width:250px;
+    transform:translateX(-100%);
+  }
+  
+  #toggle:checked ~ .barra-lateral{
+    transform:translateX(0);
+    width:250px;
+  }
+  
+  .barra-lateral .user-details,
+  .barra-lateral a .menu-text{
+    opacity:1;
+  }
+  
+  .contenido{
+    margin-left:0 !important;
+  }
+  
+  .portada-bienvenida{
+    background-size:cover;
+    background-position:center top;
+  }
 }
 
 /* Sutileza */

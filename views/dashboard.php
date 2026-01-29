@@ -68,46 +68,56 @@ $currentCtrl = $_GET['controller'] ?? '';
 
   <!-- Sidebar -->
   <aside class="barra-lateral" id="sidebar">
-    <div class="usuario-lateral-icono"><i class="fa-solid fa-user"></i></div>
-    <h3 class="adm">Administrador</h3>
-    <p class="bienvenida">
-      Bienvenid@,<br>
-      <strong><?= htmlspecialchars($usuario['nombre']) ?></strong>
-    </p>
+    <div class="user-info">
+      <div class="usuario-lateral-icono"><i class="fa-solid fa-user"></i></div>
+      <div class="user-details">
+        <h3 class="adm">Administrador</h3>
+        <p class="bienvenida">
+          Bienvenid@,<br>
+          <strong><?= htmlspecialchars($usuario['nombre']) ?></strong>
+        </p>
+      </div>
+    </div>
 
     <a href="<?= BASE_URI ?>/index.php?controller=dashboard&action=inicio"
        class="<?= ($currentCtrl === 'dashboard' && $currentPage === 'inicio') ? 'activo' : '' ?>">
-      Inicio
+      <i class="fa-solid fa-house"></i>
+      <span class="menu-text">Inicio</span>
     </a>
 
     <a href="<?= BASE_URI ?>/index.php?controller=dashboard&action=perfil"
        class="<?= ($currentCtrl === 'dashboard' && $currentPage === 'perfil') ? 'activo' : '' ?>">
-      Perfil
+      <i class="fa-solid fa-user-circle"></i>
+      <span class="menu-text">Perfil</span>
     </a>
 
     <a href="<?= BASE_URI ?>/index.php?controller=users&action=index"
        class="<?= ($currentCtrl === 'users' && $currentPage === 'index') ? 'activo' : '' ?>">
-      Gestión de Usuarios
+      <i class="fa-solid fa-users"></i>
+      <span class="menu-text">Gestión de Usuarios</span>
     </a>
 
     <a href="<?= BASE_URI ?>/index.php?controller=formatos&action=index"
        class="<?= ($currentCtrl === 'formatos' && $currentPage === 'index') ? 'activo' : '' ?>">
-      Formatos / Capturas
+      <i class="fa-solid fa-file-lines"></i>
+      <span class="menu-text">Formatos / Capturas</span>
     </a>
 
     <a href="<?= BASE_URI ?>/index.php?controller=inventario&action=form"
-   class="<?= ($currentCtrl === 'inventario' && $currentPage === 'form') ? 'activo' : '' ?>">
-  Inventario
-</a>
-
+       class="<?= ($currentCtrl === 'inventario' && $currentPage === 'form') ? 'activo' : '' ?>">
+      <i class="fa-solid fa-boxes-stacked"></i>
+      <span class="menu-text">Inventario</span>
+    </a>
 
     <a href="<?= BASE_URI ?>/index.php?controller=reportes&action=inventario"
        class="<?= ($currentCtrl === 'reportes' && $currentPage === 'inventario') ? 'activo' : '' ?>">
-      Reportes de inventario
+      <i class="fa-solid fa-chart-bar"></i>
+      <span class="menu-text">Reportes de inventario</span>
     </a>
 
     <a href="<?= BASE_URI ?>/index.php?controller=auth&action=logout">
-      Cerrar sesión
+      <i class="fa-solid fa-right-from-bracket"></i>
+      <span class="menu-text">Cerrar sesión</span>
     </a>
 
     <label for="toggle" class="cerrar">&#10005;</label>
