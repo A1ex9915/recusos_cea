@@ -89,6 +89,7 @@ $organismo_id = $_GET['organismo_id'] ?? '';
                 <input type="hidden" name="anio" value="<?= htmlspecialchars($anio) ?>">
                 <input type="hidden" name="accion" value="<?= htmlspecialchars($accion) ?>">
                 <input type="hidden" name="beneficiario" value="<?= htmlspecialchars($benef) ?>">
+                <input type="hidden" name="formato" value="pdf">
 
                 <p class="no-data">
                     Se generará un reporte global con todos los municipios y todos los recursos registrados en el año seleccionado.

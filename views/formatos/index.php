@@ -138,6 +138,14 @@
         Inventario
       </a>
 
+      <a href="<?= BASE_URI ?>/index.php?controller=reportes&action=listarReportesMunicipales" class="btn-ceaa-outline">
+        Ver Reportes Municipales
+      </a>
+
+      <a href="<?= BASE_URI ?>/index.php?controller=reportes&action=listarReportesAnuales" class="btn-ceaa-outline">
+        Ver Reportes Anuales
+      </a>
+
       <hr>
 
       <h3>Tipo de gráfica</h3>

@@ -182,16 +182,23 @@ $args = [
             r.estado_bien,
             r.fecha_alta,
             r.costo_unitario,
-
-            -- CAMPOS QUE FALTABAN
+            r.cantidad_total AS cantidad,
+            r.accion,
+            r.anio_fortalecimiento AS anio,
             r.marca,
             r.modelo,
             r.numero_serie AS no_serie,
-            r.color
+            r.color,
+            r.material,
+            COALESCE(r.beneficiario, '') AS beneficiario,
+            COALESCE(m.nombre, '') AS municipio,
+            COALESCE(o.nombre, '') AS organismo
 
         FROM recursos r
         LEFT JOIN categorias  c ON c.id = r.categoria_id
         LEFT JOIN ubicaciones u ON u.id = r.ubicacion_id
+        LEFT JOIN municipios m ON m.id = r.municipio_id
+        LEFT JOIN organismos o ON o.id = r.organismo_id
         WHERE 1 = 1
     ";
 
@@ -213,11 +220,17 @@ $args = [
     }
 
     if (!empty($filtros['anio'])) {
-        $sql .= " AND YEAR(r.fecha_alta) = :anio";
+        $sql .= " AND (r.anio_fortalecimiento = :anio OR YEAR(r.fecha_alta) = :anio2)";
         $params[':anio'] = (int)$filtros['anio'];
+        $params[':anio2'] = (int)$filtros['anio'];
     }
 
-    $sql .= " ORDER BY r.fecha_alta DESC, r.clave ASC";
+    if (!empty($filtros['municipio_id'])) {
+        $sql .= " AND r.municipio_id = :municipio_id";
+        $params[':municipio_id'] = (int)$filtros['municipio_id'];
+    }
+
+    $sql .= " ORDER BY municipio ASC, r.fecha_alta DESC, r.clave ASC";
 
     $st = $pdo->prepare($sql);
     $st->execute($params);

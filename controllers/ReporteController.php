@@ -18,6 +18,210 @@ class ReporteController
     }
 
     /* ==========================================================
+     *  LISTAR REPORTES MUNICIPALES GENERADOS
+     * ========================================================== */
+    public function listarReportesMunicipales()
+    {
+        $this->guard();
+
+        $pdo = DB::conn();
+        
+        // Obtener filtros
+        $municipio_id = $_GET['municipio_id'] ?? '';
+        $organismo_id = $_GET['organismo_id'] ?? '';
+        $fecha_desde = $_GET['fecha_desde'] ?? '';
+        $fecha_hasta = $_GET['fecha_hasta'] ?? '';
+        
+        // Construir consulta con filtros
+        $sql = "
+            SELECT 
+                r.id,
+                r.archivo,
+                r.creado_en,
+                m.nombre AS municipio,
+                o.nombre AS organismo,
+                o.siglas AS organismo_siglas
+            FROM pdf_reportes r
+            LEFT JOIN municipios m ON m.id = r.municipio_id
+            LEFT JOIN organismos o ON o.id = r.organismo_id
+            WHERE 1=1
+        ";
+        
+        $params = [];
+        
+        if ($municipio_id !== '') {
+            $sql .= " AND r.municipio_id = ?";
+            $params[] = (int)$municipio_id;
+        }
+        
+        if ($organismo_id !== '') {
+            $sql .= " AND r.organismo_id = ?";
+            $params[] = (int)$organismo_id;
+        }
+        
+        if ($fecha_desde !== '') {
+            $sql .= " AND DATE(r.creado_en) >= ?";
+            $params[] = $fecha_desde;
+        }
+        
+        if ($fecha_hasta !== '') {
+            $sql .= " AND DATE(r.creado_en) <= ?";
+            $params[] = $fecha_hasta;
+        }
+        
+        $sql .= " ORDER BY r.creado_en DESC";
+        
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute($params);
+        $reportes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        $this->render('reportes/municipales.php', compact('reportes'));
+    }
+
+    /* ==========================================================
+     *  ELIMINAR REPORTE MUNICIPAL
+     * ========================================================== */
+    public function eliminarReporteMunicipal()
+    {
+        $this->guard();
+
+        header('Content-Type: application/json');
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            echo json_encode(['success' => false, 'error' => 'Método no permitido']);
+            exit;
+        }
+
+        $id = (int)($_POST['id'] ?? 0);
+        $archivo = $_POST['archivo'] ?? '';
+
+        if (!$id || !$archivo) {
+            echo json_encode(['success' => false, 'error' => 'Datos incompletos']);
+            exit;
+        }
+
+        $pdo = DB::conn();
+
+        // Eliminar archivo físico
+        $filePath = dirname(__DIR__) . '/public/pdf/' . $archivo;
+        $archivoEliminado = false;
+        
+        if (file_exists($filePath)) {
+            $archivoEliminado = unlink($filePath);
+        } else {
+            $archivoEliminado = true; // Si no existe, consideramos que está "eliminado"
+        }
+
+        // Eliminar registro de la base de datos
+        $stmt = $pdo->prepare("DELETE FROM pdf_reportes WHERE id = ?");
+        $dbEliminado = $stmt->execute([$id]);
+
+        if ($dbEliminado && $archivoEliminado) {
+            echo json_encode(['success' => true]);
+        } else {
+            echo json_encode(['success' => false, 'error' => 'No se pudo eliminar el reporte']);
+        }
+        exit;
+    }
+
+    /* ==========================================================
+     *  LISTAR REPORTES ANUALES GENERADOS
+     * ========================================================== */
+    public function listarReportesAnuales()
+    {
+        $this->guard();
+
+        $pdo = DB::conn();
+        
+        // Obtener filtros
+        $anio = $_GET['anio'] ?? '';
+        $fecha_desde = $_GET['fecha_desde'] ?? '';
+        $fecha_hasta = $_GET['fecha_hasta'] ?? '';
+        
+        // Construir consulta con filtros
+        $sql = "
+            SELECT 
+                id,
+                archivo,
+                anio,
+                fecha AS creado_en
+            FROM pdf_reportes_anual
+            WHERE 1=1
+        ";
+        
+        $params = [];
+        
+        if ($anio !== '') {
+            $sql .= " AND anio = ?";
+            $params[] = (int)$anio;
+        }
+        
+        if ($fecha_desde !== '') {
+            $sql .= " AND DATE(fecha) >= ?";
+            $params[] = $fecha_desde;
+        }
+        
+        if ($fecha_hasta !== '') {
+            $sql .= " AND DATE(fecha) <= ?";
+            $params[] = $fecha_hasta;
+        }
+        
+        $sql .= " ORDER BY fecha DESC";
+        
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute($params);
+        $reportes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        $this->render('reportes/anuales.php', compact('reportes'));
+    }
+
+    /* ==========================================================
+     *  ELIMINAR REPORTE ANUAL
+     * ========================================================== */
+    public function eliminarReporteAnual()
+    {
+        $this->guard();
+
+        header('Content-Type: application/json');
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            echo json_encode(['success' => false, 'error' => 'Método no permitido']);
+            exit;
+        }
+
+        $id = (int)($_POST['id'] ?? 0);
+        $archivo = $_POST['archivo'] ?? '';
+
+        if (!$id || !$archivo) {
+            echo json_encode(['success' => false, 'error' => 'Datos incompletos']);
+            exit;
+        }
+
+        $pdo = DB::conn();
+
+        // Eliminar archivo físico
+        $filePath = dirname(__DIR__) . '/public/pdf/' . $archivo;
+        $archivoEliminado = false;
+        
+        if (file_exists($filePath)) {
+            $archivoEliminado = unlink($filePath);
+        } else {
+            $archivoEliminado = true;
+        }
+
+        // Eliminar registro de la base de datos
+        $stmt = $pdo->prepare("DELETE FROM pdf_reportes_anual WHERE id = ?");
+        $dbEliminado = $stmt->execute([$id]);
+
+        if ($dbEliminado && $archivoEliminado) {
+            echo json_encode(['success' => true]);
+        } else {
+            echo json_encode(['success' => false, 'error' => 'No se pudo eliminar el reporte']);
+        }
+        exit;
+    }
+
+    /* ==========================================================
      *  EXPORTAR EXCEL (general o formato especial CEAA)
      * ========================================================== */
  public function excel()
@@ -244,19 +448,30 @@ public function generarAnualPDF()
     // ================================
     // DATOS DEL FORMULARIO
     // ================================
-    $anio          = $_POST['anio'] ?? date('Y');
-    $accion        = $_POST['accion'] ?? '—';
-    $beneficiario  = $_POST['beneficiario'] ?? '—';
+    $anio = $_POST['anio'] ?? date('Y');
 
     // ================================
-    // TRAER TODOS LOS RECURSOS DEL ESTADO
+    // TRAER TODOS LOS RECURSOS
+    // Nota: Como los recursos no tienen año_fortalecimiento configurado,
+    // se genera el reporte con TODOS los recursos disponibles
     // ================================
     $recursos = Inventario::listarReporte([]);
 
-    if (empty($recursos)) exit("No hay recursos para generar el reporte anual.");
+    if (empty($recursos)) {
+        $_SESSION['error'] = "No hay recursos registrados en el sistema.";
+        header("Location: " . BASE_URI . "/index.php?controller=reporte&action=reporte&tipo=anual");
+        exit;
+    }
+
+    // Ordenar por municipio
+    usort($recursos, function($a, $b) {
+        $municipioA = $a['municipio'] ?? '';
+        $municipioB = $b['municipio'] ?? '';
+        return strcmp($municipioA, $municipioB);
+    });
 
     // ================================
-    // MPDF CONFIG
+    // GENERAR PDF CON MPDF
     // ================================
     require_once dirname(__DIR__) . '/vendor/autoload.php';
 
@@ -264,7 +479,9 @@ public function generarAnualPDF()
         'mode'         => 'utf-8',
         'format'       => 'A4-L',
         'margin_top'   => 40,
-        'margin_bottom'=> 20
+        'margin_bottom'=> 20,
+        'margin_left'  => 10,
+        'margin_right' => 10
     ]);
 
     // LOGO
@@ -279,79 +496,97 @@ public function generarAnualPDF()
     // ESTILOS
     $estilos = "
         <style>
-            h2 { text-align:center; margin-bottom:5px; }
-            table { width:100%; border-collapse:collapse; font-size:11px; }
+            h2 { 
+                text-align:center; 
+                margin-bottom:10px; 
+                color:#78002e; 
+                font-size:18px;
+            }
+            .subtitulo {
+                text-align:center;
+                margin-bottom:15px;
+                font-size:12px;
+            }
+            table { 
+                width:100%; 
+                border-collapse:collapse; 
+                font-size:8px; 
+            }
             th {
                 background:#78002e;
                 color:white;
-                padding:6px;
+                padding:5px 3px;
                 border:1px solid #333;
                 text-align:center;
+                font-weight:bold;
+                font-size:8px;
             }
             td {
-                padding:6px;
-                border:1px solid #555;
+                padding:4px 2px;
+                border:1px solid #666;
+                font-size:7px;
+                vertical-align:top;
+            }
+            .text-center {
+                text-align:center;
             }
         </style>
     ";
 
-    // ================================
     // GENERAR HTML
-    // ================================
     ob_start();
     ?>
 
     <?= $estilos ?>
 
-    <h2>
-        Reporte Anual Estatal de Entregas<br>
-        Año <?= htmlspecialchars($anio) ?>
-    </h2>
+    <h2>Fortalecimiento de Espacios de Cultura del Agua <?= htmlspecialchars($anio) ?></h2>
 
-    <p><strong>Acción global:</strong> <?= htmlspecialchars($accion) ?></p>
-    <p><strong>Beneficiario global:</strong> <?= htmlspecialchars($beneficiario) ?></p>
+    <p class="subtitulo">
+        <strong>Total de recursos:</strong> <?= count($recursos) ?> | 
+        <strong>Fecha de generación:</strong> <?= date('d/m/Y H:i') ?>
+    </p>
 
     <table>
         <thead>
             <tr>
-                <th>No. Inventario</th>
-                <th>Descripción</th>
-                <th>Concepto</th>
-                <th>Año Fortalecimiento</th>
-                <th>Cantidad</th>
-                <th>Marca</th>
-                <th>Modelo</th>
-                <th>No. Serie</th>
-                <th>Color</th>
-                <th>Material</th>
-                <th>Municipio</th>
-                <th>Organismo</th>
+                <th style="width:3%;">No.</th>
+                <th style="width:15%;">Descripción</th>
+                <th style="width:12%;">Acción</th>
+                <th style="width:3%;">Cant.</th>
+                <th style="width:10%;">Concepto</th>
+                <th style="width:4%;">Año</th>
+                <th style="width:8%;">Marca</th>
+                <th style="width:8%;">Modelo</th>
+                <th style="width:8%;">No. Serie</th>
+                <th style="width:6%;">Color</th>
+                <th style="width:8%;">Material</th>
+                <th style="width:10%;">Municipio</th>
+                <th style="width:5%;">Beneficiario</th>
             </tr>
         </thead>
 
         <tbody>
-        <?php
-        // Ordenar por municipio
-        usort($recursos, function($a, $b) {
-            return strcmp($a['municipio'], $b['municipio']);
-        });
-
+        <?php 
+        $contador = 1;
         foreach ($recursos as $r): ?>
             <tr>
-                <td><?= $r['no_inventario'] ?></td>
-                <td><?= $r['descripcion_larga'] ?></td>
-                <td><?= $r['categoria'] ?></td>
-                <td><?= $anio ?></td>
-                <td><?= $r['cantidad'] ?></td>
-                <td><?= $r['marca'] ?></td>
-                <td><?= $r['modelo'] ?></td>
-                <td><?= $r['no_serie'] ?></td>
-                <td><?= $r['color'] ?></td>
-                <td><?= $r['material'] ?></td>
-                <td><?= $r['municipio'] ?></td>
-                <td><?= $r['organismo'] ?></td>
+                <td class="text-center"><?= $contador ?></td>
+                <td><?= htmlspecialchars($r['descripcion']) ?></td>
+                <td><?= htmlspecialchars($r['accion'] ?? 'Fortalecimiento de Espacios de Cultura del Agua') ?></td>
+                <td class="text-center"><?= $r['cantidad'] ?? 1 ?></td>
+                <td><?= htmlspecialchars($r['categoria']) ?></td>
+                <td class="text-center"><?= $r['anio'] ?? $anio ?></td>
+                <td><?= htmlspecialchars($r['marca'] ?? 'Sin Marca') ?></td>
+                <td><?= htmlspecialchars($r['modelo'] ?? 'Sin modelo') ?></td>
+                <td><?= htmlspecialchars($r['no_serie'] ?? 'Sin número de serie') ?></td>
+                <td><?= htmlspecialchars($r['color'] ?? 'Multicolor') ?></td>
+                <td><?= htmlspecialchars($r['material'] ?? '') ?></td>
+                <td><?= htmlspecialchars($r['municipio']) ?></td>
+                <td><?= htmlspecialchars($r['beneficiario'] ?? '') ?></td>
             </tr>
-        <?php endforeach; ?>
+        <?php 
+        $contador++;
+        endforeach; ?>
         </tbody>
     </table>
 
@@ -365,7 +600,7 @@ public function generarAnualPDF()
     $pdfDir = dirname(__DIR__) . "/public/pdf/";
     if (!is_dir($pdfDir)) mkdir($pdfDir, 0777, true);
 
-    $fileName = "ReporteAnual_" . date("Ymd_His") . ".pdf";
+    $fileName = "ReporteAnual_{$anio}_" . date("Ymd_His") . ".pdf";
     $filePath = $pdfDir . $fileName;
 
     $mpdf->Output($filePath, \Mpdf\Output\Destination::FILE);
@@ -374,10 +609,11 @@ public function generarAnualPDF()
     // GUARDAR REGISTRO BD
     // ================================
     $pdo = DB::conn();
-    $pdo->prepare("
-        INSERT INTO pdf_reportes_anual (archivo, anio)
-        VALUES (?, ?)
-    ")->execute([$fileName, $anio]);
+    $stmt = $pdo->prepare("
+        INSERT INTO pdf_reportes_anual (archivo, anio, fecha)
+        VALUES (?, ?, NOW())
+    ");
+    $stmt->execute([$fileName, $anio]);
 
     // ================================
     // MOSTRAR AL USUARIO
