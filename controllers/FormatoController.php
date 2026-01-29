@@ -178,6 +178,75 @@ public function guardarCapturaECA(): void
     header("Location: index.php?controller=formatos&action=capturaECA&id=" . $id);
     exit;
 }
+
+/* ==========================================================
+   EDITAR FICHA ECA (PRELLENAR FORMULARIO)
+   ========================================================== */
+public function editarECA(): void
+{
+    $this->guard();
+
+    $id = (int)($_GET['id'] ?? 0);
+
+    if ($id <= 0) {
+        $_SESSION['flash_error'] = "ID inválido.";
+        header("Location: index.php?controller=formatos&action=consultaECA");
+        exit;
+    }
+
+    require_once dirname(__DIR__) . "/models/EcaFicha.php";
+    require_once dirname(__DIR__) . "/models/Municipio.php";
+    require_once dirname(__DIR__) . "/models/Organismo.php";
+    require_once dirname(__DIR__) . "/models/Inventario.php";
+
+    $ficha      = EcaFicha::buscar($id);
+    $municipios = Municipio::listar();
+    $organismos = Organismo::listar();
+    $recursos   = Inventario::listarRecursos();
+
+    if (!$ficha) {
+        $_SESSION['flash_error'] = "Ficha no encontrada.";
+        header("Location: index.php?controller=formatos&action=consultaECA");
+        exit;
+    }
+
+    $_SESSION['vista'] = "formatos/editar_eca.php";
+    $viewData = compact('ficha', 'municipios', 'organismos', 'recursos');
+
+    require dirname(__DIR__) . "/views/dashboard.php";
+}
+
+/* ==========================================================
+   ACTUALIZAR FICHA ECA
+   ========================================================== */
+public function actualizarECA(): void
+{
+    $this->guard();
+
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        header("Location: index.php?controller=formatos&action=consultaECA");
+        exit;
+    }
+
+    require_once dirname(__DIR__) . "/models/EcaFicha.php";
+
+    $id = (int)($_POST['id'] ?? 0);
+
+    if ($id <= 0) {
+        $_SESSION['flash_error'] = "ID inválido.";
+        header("Location: index.php?controller=formatos&action=consultaECA");
+        exit;
+    }
+
+    $data = $_POST;
+    unset($data['id']); // Remover ID de los datos a actualizar
+
+    EcaFicha::actualizar($id, $data);
+
+    $_SESSION['flash'] = "Ficha Técnica del ECA actualizada correctamente.";
+    header("Location: index.php?controller=formatos&action=consultaECA");
+    exit;
+}
    public function estadisticas()
 {
     $this->guard();

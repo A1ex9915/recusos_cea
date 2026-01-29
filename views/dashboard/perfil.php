@@ -28,7 +28,25 @@ if (!$user) {
   --bg:#f7f7f8;
   --text:#1f2937;
   --muted:#6b7280;
-  --white:#fff;
+.btn-volver {
+    display: inline-block;
+    padding: 10px 20px;
+    background: #e5e7eb;
+    color: #111;
+    border: none;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    font-size: 14px;
+    margin-bottom: 20px;
+}
+
+.btn-volver:hover {
+    background: #d1d5db;
+    transform: translateY(-1px);
+}  --white:#fff;
 }
 
 /* ======= CONTENEDOR PRINCIPAL ======= */
@@ -177,6 +195,8 @@ if (!$user) {
 }
 </style>
 
+
+<button type="button" class="btn-volver" onclick="window.history.back()">← Volver</button>
 
 <div class="perfil-wrapper">
 

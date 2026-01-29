@@ -2,6 +2,30 @@
 $baseUrl = BASE_URI . '/index.php';
 ?>
 
+<style>
+.btn-volver {
+    display: inline-block;
+    padding: 10px 20px;
+    background: #e5e7eb;
+    color: #111;
+    border: none;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    font-size: 14px;
+    margin-bottom: 15px;
+}
+
+.btn-volver:hover {
+    background: #d1d5db;
+    transform: translateY(-1px);
+}
+</style>
+
+<button type="button" class="btn-volver" onclick="window.history.back()">← Volver</button>
+
 <section class="invrep-wrapper">
 
     <!-- HEADER -->
@@ -132,7 +156,9 @@ $baseUrl = BASE_URI . '/index.php';
                                 <td><?= htmlspecialchars($item['no_inventario'] ?? $item['clave'] ?? '') ?></td>
                                 <td><?= htmlspecialchars($item['descripcion'] ?? $item['nombre'] ?? '') ?></td>
                                 <td><?= htmlspecialchars($item['categoria'] ?? '') ?></td>
-                                <td><?= htmlspecialchars($item['ubicacion'] ?? '') ?></td>
+                                <td title="<?= htmlspecialchars($item['organismo'] ?? '') ?>">
+                                    <?= htmlspecialchars(mb_strlen($item['organismo'] ?? '') > 30 ? mb_substr($item['organismo'] ?? '', -30) . '...' : ($item['organismo'] ?? '')) ?>
+                                </td>
                                 <td>
                                     <span class="badge-estado badge-<?= $item['estado_bien'] ?: 'default' ?>">
                                         <?= $item['estado_bien'] ? ucfirst($item['estado_bien']) : '—' ?>
@@ -187,10 +213,10 @@ $baseUrl = BASE_URI . '/index.php';
                 </select>
 
                 <label>Ubicación física</label>
-                <select id="edit_ubicacion_id" name="ubicacion_id">
-                    <option value="">Selecciona ubicación</option>
-                    <?php foreach ($ubicaciones as $u): ?>
-                        <option value="<?= (int)$u['id'] ?>"><?= htmlspecialchars($u['nombre']) ?></option>
+                <select id="edit_organismo_id" name="organismo_id">
+                    <option value="">Selecciona organismo</option>
+                    <?php foreach ($organismos as $o): ?>
+                        <option value="<?= (int)$o['id'] ?>"><?= htmlspecialchars($o['nombre']) ?></option>
                     <?php endforeach; ?>
                 </select>
 
@@ -270,7 +296,7 @@ function openEditModal(id) {
             document.getElementById('edit_clave').value           = data.clave || '';
             document.getElementById('edit_nombre').value          = data.nombre || '';
             document.getElementById('edit_categoria_id').value    = data.categoria_id || '';
-            document.getElementById('edit_ubicacion_id').value    = data.ubicacion_id || '';
+            document.getElementById('edit_organismo_id').value    = data.organismo_id || '';
             document.getElementById('edit_estado_bien').value     = data.estado_bien || '';
             document.getElementById('edit_costo_unitario').value  = data.costo_unitario || '';
             document.getElementById('edit_marca').value           = data.marca || '';

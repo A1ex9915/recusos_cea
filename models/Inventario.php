@@ -226,8 +226,9 @@ $args = [
     }
 
     if (!empty($filtros['municipio_id'])) {
-        $sql .= " AND r.municipio_id = :municipio_id";
+        $sql .= " AND (r.municipio_id = :municipio_id OR o.municipio_id = :municipio_id2)";
         $params[':municipio_id'] = (int)$filtros['municipio_id'];
+        $params[':municipio_id2'] = (int)$filtros['municipio_id'];
     }
 
     $sql .= " ORDER BY municipio ASC, r.fecha_alta DESC, r.clave ASC";

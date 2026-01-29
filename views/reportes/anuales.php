@@ -1,3 +1,24 @@
+<style>
+.btn-volver {
+    display: inline-block;
+    padding: 10px 20px;
+    background: #e5e7eb;
+    color: #111;
+    border: none;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.btn-volver:hover {
+    background: #d1d5db;
+    transform: translateY(-1px);
+}
+</style>
+
 <?php
 $pdo = DB::conn();
 
@@ -11,6 +32,8 @@ $filtro_fecha_desde = $_GET['fecha_desde'] ?? '';
 $filtro_fecha_hasta = $_GET['fecha_hasta'] ?? '';
 $hay_filtros = ($filtro_anio !== '' || $filtro_fecha_desde !== '' || $filtro_fecha_hasta !== '');
 ?>
+
+<button type="button" class="btn-volver" onclick="window.history.back()" style="margin-bottom: 15px;">← Volver</button>
 
 <div class="container-reporte">
   <h1>Reportes Anuales Generados</h1>

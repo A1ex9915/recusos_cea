@@ -43,6 +43,35 @@ class EcaFicha
     }
 
     /* ==========================================================
+       ACTUALIZAR FICHA — Actualiza dinámicamente todas las columnas
+    ========================================================== */
+    public static function actualizar(int $id, array $p): void
+    {
+        $pdo = self::pdo();
+
+        // Obtener columnas reales
+        $cols = $pdo->query("SHOW COLUMNS FROM eca_fichas")->fetchAll(PDO::FETCH_COLUMN);
+
+        $updatePairs = [];
+        $params      = [];
+
+        foreach ($cols as $col) {
+            if ($col === 'id') continue;
+            if ($col === 'fecha_captura') continue;
+
+            $updatePairs[] = "$col = :$col";
+            $params[":$col"] = $p[$col] ?? null;
+        }
+
+        $params[':id'] = $id;
+
+        $sql = "UPDATE eca_fichas SET " . implode(", ", $updatePairs) . " WHERE id = :id";
+
+        $st = $pdo->prepare($sql);
+        $st->execute($params);
+    }
+
+    /* ==========================================================
        OBTENER FICHA POR ID
     ========================================================== */
     public static function obtener(int $id): ?array

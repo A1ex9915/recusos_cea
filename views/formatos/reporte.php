@@ -7,6 +7,30 @@ $anio         = $_GET['anio'] ?? date('Y');
 $organismo_id = $_GET['organismo_id'] ?? '';
 ?>
 
+<style>
+.btn-volver {
+    display: inline-block;
+    padding: 10px 20px;
+    background: #e5e7eb;
+    color: #111;
+    border: none;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    font-size: 14px;
+    margin-bottom: 15px;
+}
+
+.btn-volver:hover {
+    background: #d1d5db;
+    transform: translateY(-1px);
+}
+</style>
+
+<button type="button" class="btn-volver" onclick="window.history.back()">← Volver</button>
+
 <section class="reporte-container">
 
     <div class="reporte-card">

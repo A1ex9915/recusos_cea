@@ -1,3 +1,4 @@
+<?php header('Content-Type: text/html; charset=UTF-8'); ?>
 <style>
 /* ============================
    ESTILOS INSTITUCIONALES CEAA
@@ -184,14 +185,15 @@ textarea {
 
 <section class="eca-wrapper">
 
-    <button type="button" class="btn-volver" onclick="window.history.back()">← Volver</button>
+    <button type="button" class="btn-volver" onclick="window.history.back()">â† Volver</button>
 
     <div class="eca-header">
-        <h1>Ficha Técnica del Espacio de Cultura del Agua</h1>
-        <h2>Captura de información</h2>
+        <h1>Ficha TÃ©cnica del Espacio de Cultura del Agua</h1>
+        <h2>Editar informaciÃ³n</h2>
     </div>
 
-    <form method="POST" action="index.php?controller=formatos&action=guardarCapturaECA">
+    <form method="POST" action="index.php?controller=formatos&action=actualizarECA">
+        <input type="hidden" name="id" value="<?= $ficha['id'] ?>">
 
         <!-- =======================================================
              DATOS DEL MUNICIPIO
@@ -205,7 +207,9 @@ textarea {
                 <select name="municipio_id" id="municipio" required>
                     <option value="">Seleccione...</option>
                     <?php foreach ($municipios as $m): ?>
-                        <option value="<?= $m['id'] ?>"><?= htmlspecialchars($m['nombre']) ?></option>
+                        <option value="<?= $m['id'] ?>" <?= ($ficha['municipio_id'] == $m['id']) ? 'selected' : '' ?>>
+                            <?= htmlspecialchars($m['nombre']) ?>
+                        </option>
                     <?php endforeach; ?>
                 </select>
             </div>
@@ -215,7 +219,7 @@ textarea {
                 <select name="organismo_id" id="organismo">
                     <option value="">Seleccione...</option>
                     <?php foreach ($organismos as $o): ?>
-                        <option value="<?= $o['id'] ?>" data-municipio-id="<?= $o['municipio_id'] ?>">
+                        <option value="<?= $o['id'] ?>" data-municipio-id="<?= $o['municipio_id'] ?>" <?= ($ficha['organismo_id'] == $o['id']) ? 'selected' : '' ?>>
                             <?= htmlspecialchars($o['nombre']) ?>
                         </option>
                     <?php endforeach; ?>
@@ -225,95 +229,95 @@ textarea {
         </div>
 
         <!-- =======================================================
-             INFORMACIÓN BÁSICA DEL ECA (como el Excel)
+             INFORMACIÃ“N BÃSICA DEL ECA (como el Excel)
         ======================================================= -->
-        <h3 class="section-title">Información básica del ECA</h3>
+        <h3 class="section-title">InformaciÃ³n bÃ¡sica del ECA</h3>
 
         <div class="grid-2">
 
             <div class="form-group">
                 <label>Estado del ECA</label>
-                <input type="text" name="estado_eca">
+                <input type="text" name="estado_eca" value="<?= htmlspecialchars($ficha['estado_eca'] ?? '') ?>">
             </div>
 
             <div class="form-group">
                 <label>Fecha de apertura</label>
-                <input type="date" name="fecha_apertura">
+                <input type="date" name="fecha_apertura" value="<?= htmlspecialchars($ficha['fecha_apertura'] ?? '') ?>">
             </div>
 
             <div class="form-group">
                 <label>Clave del ECA</label>
-                <input type="text" name="clave_eca">
+                <input type="text" name="clave_eca" value="<?= htmlspecialchars($ficha['clave_eca'] ?? '') ?>">
             </div>
 
             <div class="form-group">
                 <label>Municipio (texto en ficha)</label>
-                <input type="text" name="municipio_texto">
+                <input type="text" name="municipio_texto" value="<?= htmlspecialchars($ficha['municipio_texto'] ?? '') ?>">
             </div>
 
             <div class="form-group">
                 <label>Tipo de instancia operativa</label>
-                <input type="text" name="tipo_instancia_operativa">
+                <input type="text" name="tipo_instancia_operativa" value="<?= htmlspecialchars($ficha['tipo_instancia_operativa'] ?? '') ?>">
             </div>
 
             <div class="form-group">
                 <label>Nombre de instancia operativa</label>
-                <input type="text" name="nombre_instancia_operativa">
+                <input type="text" name="nombre_instancia_operativa" value="<?= htmlspecialchars($ficha['nombre_instancia_operativa'] ?? '') ?>">
             </div>
 
             <div class="form-group">
                 <label>Nombre del RECA</label>
-                <input type="text" name="nombre_reca">
+                <input type="text" name="nombre_reca" value="<?= htmlspecialchars($ficha['nombre_reca'] ?? '') ?>">
             </div>
 
             <div class="form-group">
-                <label>Correo electrónico</label>
-                <input type="email" name="correo_reca">
+                <label>Correo electrÃ³nico</label>
+                <input type="email" name="correo_reca" value="<?= htmlspecialchars($ficha['correo_reca'] ?? '') ?>">
             </div>
 
             <div class="form-group">
-                <label>Teléfono</label>
-                <input type="text" name="telefono">
+                <label>TelÃ©fono</label>
+                <input type="text" name="telefono" value="<?= htmlspecialchars($ficha['telefono'] ?? '') ?>">
             </div>
 
             <div class="form-group">
-                <label>Días y horarios de atención</label>
-                <input type="text" name="horario_atencion">
+                <label>DÃ­as y horarios de atenciÃ³n</label>
+                <input type="text" name="horario_atencion" value="<?= htmlspecialchars($ficha['horario_atencion'] ?? '') ?>">
             </div>
 
             <div class="form-group">
-                <label>Dirección (calle, número, localidad, colonia)</label>
-                <input type="text" name="direccion">
+                <label>DirecciÃ³n (calle, nÃºmero, localidad, colonia)</label>
+                <input type="text" name="direccion" value="<?= htmlspecialchars($ficha['direccion'] ?? '') ?>">
             </div>
 
             <div class="form-group">
-                <label>Número</label>
-                <input type="text" name="numero_direccion">
+                <label>NÃºmero</label>
+                <input type="text" name="numero_direccion" value="<?= htmlspecialchars($ficha['numero_direccion'] ?? '') ?>">
             </div>
 
             <div class="form-group">
                 <label>Colonia</label>
-                <input type="text" name="colonia">
+                <input type="text" name="colonia" value="<?= htmlspecialchars($ficha['colonia'] ?? '') ?>">
             </div>
 
             <div class="form-group">
                 <label>Localidad</label>
-                <input type="text" name="localidad">
+                <input type="text" name="localidad" value="<?= htmlspecialchars($ficha['localidad'] ?? '') ?>">
             </div>
 
             <div class="form-group">
-                <label>Código Postal</label>
-                <input type="text" name="codigo_postal">
+                <label>CÃ³digo Postal</label>
+                <input type="text" name="codigo_postal" value="<?= htmlspecialchars($ficha['codigo_postal'] ?? '') ?>">
             </div>
 
             <div class="form-group">
-                <label>Número de habitantes</label>
-                <input type="number" name="habitantes">
+                <label>NÃºmero de habitantes</label>
+                <input type="number" name="habitantes" value="<?= htmlspecialchars($ficha['habitantes'] ?? '') ?>">
             </div>
 
             <div class="form-group">
-                <label>Población atendida</label>
-                <input type="text" name="poblacion_atendida">
+                <label>PoblaciÃ³n atendida</label>
+                <input type="text" name="poblacion_atendida" value="<?= htmlspecialchars($ficha['poblacion_atendida'] ?? '') ?>">
             </div>
 
         </div>
@@ -330,7 +334,7 @@ textarea {
                 <select name="mobiliario_equipo">
                     <option value="">Seleccione un recurso...</option>
                     <?php foreach ($recursos as $r): ?>
-                        <option value="<?= $r['id'] ?>">
+                        <option value="<?= $r['id'] ?>" <?= ($ficha['mobiliario_equipo'] == $r['id']) ? 'selected' : '' ?>>
                             <?= htmlspecialchars($r['clave'] . ' - ' . $r['nombre']) ?>
                         </option>
                     <?php endforeach; ?>
@@ -338,29 +342,29 @@ textarea {
             </div>
 
             <div class="form-group">
-                <label>Equipo de cómputo y equipo electrónico</label>
-                <input type="text" name="equipo_computo">
+                <label>Equipo de cÃ³mputo y equipo electrÃ³nico</label>
+                <input type="text" name="equipo_computo" value="<?= htmlspecialchars($ficha['equipo_computo'] ?? '') ?>">
             </div>
 
             <div class="form-group">
-                <label>Material didáctico</label>
-                <input type="text" name="material_didactico">
+                <label>Material didÃ¡ctico</label>
+                <input type="text" name="material_didactico" value="<?= htmlspecialchars($ficha['material_didactico'] ?? '') ?>">
             </div>
 
             <div class="form-group">
-                <label>Fecha de último fortalecimiento</label>
-                <input type="date" name="fecha_ultimo_fortalecimiento">
+                <label>Fecha de Ãºltimo fortalecimiento</label>
+                <input type="date" name="fecha_ultimo_fortalecimiento" value="<?= htmlspecialchars($ficha['fecha_ultimo_fortalecimiento'] ?? '') ?>">
             </div>
 
             <div class="form-group">
                 <label>Observaciones</label>
-                <textarea name="observaciones" rows="3"></textarea>
+                <textarea name="observaciones" rows="3"><?= htmlspecialchars($ficha['observaciones'] ?? '') ?></textarea>
             </div>
 
         </div>
 
         <!-- =======================================================
-             INFORMES 2024 (meses + POA + Diagnóstico)
+             INFORMES 2024 (meses + POA + DiagnÃ³stico)
         ======================================================= -->
         <h3 class="section-title">Informes</h3>
 
@@ -386,8 +390,8 @@ textarea {
                 <div class="checkbox-group">
                     <label><?= $mes ?></label>
                     <select name="<?= $campo ?>">
-                        <option value="">—</option>
-                        <option value="Si">Sí</option>
+                        <option value="">â€”</option>
+                        <option value="Si">SÃ­</option>
                         <option value="No">No</option>
                     </select>
                 </div>
@@ -395,12 +399,12 @@ textarea {
 
             <div class="form-group" style="grid-column: 1 / -1;">
                 <label>POA</label>
-                <input type="text" name="poa_enero_sig">
+                <input type="text" name="poa_enero_sig" value="<?= htmlspecialchars($ficha['poa_enero_sig'] ?? '') ?>">
             </div>
 
             <div class="form-group" style="grid-column: 1 / -1;">
-                <label>Diagnóstico</label>
-                <input type="text" name="diagnostico">
+                <label>DiagnÃ³stico</label>
+                <input type="text" name="diagnostico" value="<?= htmlspecialchars($ficha['diagnostico'] ?? '') ?>">
             </div>
         </div>
 
@@ -421,11 +425,11 @@ textarea {
             <tbody>
                 <?php
                 $rubros = [
-                    'calidad_ortografia'   => 'Ortografía',
+                    'calidad_ortografia'   => 'OrtografÃ­a',
                     'calidad_totales'      => 'Los totales coinciden',
-                    'calidad_escaneado'    => 'Está bien escaneado',
+                    'calidad_escaneado'    => 'EstÃ¡ bien escaneado',
                     'calidad_encabezado'   => 'El encabezado tiene los logos',
-                    'calidad_redaccion'    => 'El oficio está bien redactado',
+                    'calidad_redaccion'    => 'El oficio estÃ¡ bien redactado',
                     'calidad_actividades'  => 'Las actividades son innovadoras',
                 ];
                 ?>
@@ -441,7 +445,7 @@ textarea {
         </table>
 
         <!-- =======================================================
-             ACCIONES REALIZADAS EN 2023 — CEAA
+             ACCIONES REALIZADAS EN 2023 â€” CEAA
         ======================================================= -->
         <h3 class="section-title">Acciones realizadas por parte de CEAA</h3>
 
@@ -449,18 +453,18 @@ textarea {
             <thead>
                 <tr>
                     <th>Acciones ofertadas</th>
-                    <th>Asistencia por el RECA (Sí/No)</th>
+                    <th>Asistencia por el RECA (SÃ­/No)</th>
                 </tr>
             </thead>
             <tbody>
                 <?php
                 $acciones2023 = [
-                    'cap_cultura_pago'   => 'Capacitación "Cultura del Pago"',
+                    'cap_cultura_pago'   => 'CapacitaciÃ³n "Cultura del Pago"',
                     'caravana_estiaje'   => 'Caravana preventiva en temporada de Estiaje',
                     'caravana_lluvias'   => 'Caravana temporada de lluvias',
-                    'curso_teatro'       => 'Curso de "Teatro Guiñol de cultura del agua"',
-                    'platicas_domo'      => 'Pláticas y juego interactivo en domo planetario',
-                    'convencion_aneas'   => 'Convención ANEAS y encuentro nacional',
+                    'curso_teatro'       => 'Curso de "Teatro GuiÃ±ol de cultura del agua"',
+                    'platicas_domo'      => 'PlÃ¡ticas y juego interactivo en domo planetario',
+                    'convencion_aneas'   => 'ConvenciÃ³n ANEAS y encuentro nacional',
                 ];
                 ?>
                 <?php foreach ($acciones2023 as $campo => $texto): ?>
@@ -471,8 +475,8 @@ textarea {
                         </td>
                         <td>
                             <select name="<?= $campo ?>_asis">
-                                <option value="">—</option>
-                                <option value="Si">Sí</option>
+                                <option value="">â€”</option>
+                                <option value="Si">SÃ­</option>
                                 <option value="No">No</option>
                             </select>
                         </td>
@@ -488,18 +492,18 @@ textarea {
 
         <div class="grid-3">
             <div class="form-group">
-                <label>Mobiliario y Equipo de Cómputo</label>
-                <input type="text" name="fort_2023_mobiliario">
+                <label>Mobiliario y Equipo de CÃ³mputo</label>
+                <input type="text" name="fort_2023_mobiliario" value="<?= htmlspecialchars($ficha['fort_2023_mobiliario'] ?? '') ?>">
             </div>
 
             <div class="form-group">
-                <label>Material Didáctico</label>
-                <input type="text" name="fort_2023_material">
+                <label>Material DidÃ¡ctico</label>
+                <input type="text" name="fort_2023_material" value="<?= htmlspecialchars($ficha['fort_2023_material'] ?? '') ?>">
             </div>
 
             <div class="form-group">
-                <label>Descripción general (ej. "1 laptop, 1 pantalla de 43''")</label>
-                <input type="text" name="fort_2023_desc">
+                <label>DescripciÃ³n general (ej. "1 laptop, 1 pantalla de 43''")</label>
+                <input type="text" name="fort_2023_desc" value="<?= htmlspecialchars($ficha['fort_2023_desc'] ?? '') ?>">
             </div>
         </div>
 
@@ -512,16 +516,16 @@ textarea {
             <thead>
                 <tr>
                     <th>Acciones realizadas</th>
-                    <th>Asistencia por el RECA (Sí/No)</th>
+                    <th>Asistencia por el RECA (SÃ­/No)</th>
                 </tr>
             </thead>
             <tbody>
                 <?php
                 $acciones2024 = [
-                    'encuentro_hidrico'       => 'Primer Encuentro Estatal Hídrico',
-                    'platicas_2024'           => 'Pláticas y juego interactivo en domo planetario',
+                    'encuentro_hidrico'       => 'Primer Encuentro Estatal HÃ­drico',
+                    'platicas_2024'           => 'PlÃ¡ticas y juego interactivo en domo planetario',
                     'caravana_virtual'        => 'Caravana preventiva virtual "Temporada de Estiaje"',
-                    'diagnostico_municipal'   => 'Curso "Diagnóstico Hídrico Municipal"',
+                    'diagnostico_municipal'   => 'Curso "DiagnÃ³stico HÃ­drico Municipal"',
                 ];
                 ?>
                 <?php foreach ($acciones2024 as $campo => $texto): ?>
@@ -532,8 +536,8 @@ textarea {
                         </td>
                         <td>
                             <select name="<?= $campo ?>_asis">
-                                <option value="">—</option>
-                                <option value="Si">Sí</option>
+                                <option value="">â€”</option>
+                                <option value="Si">SÃ­</option>
                                 <option value="No">No</option>
                             </select>
                         </td>
@@ -549,35 +553,35 @@ textarea {
 
         <div class="grid-3">
             <div class="form-group">
-                <label>Mobiliario y Equipo de Cómputo</label>
-                <input type="text" name="prop_2024_mobiliario">
+                <label>Mobiliario y Equipo de CÃ³mputo</label>
+                <input type="text" name="prop_2024_mobiliario" value="<?= htmlspecialchars($ficha['prop_2024_mobiliario'] ?? '') ?>">
             </div>
 
             <div class="form-group">
-                <label>Material Didáctico</label>
-                <input type="text" name="prop_2024_material">
+                <label>Material DidÃ¡ctico</label>
+                <input type="text" name="prop_2024_material" value="<?= htmlspecialchars($ficha['prop_2024_material'] ?? '') ?>">
             </div>
 
             <div class="form-group">
-                <label>Comentario general (ej. "Se fortaleció el año pasado")</label>
-                <input type="text" name="prop_2024_desc">
+                <label>Comentario general (ej. "Se fortaleciÃ³ el aÃ±o pasado")</label>
+                <input type="text" name="prop_2024_desc" value="<?= htmlspecialchars($ficha['prop_2024_desc'] ?? '') ?>">
             </div>
         </div>
 
         <!-- =======================================================
-             DIAGNÓSTICO GENERAL Y OBSERVACIONES
+             DIAGNÃ“STICO GENERAL Y OBSERVACIONES
         ======================================================= -->
-        <h3 class="section-title">Diagnóstico general del ECA</h3>
-        <textarea name="diagnostico_general" rows="4" style="width:100%;"></textarea>
+        <h3 class="section-title">DiagnÃ³stico general del ECA</h3>
+        <textarea name="diagnostico_general" rows="4" style="width:100%;"><?= htmlspecialchars($ficha['diagnostico_general'] ?? '') ?></textarea>
 
         <h3 class="section-title">Observaciones adicionales</h3>
-        <textarea name="observaciones_generales" rows="4" style="width:100%;"></textarea>
+        <textarea name="observaciones_generales" rows="4" style="width:100%;"><?= htmlspecialchars($ficha['observaciones_generales'] ?? '') ?></textarea>
 
         <!-- =======================================================
              BOTÓN FINAL
         ======================================================= -->
-        <button class="btn-submit">
-            Guardar información
+        <button type="submit" class="btn-submit">
+            Actualizar información
         </button>
 
     </form>
@@ -611,3 +615,4 @@ if (municipioSelect && organismoSelect) {
 
 console.log('Formulario Ficha Técnica ECA cargado.');
 </script>
+

@@ -1,8 +1,30 @@
+<style>
+.btn-volver {
+    display: inline-block;
+    padding: 10px 20px;
+    background: #e5e7eb;
+    color: #111;
+    border: none;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.btn-volver:hover {
+    background: #d1d5db;
+    transform: translateY(-1px);
+}
+</style>
+
+<button type="button" class="btn-volver" onclick="window.history.back()" style="margin-bottom: 15px;">← Volver</button>
+
 <div class="card">
   <div class="card-header">
     <h3>Usuarios</h3>
-   <a class="btn" href="<?= BASE_URI ?>/index.php?controller=users&action=create">Nuevo usuario</a>
-
+    <a class="btn" href="<?= BASE_URI ?>/index.php?controller=users&action=create">Nuevo usuario</a>
   </div>
 
   <?php if (isset($_SESSION['mensaje_exito'])): ?>

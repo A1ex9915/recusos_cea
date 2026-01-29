@@ -16,6 +16,25 @@
     color: #333;
 }
 
+.btn-volver {
+    display: inline-block;
+    padding: 10px 20px;
+    background: #e5e7eb;
+    color: #111;
+    border: none;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.btn-volver:hover {
+    background: #d1d5db;
+    transform: translateY(-1px);
+}
+
 /* ===== FILTRO ===== */
 .filtro-card {
     background: #fff;
@@ -105,6 +124,8 @@
 </style>
 
 
+<button type="button" class="btn-volver" onclick="window.history.back()" style="margin-bottom: 15px;">← Volver</button>
+
 <div class="eca-consulta-wrapper">
 
     <h2 class="eca-title">Consulta de Fichas Técnicas del ECA</h2>
@@ -190,6 +211,8 @@
 
                 <td class="acciones">
                     <a href="index.php?controller=formatos&action=verECA&id=<?= $f['id'] ?>">Ver</a>
+                    |
+                    <a href="index.php?controller=formatos&action=editarECA&id=<?= $f['id'] ?>">Editar</a>
                     |
                     <a href="index.php?controller=formatos&action=generarPDFECA&id=<?= $f['id'] ?>">PDF</a>
 

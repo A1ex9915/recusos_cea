@@ -16,6 +16,27 @@
 .eca-header{
     text-align:center;
     margin-bottom:25px;
+    position: relative;
+}
+
+.btn-volver {
+    display: inline-block;
+    padding: 10px 20px;
+    background: #e5e7eb;
+    color: #111;
+    border: none;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    font-size: 14px;
+    margin-bottom: 15px;
+}
+
+.btn-volver:hover {
+    background: #d1d5db;
+    transform: translateY(-1px);
 }
 
 .eca-header h1{
@@ -68,6 +89,8 @@
 </style>
 
 <div class="eca-view-wrapper">
+
+    <button type="button" class="btn-volver" onclick="window.history.back()">← Volver</button>
 
     <div class="eca-header">
         <h1>Ficha Técnica del Espacio de Cultura del Agua</h1>

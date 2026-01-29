@@ -273,10 +273,11 @@ class ReporteController
         $municipios = Catalogo::municipios();
         $categorias = Catalogo::categorias();
         $organismos = Catalogo::organismos();
+        $ubicaciones = Catalogo::ubicaciones();
 
         $this->render(
             'reportes/inventario.php',
-            compact('inventario', 'resumen', 'municipios', 'categorias', 'organismos')
+            compact('inventario', 'resumen', 'municipios', 'categorias', 'organismos', 'ubicaciones')
         );
     }
 public function generarMunicipioPDF()
