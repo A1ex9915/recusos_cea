@@ -140,6 +140,64 @@ body{font-family:Arial,Helvetica,sans-serif;height:100vh;overflow:auto;backgroun
 
 /* Contenido */
 .contenido{padding:20px;transition:margin-left .3s ease;margin-left:0;overflow-y:auto;min-height:calc(100vh - 80px)}
+.flash-saludo{
+  position:fixed;
+  top:96px;
+  right:18px;
+  z-index:1300;
+  max-width:min(460px, calc(100vw - 28px));
+  display:flex;
+  align-items:flex-start;
+  gap:10px;
+  padding:12px 14px;
+  border-radius:12px;
+  background:linear-gradient(135deg,#7b1b3b,#9f2953);
+  color:#fff;
+  box-shadow:0 14px 28px rgba(53, 8, 27, .32);
+  font-weight:600;
+  animation:toastIn .35s ease both;
+}
+
+.flash-saludo.is-hiding{
+  animation:toastOut .35s ease both;
+}
+
+.flash-saludo span{
+  line-height:1.35;
+}
+
+.flash-saludo-cerrar{
+  border:0;
+  background:transparent;
+  color:#fff;
+  font-size:20px;
+  line-height:1;
+  cursor:pointer;
+  opacity:.9;
+}
+
+.flash-saludo-cerrar:hover{
+  opacity:1;
+}
+
+@keyframes toastIn{
+  from{opacity:0;transform:translateY(-8px) scale(.98)}
+  to{opacity:1;transform:translateY(0) scale(1)}
+}
+
+@keyframes toastOut{
+  from{opacity:1;transform:translateY(0) scale(1)}
+  to{opacity:0;transform:translateY(-8px) scale(.98)}
+}
+
+@media (max-width:767px){
+  .flash-saludo{
+    top:88px;
+    right:10px;
+    left:10px;
+    max-width:none;
+  }
+}
 .portada-bienvenida{
   width:100%;min-height:calc(100vh - 80px);background:#fff url('../img/Portada.png') no-repeat center;
   background-size:contain;border-radius:16px;box-shadow:0 8px 24px rgba(0,0,0,.06)

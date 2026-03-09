@@ -94,6 +94,12 @@ class UserController {
       'activo'   => $data['activo'],
     ]);
 
+    Bitacora::registrar('crear', 'usuarios', 'Usuario creado', [
+      'email' => $data['email'],
+      'rol_id' => $data['rol_id'],
+      'activo' => $data['activo']
+    ]);
+
     $_SESSION['mensaje_exito'] = 'Usuario creado correctamente';
     header('Location: ' . BASE_URI . '/index.php?controller=users&action=index');
     exit;
@@ -186,6 +192,13 @@ class UserController {
 
     User::update($id, $datos_update);
 
+    Bitacora::registrar('actualizar', 'usuarios', 'Usuario actualizado', [
+      'usuario_id' => $id,
+      'email' => $data['email'],
+      'rol_id' => $data['rol_id'],
+      'activo' => $data['activo']
+    ]);
+
     $_SESSION['mensaje_exito'] = 'Usuario actualizado correctamente';
     header('Location: ' . BASE_URI . '/index.php?controller=users&action=index');
     exit;
@@ -194,7 +207,12 @@ class UserController {
   public function destroy(){
     $this->guardAdmin();
     $id = (int)($_POST['id'] ?? 0);
-    if ($id) { User::delete($id); }
+    if ($id) {
+      User::delete($id);
+      Bitacora::registrar('eliminar', 'usuarios', 'Usuario eliminado', [
+        'usuario_id' => $id
+      ]);
+    }
     header('Location: ' . BASE_URI . '/index.php?controller=users&action=index'); exit;
   }
 }

@@ -1,5 +1,19 @@
 <?php
 class AuthController {
+  private function saludoPorHorario(string $nombre): string {
+    $hora = (int)date('G');
+
+    if ($hora < 12) {
+      return "Buenos días, {$nombre}. Bienvenid@ al sistema.";
+    }
+
+    if ($hora < 19) {
+      return "Buenas tardes, {$nombre}. Bienvenid@ al sistema.";
+    }
+
+    return "Buenas noches, {$nombre}. Bienvenid@ al sistema.";
+  }
+
   private function render($view, $params=[]){
     extract($params);
     ob_start();
@@ -27,6 +41,11 @@ class AuthController {
             'rol_id' => $user['rol_id']
         ];
 
+      $_SESSION['flash_saludo'] = $this->saludoPorHorario($user['nombre']);
+      Bitacora::registrar('login', 'auth', 'Inicio de sesión exitoso', [
+        'email' => $user['email']
+      ]);
+
         header('Location: index.php?controller=dashboard&action=inicio');
         exit;
     }
@@ -38,6 +57,12 @@ class AuthController {
 
 
   public function logout(){
+    if (!empty($_SESSION['user'])) {
+      Bitacora::registrar('logout', 'auth', 'Cierre de sesión', [
+        'email' => $_SESSION['user']['email'] ?? null
+      ]);
+    }
+
     session_destroy();
     header('Location: index.php?controller=auth&action=login'); exit;
   }

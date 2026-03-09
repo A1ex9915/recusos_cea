@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <title>Inicio de Sesión — CEAA</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="<?= asset('css/login.css') ?>?v=1">
+  <link rel="stylesheet" href="<?= asset('css/login.css') ?>?v=2">
   <!-- (Opcional) Iconos si usarás <i> -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
@@ -34,7 +34,10 @@
       </div>
 
       <button type="submit">Iniciar Sesión</button>
-      <!-- <a class="boton-secundario" href="#">¿Olvidaste tu contraseña?</a> -->
+      <a class="boton-secundario" href="index.php?controller=manual&action=ver" target="_blank" rel="noopener noreferrer">
+        <i class="fa-solid fa-book-open"></i>
+        <span>Ver manual técnico</span>
+      </a>
     </form>
   </div>
 </body>

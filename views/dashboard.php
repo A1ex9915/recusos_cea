@@ -18,6 +18,7 @@ $currentCtrl = $_GET['controller'] ?? '';
   <link rel="icon" type="image/png" href="<?= asset('img/logoo.png') ?>">
   <link rel="stylesheet" href="<?= asset('css/dashboard.css') ?>?v=1">
  <link rel="stylesheet" href="<?= asset('css/dashboard.css') ?>?v=1">
+  <link rel="stylesheet" href="<?= asset('css/chatbot-soporte.css') ?>?v=2">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 <?php
@@ -115,6 +116,12 @@ $currentCtrl = $_GET['controller'] ?? '';
       <span class="menu-text">Reportes de inventario</span>
     </a>
 
+    <a href="<?= BASE_URI ?>/index.php?controller=manual&action=ver"
+       class="<?= ($currentCtrl === 'manual') ? 'activo' : '' ?>">
+      <i class="fa-solid fa-book"></i>
+      <span class="menu-text">Manual técnico</span>
+    </a>
+
     <a href="<?= BASE_URI ?>/index.php?controller=auth&action=logout">
       <i class="fa-solid fa-right-from-bracket"></i>
       <span class="menu-text">Cerrar sesión</span>
@@ -125,6 +132,14 @@ $currentCtrl = $_GET['controller'] ?? '';
 
   <!-- Contenido -->
   <main class="contenido fade-in-up" id="contenido">
+    <?php if (!empty($_SESSION['flash_saludo'])): ?>
+      <div id="flashSaludo" class="flash-saludo" role="status" aria-live="polite">
+        <span><?= htmlspecialchars($_SESSION['flash_saludo']) ?></span>
+        <button type="button" class="flash-saludo-cerrar" aria-label="Cerrar alerta">×</button>
+      </div>
+      <?php unset($_SESSION['flash_saludo']); ?>
+    <?php endif; ?>
+
     <?php
       $vista = $_SESSION['vista'] ?? null;
       $ruta  = $vista ? dirname(__DIR__) . "/views/{$vista}" : null;
@@ -141,6 +156,61 @@ $currentCtrl = $_GET['controller'] ?? '';
       }
     ?>
   </main>
+
+  <button id="chatbotToggle" class="chatbot-toggle" type="button" aria-label="Abrir soporte">
+    <i class="fa-solid fa-comments"></i>
+  </button>
+
+  <section id="chatbotWidget" class="chatbot-widget" aria-label="Asistente de soporte" aria-hidden="true">
+    <header class="chatbot-header">
+      <div class="chatbot-title-wrap">
+        <strong>Asistente CEAA</strong>
+        <span>Soporte del sistema</span>
+      </div>
+      <button id="chatbotClose" class="chatbot-close" type="button" aria-label="Cerrar">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </header>
+
+    <div id="chatbotMessages" class="chatbot-messages"></div>
+    <div id="chatbotQuick" class="chatbot-quick"></div>
+
+    <form id="chatbotForm" class="chatbot-form" autocomplete="off">
+      <input id="chatbotInput" type="text" maxlength="180" placeholder="Ej. no puedo iniciar sesión" />
+      <button type="submit" aria-label="Enviar">
+        <i class="fa-solid fa-paper-plane"></i>
+      </button>
+    </form>
+  </section>
 </div>
+<script>
+  (function () {
+    var toast = document.getElementById('flashSaludo');
+    if (!toast) return;
+
+    var closeBtn = toast.querySelector('.flash-saludo-cerrar');
+    var hide = function () {
+      toast.classList.add('is-hiding');
+      window.setTimeout(function () {
+        if (toast && toast.parentNode) {
+          toast.parentNode.removeChild(toast);
+        }
+      }, 380);
+    };
+
+    if (closeBtn) {
+      closeBtn.addEventListener('click', hide);
+    }
+
+    window.setTimeout(hide, 5000);
+  })();
+
+  window.CEAA_CHATBOT_CONFIG = {
+    baseUri: '<?= BASE_URI ?>',
+    userName: '<?= htmlspecialchars($usuario['nombre'], ENT_QUOTES, 'UTF-8') ?>',
+    rolId: <?= (int)$usuario['rol_id'] ?>
+  };
+</script>
+<script src="<?= asset('js/chatbot-soporte.js') ?>?v=2"></script>
 </body>
 </html>

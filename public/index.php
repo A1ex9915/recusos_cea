@@ -40,6 +40,7 @@ $map = [
     'inventario' => 'InventarioController',
     'reportes'   => 'ReporteController',
     'reporte'    => 'ReporteController',  // ← AGREGAR ESTA LÍNEA
+    'manual'     => 'ManualController',
 ];
 
 

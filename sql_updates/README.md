@@ -39,6 +39,20 @@ C:\xampp\mysql\bin\mysql.exe -u root sistema_ceaa < sql_updates\agregar_cambios_
 
 ## 📅 Historial de Actualizaciones
 
+### **2026-03-02** - `2026-03-02_operativa_bitacora_indices.sql`
+
+**Cambios aplicados:**
+- ✅ Nueva tabla `bitacora_acciones` para auditoría operativa
+- ✅ Índices en `recursos` para filtros por municipio, organismo, estado, fecha y categoría
+- ✅ Índices en `pdf_reportes` y `pdf_reportes_anual` para consultas de reportes
+
+**Afecta a:**
+- Controladores de autenticación, usuarios, inventario y reportes (registro de acciones)
+- Rendimiento de consultas en módulos de inventario/reportes
+
+**Ejecutar si:**
+Quieres habilitar bitácora de operaciones y mejorar tiempos de respuesta en filtros/reportes.
+
 ### **2026-01-28** - `agregar_cambios_inventario.sql`
 
 **Cambios aplicados:**

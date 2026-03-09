@@ -2,6 +2,14 @@
 
 class ReporteController
 {
+    private function json(array $payload, int $statusCode = 200): void
+    {
+        http_response_code($statusCode);
+        header('Content-Type: application/json; charset=utf-8');
+        echo json_encode($payload);
+        exit;
+    }
+
     private function guard()
     {
         if (empty($_SESSION['user'])) {
@@ -85,19 +93,15 @@ class ReporteController
     {
         $this->guard();
 
-        header('Content-Type: application/json');
-
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            echo json_encode(['success' => false, 'error' => 'Método no permitido']);
-            exit;
+            $this->json(['success' => false, 'error' => 'Método no permitido'], 405);
         }
 
         $id = (int)($_POST['id'] ?? 0);
         $archivo = $_POST['archivo'] ?? '';
 
         if (!$id || !$archivo) {
-            echo json_encode(['success' => false, 'error' => 'Datos incompletos']);
-            exit;
+            $this->json(['success' => false, 'error' => 'Datos incompletos'], 422);
         }
 
         $pdo = DB::conn();
@@ -117,11 +121,14 @@ class ReporteController
         $dbEliminado = $stmt->execute([$id]);
 
         if ($dbEliminado && $archivoEliminado) {
-            echo json_encode(['success' => true]);
+            Bitacora::registrar('eliminar', 'reportes_municipales', 'Reporte municipal eliminado', [
+                'reporte_id' => $id,
+                'archivo' => $archivo
+            ]);
+            $this->json(['success' => true]);
         } else {
-            echo json_encode(['success' => false, 'error' => 'No se pudo eliminar el reporte']);
+            $this->json(['success' => false, 'error' => 'No se pudo eliminar el reporte'], 500);
         }
-        exit;
     }
 
     /* ==========================================================
@@ -182,19 +189,15 @@ class ReporteController
     {
         $this->guard();
 
-        header('Content-Type: application/json');
-
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            echo json_encode(['success' => false, 'error' => 'Método no permitido']);
-            exit;
+            $this->json(['success' => false, 'error' => 'Método no permitido'], 405);
         }
 
         $id = (int)($_POST['id'] ?? 0);
         $archivo = $_POST['archivo'] ?? '';
 
         if (!$id || !$archivo) {
-            echo json_encode(['success' => false, 'error' => 'Datos incompletos']);
-            exit;
+            $this->json(['success' => false, 'error' => 'Datos incompletos'], 422);
         }
 
         $pdo = DB::conn();
@@ -214,11 +217,14 @@ class ReporteController
         $dbEliminado = $stmt->execute([$id]);
 
         if ($dbEliminado && $archivoEliminado) {
-            echo json_encode(['success' => true]);
+            Bitacora::registrar('eliminar', 'reportes_anuales', 'Reporte anual eliminado', [
+                'reporte_id' => $id,
+                'archivo' => $archivo
+            ]);
+            $this->json(['success' => true]);
         } else {
-            echo json_encode(['success' => false, 'error' => 'No se pudo eliminar el reporte']);
+            $this->json(['success' => false, 'error' => 'No se pudo eliminar el reporte'], 500);
         }
-        exit;
     }
 
     /* ==========================================================
@@ -432,6 +438,13 @@ $municipio = Inventario::obtenerNombreMunicipio($municipio_id);
         VALUES (?, ?, ?)
     ")->execute([$municipio_id, $organismo_id, $fileName]);
 
+    Bitacora::registrar('generar_pdf', 'reportes_municipales', 'Reporte municipal generado', [
+        'municipio_id' => $municipio_id,
+        'organismo_id' => $organismo_id,
+        'archivo' => $fileName,
+        'total_recursos' => count($recursos)
+    ]);
+
     // ==============================================
     // MOSTRAR AL USUARIO
     // ==============================================
@@ -615,6 +628,12 @@ public function generarAnualPDF()
         VALUES (?, ?, NOW())
     ");
     $stmt->execute([$fileName, $anio]);
+
+    Bitacora::registrar('generar_pdf', 'reportes_anuales', 'Reporte anual generado', [
+        'anio' => $anio,
+        'archivo' => $fileName,
+        'total_recursos' => count($recursos)
+    ]);
 
     // ================================
     // MOSTRAR AL USUARIO

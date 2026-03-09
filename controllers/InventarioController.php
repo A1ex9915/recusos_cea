@@ -2,6 +2,14 @@
 
 class InventarioController
 {
+    private function json(array $payload, int $statusCode = 200): void
+    {
+        http_response_code($statusCode);
+        header('Content-Type: application/json; charset=utf-8');
+        echo json_encode($payload);
+        exit;
+    }
+
     private function guard()
     {
         if (empty($_SESSION['user'])) {
@@ -61,6 +69,10 @@ public function store()
     $this->guard();
 
     Inventario::crear($_POST);
+    Bitacora::registrar('crear', 'inventario', 'Recurso creado', [
+        'clave' => $_POST['clave'] ?? null,
+        'nombre' => $_POST['nombre'] ?? null
+    ]);
 
     // MENSAJE DE CONFIRMACIÓN
     $_SESSION['flash_inv'] = "Producto guardado correctamente en el inventario.";
@@ -81,6 +93,11 @@ public function update()
     }
 
     Inventario::actualizar($id, $_POST);
+    Bitacora::registrar('actualizar', 'inventario', 'Recurso actualizado', [
+        'recurso_id' => $id,
+        'clave' => $_POST['clave'] ?? null,
+        'nombre' => $_POST['nombre'] ?? null
+    ]);
 
     // MENSAJE DE CONFIRMACIÓN
     $_SESSION['flash_inv'] = "Cambios guardados correctamente.";
@@ -98,6 +115,9 @@ public function update()
         $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
         if ($id > 0) {
             Inventario::eliminar($id);
+            Bitacora::registrar('eliminar', 'inventario', 'Recurso eliminado', [
+                'recurso_id' => $id
+            ]);
         }
 
         header('Location: ' . BASE_URI . '/index.php?controller=inventario&action=index');
@@ -113,20 +133,16 @@ public function update()
     $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
     if ($id <= 0) {
-        echo json_encode(["error" => "ID inválido"]);
-        exit;
+        $this->json(["error" => "ID inválido"], 400);
     }
 
     $recurso = Inventario::buscar($id);
 
     if (!$recurso) {
-        echo json_encode(["error" => "Recurso no encontrado"]);
-        exit;
+        $this->json(["error" => "Recurso no encontrado"], 404);
     }
 
-    header('Content-Type: application/json; charset=utf-8');
-    echo json_encode($recurso);
-    exit;
+    $this->json($recurso);
 }
 
 }

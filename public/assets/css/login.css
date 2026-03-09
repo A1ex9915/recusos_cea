@@ -70,6 +70,32 @@ button {
 }
 button:hover { background: #b18e48; }
 
+.boton-secundario {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  margin-top: 10px;
+  padding: 12px;
+  text-align: center;
+  text-decoration: none;
+  border-radius: 10px;
+  border: 1px solid #6c1d45;
+  color: #6c1d45;
+  font-weight: 700;
+  background: linear-gradient(180deg, #ffffff 0%, #f7f2f5 100%);
+  box-sizing: border-box;
+  box-shadow: 0 2px 8px rgba(108, 29, 69, .12);
+  transition: background-color .2s ease, color .2s ease, transform .15s ease;
+}
+
+.boton-secundario:hover {
+  background: #6c1d45;
+  color: #fff;
+  transform: translateY(-1px);
+}
+
 /* Mensajes */
 .mensaje-exito, .mensaje-error {
   padding: 10px; margin-bottom: 14px; border-radius: 8px; text-align: center; font-size: 14px;
