@@ -38,6 +38,41 @@ $totalItems = (int)($totalItems ?? count($inventario ?? []));
         </form>
     </div>
 
+    <!-- TARJETAS -->
+    <div class="invrep-resumen">
+        <div class="card-resumen total" onclick="filtrarCard('')">
+            <div class="ricon"><i class="fa-solid fa-layer-group"></i></div>
+            <div class="rtext">
+                <span class="label">Total de bienes</span>
+                <span class="valor"><?= $resumen['total'] ?? 0 ?></span>
+            </div>
+        </div>
+
+        <div class="card-resumen buenos" onclick="filtrarCard('bueno')">
+            <div class="ricon"><i class="fa-solid fa-circle-check"></i></div>
+            <div class="rtext">
+                <span class="label">En buen estado</span>
+                <span class="valor"><?= $resumen['bueno'] ?? 0 ?></span>
+            </div>
+        </div>
+
+        <div class="card-resumen regulares" onclick="filtrarCard('regular')">
+            <div class="ricon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+            <div class="rtext">
+                <span class="label">En estado regular</span>
+                <span class="valor"><?= $resumen['regular'] ?? 0 ?></span>
+            </div>
+        </div>
+
+        <div class="card-resumen malos" onclick="filtrarCard('malo')">
+            <div class="ricon"><i class="fa-solid fa-circle-xmark"></i></div>
+            <div class="rtext">
+                <span class="label">En mal estado / baja</span>
+                <span class="valor"><?= $resumen['malo'] ?? 0 ?></span>
+            </div>
+        </div>
+    </div>
+
     <!-- FILTROS -->
     <div class="invrep-filter-card">
         <div class="invrep-section-label">
@@ -94,41 +129,6 @@ $totalItems = (int)($totalItems ?? count($inventario ?? []));
         </form>
     </div>
 
-    <!-- TARJETAS -->
-    <div class="invrep-resumen">
-        <div class="card-resumen total" onclick="filtrarCard('')">
-            <div class="ricon"><i class="fa-solid fa-layer-group"></i></div>
-            <div class="rtext">
-                <span class="label">Total de bienes</span>
-                <span class="valor"><?= $resumen['total'] ?? 0 ?></span>
-            </div>
-        </div>
-
-        <div class="card-resumen buenos" onclick="filtrarCard('bueno')">
-            <div class="ricon"><i class="fa-solid fa-circle-check"></i></div>
-            <div class="rtext">
-                <span class="label">En buen estado</span>
-                <span class="valor"><?= $resumen['bueno'] ?? 0 ?></span>
-            </div>
-        </div>
-
-        <div class="card-resumen regulares" onclick="filtrarCard('regular')">
-            <div class="ricon"><i class="fa-solid fa-triangle-exclamation"></i></div>
-            <div class="rtext">
-                <span class="label">En estado regular</span>
-                <span class="valor"><?= $resumen['regular'] ?? 0 ?></span>
-            </div>
-        </div>
-
-        <div class="card-resumen malos" onclick="filtrarCard('malo')">
-            <div class="ricon"><i class="fa-solid fa-circle-xmark"></i></div>
-            <div class="rtext">
-                <span class="label">En mal estado / baja</span>
-                <span class="valor"><?= $resumen['malo'] ?? 0 ?></span>
-            </div>
-        </div>
-    </div>
-
     <!-- TABLA -->
     <div class="invrep-card">
         <div class="invrep-table-header">
@@ -158,7 +158,7 @@ $totalItems = (int)($totalItems ?? count($inventario ?? []));
                         <?php foreach ($inventario as $item): ?>
                             <tr class="fila-animada">
                                 <td><?= htmlspecialchars($item['no_inventario'] ?? $item['clave'] ?? '') ?></td>
-                                <td><?= htmlspecialchars($item['descripcion'] ?? $item['nombre'] ?? '') ?></td>
+                                <td title="<?= htmlspecialchars($item['descripcion'] ?? $item['nombre'] ?? '') ?>"><?= htmlspecialchars(mb_strlen($item['descripcion'] ?? $item['nombre'] ?? '') > 50 ? mb_substr($item['descripcion'] ?? $item['nombre'] ?? '', 0, 50) . '…' : ($item['descripcion'] ?? $item['nombre'] ?? '')) ?></td>
                                 <td><?= htmlspecialchars($item['categoria'] ?? '') ?></td>
                                 <td title="<?= htmlspecialchars($item['organismo'] ?? '') ?>">
                                     <?= htmlspecialchars(mb_strlen($item['organismo'] ?? '') > 30 ? mb_substr($item['organismo'] ?? '', -30) . '...' : ($item['organismo'] ?? '')) ?>
