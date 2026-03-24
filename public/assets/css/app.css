@@ -80,11 +80,23 @@ input:focus,select:focus{border-color:#cbd5e1;box-shadow:0 0 0 4px rgba(203,213,
     height: 100%;
     background: rgba(0,0,0,0.45);
     backdrop-filter: blur(4px);
-    display: none;
+    display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;   /* permite contenido más alto que el viewport */
+    overflow-y: auto;          /* el scroll va en el overlay */
     z-index: 9999;
-    padding: 20px;
+    padding: 24px 20px;
+    box-sizing: border-box;
+    /* Transición de entrada/salida */
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity .28s ease, visibility .28s ease;
+}
+#editModal.is-open {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: all;
 }
 
 /* ============================
@@ -94,24 +106,18 @@ input:focus,select:focus{border-color:#cbd5e1;box-shadow:0 0 0 4px rgba(203,213,
     background: #ffffff;
     width: 95%;
     max-width: 550px;
-    max-height: 90vh;
-    overflow-y: auto;
     border-radius: 16px;
     padding: 25px 30px;
     box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-    animation: modalFade 0.25s ease-out;
+    margin: auto;              /* centra verticalmente cuando el contenido es corto */
+    /* Transición de la tarjeta */
+    transform: translateY(22px) scale(.97);
+    opacity: 0;
+    transition: transform .3s cubic-bezier(.34,1.3,.64,1), opacity .28s ease;
 }
-
-/* Animación de entrada */
-@keyframes modalFade {
-    from {
-        opacity: 0;
-        transform: translateY(-10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+#editModal.is-open .excel-modal-content {
+    transform: translateY(0) scale(1);
+    opacity: 1;
 }
 
 /* Título */

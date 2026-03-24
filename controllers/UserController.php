@@ -21,8 +21,9 @@ class UserController {
 
   public function index(){
     $this->guardAdmin();
-    $usuarios = User::all();                                         
-    return $this->renderVista('users/index.php', compact('usuarios'));
+    $usuarios = User::all();
+    $roles    = Role::all();
+    return $this->renderVista('users/index.php', compact('usuarios', 'roles'));
   }
 
   public function create(){
@@ -78,11 +79,12 @@ class UserController {
       $errores[] = 'El rol seleccionado no es válido';
     }
 
-    // Si hay errores, regresar al formulario
+    // Si hay errores, regresar al listado con modal abierto
     if (!empty($errores)) {
-      $_SESSION['errores'] = $errores;
-      $_SESSION['old_input'] = $data;
-      header('Location: ' . BASE_URI . '/index.php?controller=users&action=create');
+      $_SESSION['errores']    = $errores;
+      $_SESSION['old_input']  = $data;
+      $_SESSION['modal_open'] = 'create';
+      header('Location: ' . BASE_URI . '/index.php?controller=users&action=index');
       exit;
     }
 
@@ -171,11 +173,13 @@ class UserController {
       $errores[] = 'El rol seleccionado no es válido';
     }
 
-    // Si hay errores, regresar al formulario
+    // Si hay errores, regresar al listado con modal abierto
     if (!empty($errores)) {
-      $_SESSION['errores'] = $errores;
-      $_SESSION['old_input'] = $data;
-      header('Location: ' . BASE_URI . '/index.php?controller=users&action=edit&id=' . $id);
+      $_SESSION['errores']       = $errores;
+      $_SESSION['old_input']     = $data;
+      $_SESSION['modal_open']    = 'edit';
+      $_SESSION['modal_edit_id'] = $id;
+      header('Location: ' . BASE_URI . '/index.php?controller=users&action=index');
       exit;
     }
 

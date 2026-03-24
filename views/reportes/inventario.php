@@ -245,7 +245,7 @@ $totalItems = (int)($totalItems ?? count($inventario ?? []));
     <?php endif; ?>
 
     <!-- MODAL DE EDICIÓN -->
-    <div id="editModal" class="excel-modal">
+    <div id="editModal">
         <div class="excel-modal-content">
             <div class="inv-modal-header">
                 <i class="fa-solid fa-pen-to-square"></i>
@@ -257,72 +257,101 @@ $totalItems = (int)($totalItems ?? count($inventario ?? []));
 
             <form id="editForm" onsubmit="guardarCambiosInventario(event)">
                 <input type="hidden" id="edit_id" name="id">
-
-                <!-- CLAVE / NOMBRE -->
-                <label>No. inventario / clave</label>
-                <input type="text" id="edit_clave" name="clave">
-
-                <label>Nombre / descripción corta</label>
-                <input type="text" id="edit_nombre" name="nombre">
-
-                <!-- CATEGORÍA / UBICACIÓN -->
-                <label>Categoría</label>
-                <select id="edit_categoria_id" name="categoria_id">
-                    <option value="">Selecciona categoría</option>
-                    <?php foreach ($categorias as $c): ?>
-                        <option value="<?= (int)$c['id'] ?>"><?= htmlspecialchars($c['nombre']) ?></option>
-                    <?php endforeach; ?>
-                </select>
-
-                <label>Ubicación física</label>
-                <select id="edit_organismo_id" name="organismo_id">
-                    <option value="">Selecciona organismo</option>
-                    <?php foreach ($organismos as $o): ?>
-                        <option value="<?= (int)$o['id'] ?>"><?= htmlspecialchars($o['nombre']) ?></option>
-                    <?php endforeach; ?>
-                </select>
-
-                <!-- ESTADO / COSTO -->
-                <label>Estado del bien</label>
-                <select id="edit_estado_bien" name="estado_bien">
-                    <option value="">Selecciona...</option>
-                    <option value="bueno">Bueno</option>
-                    <option value="regular">Regular</option>
-                    <option value="malo">Malo</option>
-                    <option value="baja">Baja</option>
-                </select>
-
-                <label>Costo unitario (MXN)</label>
-                <input type="number" step="0.01" id="edit_costo_unitario" name="costo_unitario">
-
-                <!-- DATOS CEAA -->
-                <label>Marca</label>
-                <input type="text" id="edit_marca" name="marca">
-
-                <label>Modelo</label>
-                <input type="text" id="edit_modelo" name="modelo">
-
-                <label>Número de serie</label>
-                <input type="text" id="edit_numero_serie" name="numero_serie">
-
-                <label>Color</label>
-                <input type="text" id="edit_color" name="color">
-
-                <label>Material</label>
-                <input type="text" id="edit_material" name="material">
-
-                <label>Descripción / observaciones</label>
-                <textarea id="edit_descripcion" name="descripcion" rows="3"></textarea>
-
-                <!-- CAMPOS OCULTOS PARA NO PERDER INFO -->
                 <input type="hidden" id="edit_unidad_id" name="unidad_id">
                 <input type="hidden" id="edit_tipo_fuente" name="tipo_fuente">
                 <input type="hidden" id="edit_cantidad_total" name="cantidad_total">
                 <input type="hidden" id="edit_cantidad_disponible" name="cantidad_disponible">
 
+                <!-- SECCIÓN: IDENTIFICACIÓN -->
+                <div class="em-section-label">
+                    <i class="fa-solid fa-tag"></i> Identificación
+                </div>
+                <div class="em-grid">
+                    <div class="em-field">
+                        <label>No. inventario / clave</label>
+                        <input type="text" id="edit_clave" name="clave" placeholder="Ej. 364791">
+                    </div>
+                    <div class="em-field">
+                        <label>Estado del bien</label>
+                        <select id="edit_estado_bien" name="estado_bien">
+                            <option value="">Selecciona...</option>
+                            <option value="bueno">Bueno</option>
+                            <option value="regular">Regular</option>
+                            <option value="malo">Malo</option>
+                            <option value="baja">Baja</option>
+                        </select>
+                    </div>
+                    <div class="em-field em-full">
+                        <label>Nombre / descripción corta</label>
+                        <input type="text" id="edit_nombre" name="nombre" placeholder="Descripción del bien">
+                    </div>
+                </div>
+
+                <!-- SECCIÓN: CLASIFICACIÓN -->
+                <div class="em-section-label">
+                    <i class="fa-solid fa-layer-group"></i> Clasificación
+                </div>
+                <div class="em-grid">
+                    <div class="em-field">
+                        <label>Categoría</label>
+                        <select id="edit_categoria_id" name="categoria_id">
+                            <option value="">Selecciona categoría</option>
+                            <?php foreach ($categorias as $c): ?>
+                                <option value="<?= (int)$c['id'] ?>"><?= htmlspecialchars($c['nombre']) ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="em-field">
+                        <label>Costo unitario (MXN)</label>
+                        <input type="number" step="0.01" id="edit_costo_unitario" name="costo_unitario" placeholder="0.00">
+                    </div>
+                    <div class="em-field em-full">
+                        <label>Ubicación física</label>
+                        <select id="edit_organismo_id" name="organismo_id">
+                            <option value="">Selecciona organismo</option>
+                            <?php foreach ($organismos as $o): ?>
+                                <option value="<?= (int)$o['id'] ?>"><?= htmlspecialchars($o['nombre']) ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- SECCIÓN: CARACTERÍSTICAS -->
+                <div class="em-section-label">
+                    <i class="fa-solid fa-circle-info"></i> Características
+                </div>
+                <div class="em-grid">
+                    <div class="em-field">
+                        <label>Marca</label>
+                        <input type="text" id="edit_marca" name="marca" placeholder="Ej. Dell, HP…">
+                    </div>
+                    <div class="em-field">
+                        <label>Modelo</label>
+                        <input type="text" id="edit_modelo" name="modelo" placeholder="Ej. XPS 15">
+                    </div>
+                    <div class="em-field">
+                        <label>Número de serie</label>
+                        <input type="text" id="edit_numero_serie" name="numero_serie">
+                    </div>
+                    <div class="em-field">
+                        <label>Color</label>
+                        <input type="text" id="edit_color" name="color" placeholder="Ej. Negro">
+                    </div>
+                    <div class="em-field em-full">
+                        <label>Material</label>
+                        <input type="text" id="edit_material" name="material" placeholder="Ej. Metal, plástico…">
+                    </div>
+                    <div class="em-field em-full">
+                        <label>Descripción / observaciones</label>
+                        <textarea id="edit_descripcion" name="descripcion" rows="3" placeholder="Observaciones adicionales…"></textarea>
+                    </div>
+                </div>
+
                 <div class="excel-modal-actions">
                     <button type="button" class="btn-secundario" onclick="closeEditModal()">Cancelar</button>
-                    <button type="submit" class="btn-primario">Guardar cambios</button>
+                    <button type="submit" class="btn-primario">
+                        <i class="fa-solid fa-floppy-disk"></i> Guardar cambios
+                    </button>
                 </div>
             </form>
         </div>
@@ -374,7 +403,8 @@ function openEditModal(id) {
             document.getElementById('edit_cantidad_total').value      = data.cantidad_total || 0;
             document.getElementById('edit_cantidad_disponible').value = data.cantidad_disponible || data.cantidad_total || 0;
 
-            document.getElementById('editModal').style.display = 'flex';
+            document.getElementById('editModal').classList.add('is-open');
+            document.body.style.overflow = 'hidden';
         })
         .catch(err => {
             console.error(err);
@@ -383,7 +413,8 @@ function openEditModal(id) {
 }
 
 function closeEditModal() {
-    document.getElementById('editModal').style.display = 'none';
+    document.getElementById('editModal').classList.remove('is-open');
+    document.body.style.overflow = '';
 }
 
 // Guardar cambios con fetch POST
@@ -485,130 +516,10 @@ function guardarCambiosInventario(e) {
     box-shadow: 0 4px 12px rgba(0,0,0,0.07);
 }
 
-/* ============================
-   MODAL OVERLAY (FONDO)
-============================ */
-#editModal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.45);
-    backdrop-filter: blur(4px);
-    display: none;
-    justify-content: center;
-    align-items: center;
-    z-index: 9999;
-    padding: 20px;
-}
-
-/* ============================
-   CONTENEDOR DEL MODAL
-============================ */
+/* Sobreescritura puntual: ancho máximo específico de esta vista */
 #editModal .excel-modal-content {
-    background: #ffffff;
-    width: 95%;
-    max-width: 560px;
-    max-height: 90vh;
-    overflow-y: auto;
-    border-radius: 16px;
+    max-width: 680px;
     padding: 28px;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.20);
-    animation: modalFade 0.25s ease-out;
-}
-
-/* ANIMACIÓN DE APARICIÓN */
-@keyframes modalFade {
-    from { opacity: 0; transform: translateY(-10px); }
-    to   { opacity: 1; transform: translateY(0); }
-}
-
-/* TITULO DEL MODAL (heredado de inv-modal-header en inventario-reporte.css) */
-#editModal h3 {
-    margin: 0;
-}
-
-/* ============================
-   FORMULARIO DEL MODAL
-============================ */
-#editModal form label {
-    font-weight: 600;
-    margin-top: 12px;
-    color: #800033;
-    display: block;
-}
-
-#editModal form input,
-#editModal form select,
-#editModal form textarea {
-    width: 100%;
-    padding: 10px 12px;
-    margin-top: 5px;
-    border: 1px solid #d9d9d9;
-    border-radius: 8px;
-    font-size: 15px;
-    background: #fff;
-    outline: none;
-    transition: 0.2s;
-}
-
-#editModal form input:focus,
-#editModal form select:focus,
-#editModal form textarea:focus {
-    border-color: #800033;
-    box-shadow: 0 0 4px rgba(128,0,51,0.35);
-}
-
-/* ============================
-   BOTONES DE ACCIONES
-============================ */
-.excel-modal-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 12px;
-    margin-top: 25px;
-}
-
-.btn-primario {
-    background: #800033;
-    color: #fff;
-    padding: 10px 18px;
-    border-radius: 8px;
-    border: none;
-    cursor: pointer;
-    font-weight: 600;
-    transition: 0.2s;
-}
-
-.btn-primario:hover {
-    background: #a10042;
-}
-
-.btn-secundario {
-    background: #dddddd;
-    color: #333;
-    padding: 10px 18px;
-    border-radius: 8px;
-    border: none;
-    cursor: pointer;
-    font-weight: 600;
-    transition: 0.2s;
-}
-
-.btn-secundario:hover {
-    background: #c7c7c7;
-}
-
-/* ============================
-   SCROLL PERSONALIZADO
-============================ */
-#editModal .excel-modal-content::-webkit-scrollbar {
-    width: 7px;
-}
-#editModal .excel-modal-content::-webkit-scrollbar-thumb {
-    background: #ccc;
-    border-radius: 8px;
 }
 </style>
 
