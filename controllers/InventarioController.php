@@ -12,10 +12,7 @@ class InventarioController
 
     private function guard()
     {
-        if (empty($_SESSION['user'])) {
-            header('Location: ' . BASE_URI . '/index.php?controller=auth&action=login');
-            exit;
-        }
+        require_role([ROL_ADMIN, ROL_CAPTURISTA]);
     }
 
     private function render(string $vista, array $vars = [])
@@ -25,7 +22,7 @@ class InventarioController
         require dirname(__DIR__) . '/views/dashboard.php';
     }
 
-    // LISTADO PRINCIPAL DE INVENTARIO
+
     public function index()
     {
         $this->guard();
@@ -67,6 +64,26 @@ class InventarioController
 public function store()
 {
     $this->guard();
+    csrf_validate();
+
+    // Validación backend
+    $clave  = trim($_POST['clave']  ?? '');
+    $nombre = trim($_POST['nombre'] ?? '');
+    if ($clave === '' || $nombre === '') {
+        $_SESSION['flash_inv'] = 'Error: Clave y Nombre son campos obligatorios.';
+        header('Location: ' . BASE_URI . '/index.php?controller=inventario&action=form');
+        exit;
+    }
+    if (!empty($_POST['costo_unitario']) && !is_numeric($_POST['costo_unitario'])) {
+        $_SESSION['flash_inv'] = 'Error: El costo unitario debe ser un número válido.';
+        header('Location: ' . BASE_URI . '/index.php?controller=inventario&action=form');
+        exit;
+    }
+    if (!empty($_POST['cantidad_total']) && (int)$_POST['cantidad_total'] < 1) {
+        $_SESSION['flash_inv'] = 'Error: La cantidad total debe ser al menos 1.';
+        header('Location: ' . BASE_URI . '/index.php?controller=inventario&action=form');
+        exit;
+    }
 
     Inventario::crear($_POST);
     Bitacora::registrar('crear', 'inventario', 'Recurso creado', [
@@ -85,6 +102,7 @@ public function store()
 public function update()
 {
     $this->guard();
+    csrf_validate();
 
     $id = isset($_POST['id']) ? (int)$_POST['id'] : 0;
     if ($id <= 0) {

@@ -25,50 +25,97 @@
   gap: 1.5rem;
 }
 
-/* ENCABEZADO */
-.inv-header {
+/* ENCABEZADO HERO */
+.inv-hero {
+  background: linear-gradient(135deg, #7b1b3b 0%, #a83260 100%);
+  border-radius: 20px;
+  padding: 1.6rem 2rem;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(123,27,59,.30);
+}
+
+.inv-hero::before {
+  content: '';
+  position: absolute;
+  width: 220px; height: 220px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.06);
+  top: -80px; right: 200px;
+  pointer-events: none;
+}
+
+.inv-hero::after {
+  content: '';
+  position: absolute;
+  width: 140px; height: 140px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.06);
+  bottom: -50px; right: 60px;
+  pointer-events: none;
+}
+
+.inv-hero-content {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
+  align-items: center;
   gap: 1rem;
-  padding: 0.8rem 0 0.5rem;
-  border-bottom: 1px solid #e5e7eb;
+  position: relative;
+  z-index: 1;
 }
 
-.inv-header h2 {
+.inv-hero-left {
+  display: flex;
+  align-items: center;
+  gap: 1.1rem;
+}
+
+.inv-hero-icon {
+  width: 54px; height: 54px;
+  background: rgba(255,255,255,.15);
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.inv-hero-title {
   margin: 0;
-  font-size: 1.6rem;
-  font-weight: 700;
-  color: var(--color-primario);
+  font-size: 1.55rem;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -.01em;
 }
 
-.inv-header p {
-  margin: 0.3rem 0 0;
-  font-size: 0.95rem;
-  color: var(--color-texto-sec);
-  max-width: 620px;
+.inv-hero-sub {
+  margin: 0.2rem 0 0;
+  font-size: 0.9rem;
+  color: rgba(255,255,255,.82);
 }
 
-/* Botón volver */
-.btn-volver {
-  align-self: center;
-  padding: 0.5rem 0.9rem;
-  border-radius: var(--radius-pill);
-  border: 1px solid var(--color-borde);
-  background: #fff;
+.inv-hero-back {
+  background: rgba(255,255,255,.15);
+  border: 1px solid rgba(255,255,255,.30);
+  color: #fff;
+  padding: 0.5rem 1.1rem;
+  border-radius: 999px;
   font-size: 0.85rem;
+  font-weight: 600;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
-  gap: 0.25rem;
-  color: var(--color-texto-sec);
-  transition: background var(--transition-base), transform var(--transition-base), box-shadow var(--transition-base);
+  gap: 0.35rem;
+  transition: background .2s ease, transform .2s ease;
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 
-.btn-volver:hover {
-  background: #f3f4f6;
+.inv-hero-back:hover {
+  background: rgba(255,255,255,.26);
   transform: translateY(-1px);
-  box-shadow: 0 4px 10px rgba(148, 163, 184, 0.35);
 }
 
 /* CARD */
@@ -94,6 +141,23 @@
 .inv-card > * {
   position: relative;
   z-index: 1;
+}
+
+/* ETIQUETA DE SECCIÓN */
+.inv-section-label {
+  margin: 0.6rem 0 0.1rem;
+  padding: 0.42rem 0.8rem;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: #7b1b3b;
+  background: #fdf0f4;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  border-left: 3px solid #7b1b3b;
 }
 
 /* FORMULARIO */
@@ -195,15 +259,15 @@
 }
 
 .btn-primario {
-  background: var(--color-primario);
+  background: linear-gradient(135deg, #7b1b3b, #a83260);
   color: #fff;
-  box-shadow: 0 8px 18px rgba(128,0,51,0.35);
+  box-shadow: 0 6px 18px rgba(123,27,59,.35);
 }
 
 .btn-primario:hover {
-  background: #5d0026;
+  background: linear-gradient(135deg, #5d1529, #7b1b3b);
   transform: translateY(-1px);
-  box-shadow: 0 10px 24px rgba(128,0,51,0.45);
+  box-shadow: 0 10px 24px rgba(123,27,59,.45);
 }
 
 .btn-secundario {
@@ -215,7 +279,7 @@
 .btn-secundario:hover {
   background: #e5e7eb;
   transform: translateY(-1px);
-  box-shadow: 0 8px 16px rgba(148, 163, 184, 0.35);
+  box-shadow: 0 8px 16px rgba(148,163,184,.35);
 }
 /* ============================
    MODAL GLOBAL (FONDO)
@@ -365,12 +429,12 @@
 }
 
 @media (max-width: 768px) {
-  .inv-header {
+  .inv-hero-content {
     flex-direction: column;
     align-items: flex-start;
   }
 
-  .btn-volver {
+  .inv-hero-back {
     align-self: flex-start;
   }
 

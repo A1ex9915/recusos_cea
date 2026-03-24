@@ -1,339 +1,460 @@
-<style>
-.btn-volver {
-    display: inline-block;
-    padding: 10px 20px;
-    background: #e5e7eb;
-    color: #111;
-    border: none;
-    border-radius: 10px;
-    text-decoration: none;
-    font-weight: 600;
-    transition: all 0.2s ease;
-    cursor: pointer;
-    font-size: 14px;
-}
-
-.btn-volver:hover {
-    background: #d1d5db;
-    transform: translateY(-1px);
-}
-</style>
-
 <?php
 $pdo = DB::conn();
 
-// Obtener años únicos para filtro
 $stmtAnios = $pdo->query("SELECT DISTINCT anio FROM pdf_reportes_anual ORDER BY anio DESC");
 $anios = $stmtAnios->fetchAll(PDO::FETCH_COLUMN);
 
-// Obtener valores de filtros
-$filtro_anio = $_GET['anio'] ?? '';
+$filtro_anio       = $_GET['anio']        ?? '';
 $filtro_fecha_desde = $_GET['fecha_desde'] ?? '';
 $filtro_fecha_hasta = $_GET['fecha_hasta'] ?? '';
 $hay_filtros = ($filtro_anio !== '' || $filtro_fecha_desde !== '' || $filtro_fecha_hasta !== '');
 ?>
 
-<button type="button" class="btn-volver" onclick="window.history.back()" style="margin-bottom: 15px;">← Volver</button>
+<div class="rptan-wrapper">
 
-<div class="container-reporte">
-  <h1>Reportes Anuales Generados</h1>
+    <!-- ===== HERO ===== -->
+    <div class="rptan-hero">
+        <a href="<?= BASE_URI ?>/index.php?controller=formatos&action=index" class="rptan-hero-back">
+            <i class="fa-solid fa-arrow-left"></i> Volver a Formatos
+        </a>
+        <div class="rptan-hero-center">
+            <div class="rptan-hero-icon">
+                <i class="fa-solid fa-calendar-days"></i>
+            </div>
+            <div>
+                <h1 class="rptan-hero-title">Reportes Anuales Generados</h1>
+                <p class="rptan-hero-sub">Consulta y descarga los reportes PDF generados por año</p>
+            </div>
+        </div>
+    </div>
 
-  <!-- Filtros -->
-  <div class="card mb-3">
-    <div class="card-body">
-      <h3>Filtros de Búsqueda</h3>
-      <form method="GET" action="<?= BASE_URI ?>/index.php" class="filter-form">
-        <input type="hidden" name="controller" value="reportes">
-        <input type="hidden" name="action" value="listarReportesAnuales">
-        
-        <div class="form-grid">
-          <div class="form-group">
-            <label for="anio">Año:</label>
-            <select name="anio" id="anio" class="form-control">
-              <option value="">-- Todos los años --</option>
-              <?php foreach ($anios as $a): ?>
-                <option value="<?= $a ?>" <?= ($filtro_anio == $a) ? 'selected' : '' ?>>
-                  <?= $a ?>
-                </option>
-              <?php endforeach; ?>
-            </select>
-          </div>
+    <!-- ===== BODY ===== -->
+    <div class="rptan-body">
 
-          <div class="form-group">
-            <label for="fecha_desde">Fecha desde:</label>
-            <input type="date" name="fecha_desde" id="fecha_desde" class="form-control" 
-                   value="<?= htmlspecialchars($filtro_fecha_desde) ?>">
-          </div>
-
-          <div class="form-group">
-            <label for="fecha_hasta">Fecha hasta:</label>
-            <input type="date" name="fecha_hasta" id="fecha_hasta" class="form-control" 
-                   value="<?= htmlspecialchars($filtro_fecha_hasta) ?>">
-          </div>
+        <!-- FILTROS -->
+        <div class="rptan-section-label">
+            <i class="fa-solid fa-filter"></i> Filtros de búsqueda
         </div>
 
-        <div class="form-actions">
-          <button type="submit" class="btn-ceaa">Buscar</button>
-          <a href="<?= BASE_URI ?>/index.php?controller=reportes&action=listarReportesAnuales" class="btn-ceaa-outline">
-            Limpiar Filtros
-          </a>
+        <form method="GET" action="<?= BASE_URI ?>/index.php" class="rptan-filter-form">
+            <input type="hidden" name="controller" value="reportes">
+            <input type="hidden" name="action" value="listarReportesAnuales">
+
+            <div class="rptan-filter-grid">
+                <div class="rptan-filter-field">
+                    <label class="rptan-label" for="anio">Año</label>
+                    <select name="anio" id="anio" class="rptan-select">
+                        <option value="">-- Todos los años --</option>
+                        <?php foreach ($anios as $a): ?>
+                        <option value="<?= $a ?>" <?= ($filtro_anio == $a) ? 'selected' : '' ?>>
+                            <?= htmlspecialchars($a) ?>
+                        </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+
+                <div class="rptan-filter-field">
+                    <label class="rptan-label" for="fecha_desde">Fecha desde</label>
+                    <input type="date" name="fecha_desde" id="fecha_desde" class="rptan-input"
+                           value="<?= htmlspecialchars($filtro_fecha_desde) ?>">
+                </div>
+
+                <div class="rptan-filter-field">
+                    <label class="rptan-label" for="fecha_hasta">Fecha hasta</label>
+                    <input type="date" name="fecha_hasta" id="fecha_hasta" class="rptan-input"
+                           value="<?= htmlspecialchars($filtro_fecha_hasta) ?>">
+                </div>
+
+                <div class="rptan-filter-actions">
+                    <button type="submit" class="rptan-btn-filter">
+                        <i class="fa-solid fa-magnifying-glass"></i> Buscar
+                    </button>
+                    <a href="<?= BASE_URI ?>/index.php?controller=reportes&action=listarReportesAnuales"
+                       class="rptan-btn-clear">
+                        <i class="fa-solid fa-xmark"></i> Limpiar
+                    </a>
+                </div>
+            </div>
+        </form>
+
+        <?php if ($hay_filtros): ?>
+        <div class="rptan-results-badge">
+            <i class="fa-solid fa-chart-bar"></i>
+            Se encontraron <strong><?= count($reportes) ?></strong> reporte(s) con los filtros aplicados
         </div>
-      </form>
-    </div>
-  </div>
+        <?php endif; ?>
 
-  <?php if ($hay_filtros): ?>
-    <p><strong>Se encontraron <?= count($reportes) ?> reporte(s)</strong></p>
-  <?php endif; ?>
+        <hr class="rptan-divider">
 
-  <?php if (empty($reportes)): ?>
-    <div class="alert alert-info">
-      No hay reportes anuales generados<?= $hay_filtros ? ' con los filtros seleccionados' : '' ?>.
-    </div>
-  <?php else: ?>
-    <table class="tabla-inventario">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Año</th>
-          <th>Archivo</th>
-          <th>Fecha de Generación</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        <?php foreach ($reportes as $reporte): ?>
-          <tr data-id="<?= $reporte['id'] ?>">
-            <td><?= $reporte['id'] ?></td>
-            <td><?= htmlspecialchars($reporte['anio']) ?></td>
-            <td>
-              <a href="<?= BASE_URI ?>/public/pdf/<?= htmlspecialchars($reporte['archivo']) ?>" 
-                 target="_blank" class="btn-link">
-                <?= htmlspecialchars($reporte['archivo']) ?>
-              </a>
-            </td>
-            <td><?= date('d/m/Y H:i', strtotime($reporte['creado_en'])) ?></td>
-            <td>
-              <a href="<?= BASE_URI ?>/public/pdf/<?= htmlspecialchars($reporte['archivo']) ?>" 
-                 target="_blank" class="btn-ceaa-outline btn-sm">
-                Ver PDF
-              </a>
-              <button onclick="eliminarReporte(<?= $reporte['id'] ?>, '<?= htmlspecialchars($reporte['archivo']) ?>')" 
-                      class="btn-danger btn-sm">
-                Eliminar
-              </button>
-            </td>
-          </tr>
-        <?php endforeach; ?>
-      </tbody>
-    </table>
-  <?php endif; ?>
-</div>
+        <!-- TABLA -->
+        <div class="rptan-section-label">
+            <i class="fa-solid fa-file-pdf"></i> Reportes generados
+        </div>
+
+        <div class="rptan-table-wrapper">
+            <table class="rptan-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Año</th>
+                        <th>Archivo</th>
+                        <th>Fecha de Generación</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                <?php if (empty($reportes)): ?>
+                    <tr>
+                        <td colspan="5" class="rptan-empty-row">
+                            <i class="fa-solid fa-inbox"></i>
+                            No hay reportes anuales generados<?= $hay_filtros ? ' con los filtros seleccionados' : '' ?>.
+                        </td>
+                    </tr>
+                <?php else: ?>
+                    <?php foreach ($reportes as $reporte): ?>
+                    <tr data-id="<?= (int)$reporte['id'] ?>">
+                        <td><?= (int)$reporte['id'] ?></td>
+                        <td>
+                            <span class="rptan-badge-anio"><?= htmlspecialchars($reporte['anio']) ?></span>
+                        </td>
+                        <td>
+                            <a href="<?= BASE_URI ?>/pdf/<?= htmlspecialchars($reporte['archivo']) ?>"
+                               target="_blank" class="rptan-file-link">
+                                <i class="fa-solid fa-file-pdf"></i>
+                                <?= htmlspecialchars($reporte['archivo']) ?>
+                            </a>
+                        </td>
+                        <td class="rptan-date"><?= date('d/m/Y H:i', strtotime($reporte['creado_en'])) ?></td>
+                        <td>
+                            <div class="rptan-actions">
+                                <a href="<?= BASE_URI ?>/pdf/<?= htmlspecialchars($reporte['archivo']) ?>"
+                                   target="_blank" class="rptan-btn-act rptan-btn-ver">
+                                    <i class="fa-solid fa-file-arrow-down"></i> Ver PDF
+                                </a>
+                                <button type="button"
+                                        onclick="eliminarReporte(<?= (int)$reporte['id'] ?>, '<?= htmlspecialchars($reporte['archivo'], ENT_QUOTES) ?>')"
+                                        class="rptan-btn-act rptan-btn-del">
+                                    <i class="fa-solid fa-trash"></i> Eliminar
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+                </tbody>
+            </table>
+        </div>
+
+    </div><!-- /.rptan-body -->
+</div><!-- /.rptan-wrapper -->
 
 <style>
-.container-reporte {
-  padding: 20px;
-  max-width: 1400px;
-  margin: 0 auto;
+/* ================================================================
+   MÓDULO: REPORTES ANUALES
+   ================================================================ */
+
+.rptan-wrapper { padding: 24px; }
+
+/* HERO --------------------------------------------------------- */
+.rptan-hero {
+    position: relative;
+    background: linear-gradient(135deg, #7b1b3b 0%, #a83260 100%);
+    border-radius: 20px;
+    padding: 28px 32px;
+    margin-bottom: 20px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+.rptan-hero::before {
+    content: '';
+    position: absolute;
+    width: 220px; height: 220px;
+    top: -80px; right: 200px;
+    background: rgba(255,255,255,.06);
+    border-radius: 50%;
+    pointer-events: none;
+}
+.rptan-hero::after {
+    content: '';
+    position: absolute;
+    width: 140px; height: 140px;
+    bottom: -50px; right: 60px;
+    background: rgba(255,255,255,.07);
+    border-radius: 50%;
+    pointer-events: none;
+}
+.rptan-hero-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 8px 16px;
+    background: rgba(255,255,255,.15);
+    border: 1px solid rgba(255,255,255,.30);
+    border-radius: 999px;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    white-space: nowrap;
+    flex-shrink: 0;
+    z-index: 1;
+    transition: background .2s;
+}
+.rptan-hero-back:hover { background: rgba(255,255,255,.25); color: #fff; }
+.rptan-hero-center {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    z-index: 1;
+}
+.rptan-hero-icon {
+    width: 54px; height: 54px;
+    background: rgba(255,255,255,.15);
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    color: #fff;
+    flex-shrink: 0;
+}
+.rptan-hero-title {
+    font-size: 22px;
+    font-weight: 800;
+    color: #fff;
+    margin: 0 0 3px;
+}
+.rptan-hero-sub {
+    color: rgba(255,255,255,.80);
+    font-size: 13px;
+    margin: 0;
 }
 
-.container-reporte h1 {
-  color: #7b1b3b;
-  margin-bottom: 20px;
+/* BODY --------------------------------------------------------- */
+.rptan-body {
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 4px 20px rgba(0,0,0,.08);
+    padding: 28px 32px;
 }
 
-.card {
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+/* SECTION LABEL ----------------------------------------------- */
+.rptan-section-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #7b1b3b;
+    background: #fdf0f4;
+    border-left: 3px solid #7b1b3b;
+    border-radius: 0 8px 8px 0;
+    padding: 8px 14px;
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .6px;
+    margin-bottom: 18px;
 }
 
-.card-body {
-  padding: 20px;
+/* FILTER ------------------------------------------------------ */
+.rptan-filter-form { margin-bottom: 4px; }
+.rptan-filter-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    align-items: end;
+}
+.rptan-filter-field { display: flex; flex-direction: column; gap: 6px; }
+.rptan-label { font-size: 13px; font-weight: 700; color: #374151; }
+.rptan-select,
+.rptan-input {
+    padding: 10px 14px;
+    border: 1.5px solid #e5e7eb;
+    border-radius: 10px;
+    font-size: 14px;
+    color: #374151;
+    background: #fff;
+    width: 100%;
+    box-sizing: border-box;
+    transition: border-color .2s, box-shadow .2s;
+}
+.rptan-select:focus,
+.rptan-input:focus {
+    outline: none;
+    border-color: #7b1b3b;
+    box-shadow: 0 0 0 3px rgba(123,27,59,.12);
+}
+.rptan-filter-actions {
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;
+    padding-bottom: 1px;
+}
+.rptan-btn-filter {
+    flex: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    padding: 10px 18px;
+    background: linear-gradient(135deg, #7b1b3b, #a83260);
+    color: #fff;
+    border: none;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform .15s, box-shadow .15s;
+    box-shadow: 0 4px 14px rgba(123,27,59,.28);
+}
+.rptan-btn-filter:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(123,27,59,.38); }
+.rptan-btn-clear {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 10px 18px;
+    background: #f3f4f6;
+    color: #374151;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background .2s;
+}
+.rptan-btn-clear:hover { background: #e5e7eb; color: #111; }
+
+/* RESULTS BADGE ----------------------------------------------- */
+.rptan-results-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    border-radius: 10px;
+    padding: 10px 18px;
+    font-size: 14px;
+    color: #1e40af;
+    margin-top: 14px;
 }
 
-.card h3 {
-  margin-top: 0;
-  margin-bottom: 15px;
-  color: #333;
-  font-size: 18px;
+/* DIVIDER ------------------------------------------------------ */
+.rptan-divider { border: none; border-top: 2px solid #f3f4f6; margin: 22px 0; }
+
+/* TABLE ------------------------------------------------------- */
+.rptan-table-wrapper {
+    overflow-x: auto;
+    border-radius: 12px;
+    border: 1px solid #f0f0f0;
+}
+.rptan-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.rptan-table thead tr {
+    background: linear-gradient(90deg, #7b1b3b 0%, #a83260 100%);
+}
+.rptan-table thead th {
+    padding: 13px 16px;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    text-align: left;
+    white-space: nowrap;
+}
+.rptan-table tbody tr { border-bottom: 1px solid #f3f4f6; transition: background .15s; }
+.rptan-table tbody tr:nth-child(even) { background: #fafafa; }
+.rptan-table tbody tr:hover { background: #fdf0f4; }
+.rptan-table tbody td { padding: 12px 16px; color: #4b5563; vertical-align: middle; }
+
+/* YEAR BADGE -------------------------------------------------- */
+.rptan-badge-anio {
+    display: inline-block;
+    padding: 4px 14px;
+    background: #fdf0f4;
+    color: #7b1b3b;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 800;
+    border: 1px solid rgba(123,27,59,.15);
 }
 
-.mb-3 {
-  margin-bottom: 1.5rem;
+/* FILE LINK --------------------------------------------------- */
+.rptan-file-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: #7b1b3b;
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+    text-decoration: none;
+    transition: color .15s;
 }
+.rptan-file-link:hover { color: #a83260; text-decoration: underline; }
 
-.filter-form .form-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 15px;
-  margin-bottom: 15px;
+.rptan-date { font-size: 13px; color: #6b7280; white-space: nowrap; }
+
+/* ACTION BUTTONS ---------------------------------------------- */
+.rptan-actions { display: flex; gap: 8px; }
+.rptan-btn-act {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    transition: transform .15s, box-shadow .15s;
 }
+.rptan-btn-act:hover { transform: translateY(-1px); }
+.rptan-btn-ver { background: linear-gradient(135deg, #7b1b3b, #a83260); color: #fff; box-shadow: 0 3px 10px rgba(123,27,59,.25); }
+.rptan-btn-ver:hover { color: #fff; box-shadow: 0 6px 16px rgba(123,27,59,.35); }
+.rptan-btn-del { background: #fee2e2; color: #b91c1c; }
+.rptan-btn-del:hover { background: #fecaca; box-shadow: 0 3px 10px rgba(185,28,28,.2); }
 
-.form-group {
-  display: flex;
-  flex-direction: column;
+/* EMPTY ROW --------------------------------------------------- */
+.rptan-empty-row {
+    text-align: center;
+    padding: 40px !important;
+    color: #9ca3af;
+    font-style: italic;
 }
+.rptan-empty-row i { margin-right: 8px; font-size: 16px; }
 
-.form-group label {
-  margin-bottom: 5px;
-  font-weight: 600;
-  color: #333;
-}
-
-.form-control {
-  padding: 8px 12px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 14px;
-}
-
-.form-control:focus {
-  outline: none;
-  border-color: #7b1b3b;
-}
-
-.form-actions {
-  display: flex;
-  gap: 10px;
-}
-
-.btn-ceaa,
-.btn-ceaa-outline {
-  padding: 10px 20px;
-  border-radius: 4px;
-  font-weight: 600;
-  text-decoration: none;
-  display: inline-block;
-  cursor: pointer;
-  border: none;
-  font-size: 14px;
-  transition: all 0.3s;
-}
-
-.btn-ceaa {
-  background: #7b1b3b;
-  color: white;
-}
-
-.btn-ceaa:hover {
-  background: #5a1429;
-}
-
-.btn-ceaa-outline {
-  background: white;
-  color: #7b1b3b;
-  border: 2px solid #7b1b3b;
-}
-
-.btn-ceaa-outline:hover {
-  background: #7b1b3b;
-  color: white;
-}
-
-.btn-sm {
-  padding: 5px 10px;
-  font-size: 12px;
-}
-
-.btn-danger {
-  background: #dc3545;
-  color: white;
-}
-
-.btn-danger:hover {
-  background: #c82333;
-}
-
-.btn-link {
-  color: #7b1b3b;
-  text-decoration: none;
-}
-
-.btn-link:hover {
-  text-decoration: underline;
-}
-
-.tabla-inventario {
-  width: 100%;
-  border-collapse: collapse;
-  background: white;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  border-radius: 8px;
-  overflow: hidden;
-}
-
-.tabla-inventario thead {
-  background: #7b1b3b;
-  color: white;
-}
-
-.tabla-inventario th,
-.tabla-inventario td {
-  padding: 12px;
-  text-align: left;
-  border-bottom: 1px solid #ddd;
-}
-
-.tabla-inventario th {
-  font-weight: 600;
-}
-
-.tabla-inventario tbody tr:hover {
-  background: #f8f9fa;
-}
-
-.tabla-inventario td {
-  vertical-align: middle;
-}
-
-.alert {
-  padding: 15px;
-  border-radius: 4px;
-  margin-bottom: 20px;
-}
-
-.alert-info {
-  background: #d1ecf1;
-  color: #0c5460;
-  border: 1px solid #bee5eb;
+/* RESPONSIVE -------------------------------------------------- */
+@media (max-width: 768px) {
+    .rptan-hero { flex-direction: column; align-items: flex-start; gap: 12px; }
+    .rptan-hero-center { flex-direction: column; align-items: flex-start; }
+    .rptan-body { padding: 20px 16px; }
+    .rptan-filter-grid { grid-template-columns: 1fr; }
+    .rptan-table thead th, .rptan-table tbody td { font-size: 12px; padding: 9px 10px; }
+    .rptan-actions { flex-wrap: wrap; }
 }
 </style>
 
 <script>
 function eliminarReporte(id, archivo) {
-  if (!confirm('¿Está seguro de que desea eliminar este reporte?\n\nArchivo: ' + archivo)) {
-    return;
-  }
+    if (!confirm('¿Estás seguro de eliminar este reporte?\n\nArchivo: ' + archivo)) return;
 
-  const formData = new FormData();
-  formData.append('id', id);
-  formData.append('archivo', archivo);
+    const formData = new FormData();
+    formData.append('id', id);
+    formData.append('_csrf_token', '<?= htmlspecialchars(csrf_token(), ENT_QUOTES, 'UTF-8') ?>');
 
-  fetch('<?= BASE_URI ?>/index.php?controller=reportes&action=eliminarReporteAnual', {
-    method: 'POST',
-    body: formData
-  })
-  .then(response => response.json())
-  .then(data => {
-    if (data.success) {
-      alert('Reporte eliminado correctamente');
-      // Eliminar la fila de la tabla
-      const row = document.querySelector(`tr[data-id="${id}"]`);
-      if (row) {
-        row.remove();
-      }
-      // Recargar la página si no quedan más filas
-      if (document.querySelectorAll('.tabla-inventario tbody tr').length === 0) {
-        location.reload();
-      }
-    } else {
-      alert('Error al eliminar el reporte: ' + (data.error || 'Error desconocido'));
-    }
-  })
-  .catch(error => {
-    console.error('Error:', error);
-    alert('Error al eliminar el reporte');
-  });
+    fetch('<?= BASE_URI ?>/index.php?controller=reportes&action=eliminarReporteAnual', {
+        method: 'POST',
+        body: formData
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.success) {
+            const row = document.querySelector(`tr[data-id="${id}"]`);
+            if (row) row.remove();
+            if (document.querySelectorAll('.rptan-table tbody tr').length === 0) location.reload();
+        } else {
+            alert('Error al eliminar: ' + (data.error || 'Error desconocido'));
+        }
+    })
+    .catch(() => alert('Error al eliminar el reporte'));
 }
 </script>

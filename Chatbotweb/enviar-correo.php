@@ -19,6 +19,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         exit;
     }
 
+    $smtpConfig = require __DIR__ . '/smtp_config.php';
     $mail = new PHPMailer(true);
 
     try {
@@ -26,14 +27,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $mail->isSMTP();
         $mail->Host = 'smtp.gmail.com';
         $mail->SMTPAuth = true;
-        $mail->Username = 'lotlwaresolutions@gmail.com'; // Tu correo
-        $mail->Password = 'lyij odlh jvkf adiy'; // ⚠️ Contraseña de aplicación
-        $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS; // TLS si usas puerto 587
+        $mail->Username = $smtpConfig['username'];
+        $mail->Password = $smtpConfig['password'];
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
         $mail->Port = 465;
 
         // Remitente y destinatario
-        $mail->setFrom('lotlwaresolutions@gmail.com', 'Lotli');
-        $mail->addAddress('lotlwaresolutions@gmail.com');
+        $mail->setFrom($smtpConfig['from'], $smtpConfig['from_name']);
+        $mail->addAddress($smtpConfig['to']);
 
         // Contenido del correo
         $mail->isHTML(true);

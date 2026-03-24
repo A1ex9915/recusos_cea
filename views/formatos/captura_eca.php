@@ -1,197 +1,263 @@
 <style>
-/* ============================
-   ESTILOS INSTITUCIONALES CEAA
-   ============================ */
-
-body {
-    background: #f2f2f2;
-    font-family: 'Segoe UI', sans-serif;
-}
+body { background: #f4f5f7; font-family: 'Segoe UI', sans-serif; }
 
 .eca-wrapper {
-    background: #fff;
-    padding: 40px;
-    margin: 20px auto;
+    background: #f4f5f7;
+    padding: 20px 24px;
     max-width: 1300px;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0,0,0,.12);
+    margin: 0 auto;
 }
 
-.eca-header {
-    text-align: center;
-    margin-bottom: 35px;
+/* ===== HERO ===== */
+.eca-hero {
+    background: linear-gradient(135deg, #7b1b3b 0%, #a83260 100%);
+    border-radius: 20px;
+    padding: 1.5rem 2rem;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(123,27,59,.28);
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
 }
-
+.eca-hero::before {
+    content: '';
+    position: absolute;
+    width: 200px; height: 200px;
+    border-radius: 50%;
+    background: rgba(255,255,255,.06);
+    top: -70px; right: 200px;
+    pointer-events: none;
+}
+.eca-hero::after {
+    content: '';
+    position: absolute;
+    width: 130px; height: 130px;
+    border-radius: 50%;
+    background: rgba(255,255,255,.06);
+    bottom: -40px; right: 60px;
+    pointer-events: none;
+}
+.eca-hero-left {
+    display: flex;
+    align-items: center;
+    gap: 1.1rem;
+    position: relative;
+    z-index: 1;
+}
+.eca-hero-icon {
+    width: 52px; height: 52px;
+    background: rgba(255,255,255,.15);
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    color: #fff;
+    flex-shrink: 0;
+}
+.eca-hero-title {
+    margin: 0;
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: #fff;
+}
+.eca-hero-sub {
+    margin: 0.2rem 0 0;
+    font-size: 0.88rem;
+    color: rgba(255,255,255,.82);
+}
+.eca-hero-logo {
+    height: 60px;
+    object-fit: contain;
+    position: relative;
+    z-index: 1;
+    filter: brightness(0) invert(1);
+    opacity: .7;
+}
 .btn-volver {
-    display: inline-block;
-    padding: 10px 20px;
-    background: #e5e7eb;
-    color: #111;
-    border: none;
-    border-radius: 10px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    background: rgba(255,255,255,.15);
+    border: 1px solid rgba(255,255,255,.30);
+    color: #fff;
+    border-radius: 999px;
     text-decoration: none;
     font-weight: 600;
-    transition: all 0.2s ease;
+    font-size: 0.85rem;
+    transition: background .2s ease;
+    position: relative;
+    z-index: 1;
     cursor: pointer;
-    font-size: 14px;
-    margin-bottom: 15px;
+}
+.btn-volver:hover { background: rgba(255,255,255,.26); }
+
+/* ===== BODY CARD ===== */
+.eca-body {
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 8px 24px rgba(15,23,42,.08);
+    padding: 28px 32px;
 }
 
-.btn-volver:hover {
-    background: #d1d5db;
-    transform: translateY(-1px);
-}
-
-.eca-logo {
-    height: 90px;
-    margin-bottom: 12px;
-}
-
-h1 {
-    margin: 5px 0;
-    color: #7a0d1c;
-    font-size: 28px;
-    font-weight: 700;
-}
-
-h2 {
-    color: #444;
-    margin-top: 5px;
-    font-size: 19px;
-}
-
+/* ===== ETIQUETA DE SECCIÓN ===== */
 .section-title {
-    margin-top: 45px;
-    background: #7a0d1c;
-    padding: 12px 14px;
-    border-radius: 6px;
-    color: white;
-    font-size: 20px;
-    font-weight: bold;
+    margin: 28px 0 0;
+    padding: 10px 14px;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    color: #7b1b3b;
+    background: #fdf0f4;
+    border-radius: 8px;
+    border-left: 3px solid #7b1b3b;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .grid-2 {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 22px;
-    margin-top: 20px;
+    gap: 18px;
+    margin-top: 16px;
 }
-
 .grid-3 {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 22px;
-    margin-top: 20px;
+    gap: 18px;
+    margin-top: 16px;
 }
-
 .grid-4 {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 16px;
-    margin-top: 20px;
+    gap: 14px;
+    margin-top: 16px;
 }
-
 .form-group {
     display: flex;
     flex-direction: column;
 }
-
 .form-group label {
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 600;
-    color: #333;
+    color: #374151;
+    margin-bottom: 4px;
 }
-
 input, select, textarea {
-    padding: 10px 12px;
-    border-radius: 6px;
-    border: 1px solid #bbb;
-    background: #fafafa;
-    font-size: 15px;
-    margin-top: 6px;
+    padding: 9px 12px;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+    background: #f9fafb;
+    font-size: 14px;
+    color: #1f2933;
+    outline: none;
+    transition: border-color .2s ease, box-shadow .2s ease;
 }
-
-textarea {
-    resize: vertical;
+input:focus, select:focus, textarea:focus {
+    border-color: #7b1b3b;
+    box-shadow: 0 0 0 2px rgba(123,27,59,.12);
+    background: #fff;
 }
+textarea { resize: vertical; }
 
 .btn-submit {
-    background: #7a0d1c;
+    background: linear-gradient(135deg, #7b1b3b, #a83260);
     display: block;
     width: 100%;
-    padding: 16px;
+    padding: 15px;
     border: none;
-    margin-top: 40px;
+    margin-top: 36px;
     color: #fff;
-    font-size: 18px;
-    border-radius: 8px;
+    font-size: 1rem;
+    border-radius: 10px;
     font-weight: 700;
     cursor: pointer;
-    transition: .2s;
+    transition: filter .2s, transform .2s;
+    box-shadow: 0 6px 18px rgba(123,27,59,.30);
 }
-
 .btn-submit:hover {
-    background: #5c0a15;
+    filter: brightness(1.08);
+    transform: translateY(-1px);
 }
 
 .fort-card {
-    padding: 20px;
-    background: #f8f8f8;
-    border-radius: 6px;
-    border: 1px solid #ddd;
-    margin-top: 20px;
+    padding: 18px;
+    background: #fafafa;
+    border-radius: 10px;
+    border: 1px solid #e5e7eb;
+    margin-top: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
 }
 
 .checkbox-group {
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    background: #fafafa;
+    padding: 10px 12px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    background: #f9fafb;
     display: flex;
     flex-direction: column;
+    gap: 4px;
 }
 
 .table-eca {
     width: 100%;
-    margin-top: 20px;
+    margin-top: 16px;
     border-collapse: collapse;
+    font-size: 0.88rem;
 }
-
 .table-eca th {
-    background: #7a0d1c;
+    background: linear-gradient(135deg,#7b1b3b,#a83260);
     color: white;
-    padding: 10px;
+    padding: 10px 12px;
     text-align: left;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: .04em;
 }
-
 .table-eca td {
-    padding: 10px;
-    border: 1px solid #ddd;
+    padding: 10px 12px;
+    border-bottom: 1px solid #f0f0f0;
 }
-
+.table-eca tbody tr:nth-child(even) { background: #fafbfc; }
+.table-eca tbody tr:hover { background: #fff5f7; }
 .table-eca td input[type="radio"],
-.table-eca td input[type="checkbox"] {
-    transform: scale(1.1);
-}
+.table-eca td input[type="checkbox"] { transform: scale(1.1); }
 
-/* RESPONSIVE */
 @media(max-width: 900px){
-    .grid-2, .grid-3, .grid-4 {
-        grid-template-columns: 1fr;
-    }
+    .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+    .eca-body { padding: 18px 16px; }
 }
 </style>
 
-<section class="eca-wrapper">
+<div class="eca-wrapper">
 
-    <button type="button" class="btn-volver" onclick="window.history.back()">← Volver</button>
-
-    <div class="eca-header">
-        <h1>Ficha Técnica del Espacio de Cultura del Agua</h1>
-        <h2>Captura de información</h2>
+    <!-- HERO -->
+    <div class="eca-hero">
+        <div class="eca-hero-left">
+            <span class="eca-hero-icon"><i class="fa-solid fa-water"></i></span>
+            <div>
+                <h1 class="eca-hero-title">Ficha T&eacute;cnica del ECA</h1>
+                <p class="eca-hero-sub">Espacio de Cultura del Agua &mdash; Captura de informaci&oacute;n</p>
+            </div>
+        </div>
+        <button type="button" class="btn-volver" onclick="window.history.back()">
+            <i class="fa-solid fa-arrow-left"></i> Volver
+        </button>
     </div>
 
+    <div class="eca-body">
+
     <form method="POST" action="index.php?controller=formatos&action=guardarCapturaECA">
+
+        <?= csrf_field() ?>
 
         <!-- =======================================================
              DATOS DEL MUNICIPIO
@@ -577,12 +643,13 @@ textarea {
              BOTÓN FINAL
         ======================================================= -->
         <button class="btn-submit">
-            Guardar información
+            <i class="fa-solid fa-floppy-disk"></i> Guardar informaci&oacute;n
         </button>
 
     </form>
 
-</section>
+    </div><!-- /.eca-body -->
+</div><!-- /.eca-wrapper -->
 
 <script>
 // Auto-seleccionar organismo operador según el municipio seleccionado

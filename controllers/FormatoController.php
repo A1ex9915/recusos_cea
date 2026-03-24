@@ -5,14 +5,11 @@ use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 
 class FormatoController
 {
-    /* ================= Helpers internos ================= */
+
 
     private function guard(): void
     {
-        if (empty($_SESSION['user'])) {
-            header('Location: index.php?controller=auth&action=login');
-            exit;
-        }
+        require_role([ROL_ADMIN, ROL_CAPTURISTA]);
     }
 
     private function render(string $vista, array $vars = []): void
@@ -26,19 +23,17 @@ class FormatoController
         require dirname(__DIR__) . '/views/dashboard.php';
     }
 
-    /* ================= Acciones públicas ================= */
-
-    /** Listado de formatos + datos para reportes */
+   
     public function index(): void
     {
         $formatos   = Formato::all();
         $municipios = Municipio::listar();
         $organismos = Organismo::listar();
 
-        // Obtener datos para las gráficas
+       
         $pdo = DB::conn();
         
-        // Inventario por Categoría
+       
         $stmt = $pdo->query("
             SELECT COALESCE(c.nombre, 'Sin categoría') AS label, COUNT(r.id) AS total
             FROM recursos r
@@ -122,6 +117,7 @@ class FormatoController
     public function guardarCaptura(): void
     {
         $this->guard();
+        csrf_validate();
 
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             header('Location: index.php?controller=formatos&action=index');
@@ -142,6 +138,12 @@ class FormatoController
             $user_id
         );
 
+        Bitacora::registrar('crear', 'formatos', 'Captura de formato guardada', [
+            'formato_id'   => $formato_id,
+            'organismo_id' => $organismo_id,
+            'municipio_id' => $municipio_id,
+        ]);
+
         $_SESSION['flash'] = 'Captura guardada correctamente.';
         header('Location: index.php?controller=formatos&action=captura&id=' . $formato_id);
         exit;
@@ -161,6 +163,7 @@ public function capturaECA(): void
 public function guardarCapturaECA(): void
 {
     $this->guard();
+    csrf_validate();
     
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         header("Location: index.php?controller=formatos&action=capturaECA");
@@ -172,9 +175,22 @@ public function guardarCapturaECA(): void
     $data = $_POST;
     $data['user_id'] = $_SESSION['user']['id'];
 
+    // Validación backend mínima
+    if (empty($data['municipio_id']) || (int)$data['municipio_id'] <= 0) {
+        $_SESSION['flash_error'] = 'Debe seleccionar un municipio.';
+        header('Location: index.php?controller=formatos&action=capturaECA');
+        exit;
+    }
+
     $id = EcaFicha::crear($data);
 
-    $_SESSION['flash'] = "Ficha Técnica del ECA guardada correctamente.";
+    Bitacora::registrar('crear', 'formatos_eca', 'Ficha Tecnica ECA creada', [
+        'ficha_id'     => $id,
+        'municipio_id' => $data['municipio_id'] ?? null,
+        'organismo_id' => $data['organismo_id'] ?? null,
+    ]);
+
+    $_SESSION['flash'] = "Ficha T\u00e9cnica del ECA guardada correctamente.";
     header("Location: index.php?controller=formatos&action=capturaECA&id=" . $id);
     exit;
 }
@@ -222,6 +238,7 @@ public function editarECA(): void
 public function actualizarECA(): void
 {
     $this->guard();
+    csrf_validate();
 
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         header("Location: index.php?controller=formatos&action=consultaECA");

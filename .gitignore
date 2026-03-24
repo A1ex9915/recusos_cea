@@ -3,3 +3,4 @@
 .env
 .DS_Store
 *.log
+Chatbotweb/smtp_config.php

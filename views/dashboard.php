@@ -16,9 +16,12 @@ $currentCtrl = $_GET['controller'] ?? '';
   <title>Panel de Administración — CEAA</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/png" href="<?= asset('img/logoo.png') ?>">
-  <link rel="stylesheet" href="<?= asset('css/dashboard.css') ?>?v=1">
- <link rel="stylesheet" href="<?= asset('css/dashboard.css') ?>?v=1">
+  <link rel="stylesheet" href="<?= asset('css/dashboard.css') ?>?v=3">
+ <link rel="stylesheet" href="<?= asset('css/dashboard.css') ?>?v=3">
   <link rel="stylesheet" href="<?= asset('css/chatbot-soporte.css') ?>?v=2">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 <?php
@@ -26,18 +29,18 @@ $currentCtrl = $_GET['controller'] ?? '';
 
   // Formatos
   if ($currentCtrl === 'formatos'): ?>
-    <link rel="stylesheet" href="<?= asset('css/formatos.css') ?>?v=1">
+    <link rel="stylesheet" href="<?= asset('css/formatos.css') ?>?v=2">
 <?php endif; ?>
 
 <?php
   // Inventario (captura) y Reportes de inventario
   if ($currentCtrl === 'inventario' || ($currentCtrl === 'reportes' && $currentPage === 'inventario')): ?>
-    <link rel="stylesheet" href="<?= asset('css/inventario-reporte.css') ?>?v=1">
+    <link rel="stylesheet" href="<?= asset('css/inventario-reporte.css') ?>?v=3">
 <?php endif; ?>
 <?php
   // CSS para el módulo de Inventario (formulario)
   if ($currentCtrl === 'inventario'): ?>
-    <link rel="stylesheet" href="<?= asset('css/inventario-captura.css') ?>?v=1">
+    <link rel="stylesheet" href="<?= asset('css/inventario-captura.css') ?>?v=2">
 <?php endif; ?>
 <?php
   if ($currentCtrl === 'reportes' && $currentPage === 'inventario'): ?>
@@ -70,7 +73,42 @@ $currentCtrl = $_GET['controller'] ?? '';
   <!-- Sidebar -->
   <aside class="barra-lateral" id="sidebar">
     <div class="user-info">
-      <div class="usuario-lateral-icono"><i class="fa-solid fa-user"></i></div>
+      <?php
+        // Leer siempre desde BD para no depender de si la sesión tiene foto_perfil
+        $dbFoto = DB::conn()
+                    ->prepare("SELECT foto_perfil FROM usuarios WHERE id = ? LIMIT 1");
+        $dbFoto->execute([(int)$usuario['id']]);
+        $fotoPerfil = (string)($dbFoto->fetchColumn() ?? '');
+
+        // Ignorar la imagen por defecto si el archivo no existe en disco
+        $fotoEnDisco = ($fotoPerfil !== '' && $fotoPerfil !== 'assets/img/default-profile.png')
+                        ? realpath(__DIR__ . '/../../public/' . ltrim($fotoPerfil, '/'))
+                        : false;
+
+        // Construir URL con cada segmento codificado para soportar nombres con espacios
+        if ($fotoEnDisco) {
+            $segmentos = explode('/', ltrim($fotoPerfil, '/'));
+            $fotoUrl   = BASE_URI . '/' . implode('/', array_map('rawurlencode', $segmentos));
+        } else {
+            $fotoUrl = '';
+        }
+
+        $inicial = mb_strtoupper(mb_substr($usuario['nombre'], 0, 1, 'UTF-8'), 'UTF-8');
+
+        // Actualizar sesión con el valor real de la BD
+        $_SESSION['user']['foto_perfil'] = $fotoPerfil;
+      ?>
+      <div class="usuario-lateral-icono">
+        <?php if ($fotoUrl): ?>
+          <img src="<?= htmlspecialchars($fotoUrl, ENT_QUOTES, 'UTF-8') ?>"
+               alt="Foto de perfil"
+               class="sidebar-avatar"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+          <span class="sidebar-inicial" style="display:none"><?= $inicial ?></span>
+        <?php else: ?>
+          <span class="sidebar-inicial"><?= $inicial ?></span>
+        <?php endif; ?>
+      </div>
       <div class="user-details">
         <h3 class="adm">Administrador</h3>
         <p class="bienvenida">
@@ -119,8 +157,16 @@ $currentCtrl = $_GET['controller'] ?? '';
     <a href="<?= BASE_URI ?>/index.php?controller=manual&action=ver"
        class="<?= ($currentCtrl === 'manual') ? 'activo' : '' ?>">
       <i class="fa-solid fa-book"></i>
-      <span class="menu-text">Manual técnico</span>
+      <span class="menu-text">Manual de usuario</span>
     </a>
+
+    <?php if (($usuario['email'] ?? '') === 'luis.roldangamero@gmail.com'): ?>
+    <a href="<?= BASE_URI ?>/index.php?controller=bitacora&action=index"
+       class="<?= ($currentCtrl === 'bitacora') ? 'activo' : '' ?>">
+      <i class="fa-solid fa-shield-halved"></i>
+      <span class="menu-text">Bitácora</span>
+    </a>
+    <?php endif; ?>
 
     <a href="<?= BASE_URI ?>/index.php?controller=auth&action=logout">
       <i class="fa-solid fa-right-from-bracket"></i>
@@ -208,9 +254,10 @@ $currentCtrl = $_GET['controller'] ?? '';
   window.CEAA_CHATBOT_CONFIG = {
     baseUri: '<?= BASE_URI ?>',
     userName: '<?= htmlspecialchars($usuario['nombre'], ENT_QUOTES, 'UTF-8') ?>',
-    rolId: <?= (int)$usuario['rol_id'] ?>
+    rolId: <?= (int)$usuario['rol_id'] ?>,
+    csrfToken: '<?= csrf_token() ?>'
   };
 </script>
-<script src="<?= asset('js/chatbot-soporte.js') ?>?v=2"></script>
+<script src="<?= asset('js/chatbot-soporte.js') ?>?v=3"></script>
 </body>
 </html>

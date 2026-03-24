@@ -5,10 +5,9 @@ class ManualController
     private function findManualPath(): ?string
     {
         $preferred = [
-            dirname(__DIR__) . '/public/manuales/MongoDB4.pdf',
-            dirname(__DIR__) . '/MongoDB4.pdf',
+            dirname(__DIR__) . '/public/manuales/manual_usuario_ceaa.pdf',
+            dirname(__DIR__) . '/public/manuales/manual_tecnico_ceaa2.pdf',
             dirname(__DIR__) . '/public/manuales/manual_tecnico_ceaa.pdf',
-            dirname(__DIR__) . '/public/manuales/MongoDB.pdf',
             dirname(__DIR__) . '/public/manuales/Manual_Tecnico_CEAA.pdf',
             dirname(__DIR__) . '/public/manuales/manual-tecnico-ceaa.pdf',
         ];
@@ -46,7 +45,7 @@ class ManualController
 
         if (!$filePath || !is_file($filePath)) {
             http_response_code(404);
-            echo 'No se encontró el manual técnico. Colócalo en /public/manuales/';
+            echo 'No se encontró el manual de usuario. Colócalo en /public/manuales/manual_usuario_ceaa.pdf';
             exit;
         }
 

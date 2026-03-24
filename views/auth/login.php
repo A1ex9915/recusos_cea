@@ -34,10 +34,8 @@
       </div>
 
       <button type="submit">Iniciar Sesión</button>
-      <a class="boton-secundario" href="index.php?controller=manual&action=ver" target="_blank" rel="noopener noreferrer">
-        <i class="fa-solid fa-book-open"></i>
-        <span>Ver manual técnico</span>
-      </a>
+
+      <p class="login-copyright">&copy; CEAA 2026</p>
     </form>
   </div>
 </body>

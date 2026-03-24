@@ -10,6 +10,7 @@ class DashboardController {
   }
 
   public function inicio(){
+    require_role([ROL_ADMIN, ROL_CAPTURISTA, ROL_CONSULTOR]);
     $this->renderVista('dashboard/inicio.php');
   }
 

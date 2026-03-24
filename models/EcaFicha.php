@@ -9,14 +9,12 @@ class EcaFicha
         return DB::conn();
     }
 
-    /* ==========================================================
-       CREAR FICHA — Inserta dinámicamente todas las columnas
-    ========================================================== */
+
     public static function crear(array $p): int 
     {
         $pdo = self::pdo();
 
-        // Obtener columnas reales
+    
         $cols = $pdo->query("SHOW COLUMNS FROM eca_fichas")->fetchAll(PDO::FETCH_COLUMN);
 
         $insertCols = [];

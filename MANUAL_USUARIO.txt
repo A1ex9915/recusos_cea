@@ -1,0 +1,889 @@
+================================================================================
+         MANUAL DE USUARIO — SISTEMA DE RECURSOS CEAA
+         Comisión Estatal del Agua y Alcantarillado
+         Versión 1.0 | Marzo 2026
+================================================================================
+
+ÍNDICE
+------
+  1. Introducción
+  2. Requisitos para usar el sistema
+  3. Módulo 1  — Inicio de sesión (Login)
+  4. Módulo 2  — Inicio / Dashboard
+  5. Módulo 3  — Mi Perfil
+  6. Módulo 4  — Gestión de Usuarios
+  7. Módulo 5  — Formatos y Capturas (menú principal de operaciones)
+       5.1  Vista general / Estadísticas
+       5.2  Nueva Ficha Técnica ECA (Captura)
+       5.3  Consulta de Fichas ECA
+       5.4  Ver Ficha ECA (detalle)
+       5.5  Editar Ficha ECA
+       5.6  Generar Reporte en PDF
+  8. Módulo 6  — Inventario
+       6.1  Captura rápida de bien
+       6.2  Formulario completo de bien
+       6.3  Reporte de Inventario
+  9. Módulo 7  — Reportes
+       7.1  Reportes Municipales
+       7.2  Reportes Anuales
+ 10. Módulo 8  — Manual Técnico
+ 11. Módulo 9  — Asistente Virtual (Chatbot)
+ 12. Cerrar sesión
+ 13. Roles y permisos
+ 14. Preguntas frecuentes
+
+
+================================================================================
+1. INTRODUCCIÓN
+================================================================================
+
+El Sistema de Recursos CEAA es una aplicación web institucional desarrollada
+para la Comisión Estatal del Agua y Alcantarillado. Su propósito es centralizar
+y administrar la información relacionada con:
+
+  - Los Espacios de Cultura del Agua (ECA) en los municipios del estado.
+  - El inventario de bienes y recursos asignados a cada organismo.
+  - La generación de reportes oficiales en formato PDF.
+  - La gestión de usuarios con distintos niveles de acceso.
+
+El sistema es accesible desde cualquier navegador web moderno (Google Chrome,
+Mozilla Firefox, Microsoft Edge) dentro de la red de la institución.
+
+
+================================================================================
+2. REQUISITOS PARA USAR EL SISTEMA
+================================================================================
+
+  - Navegador web actualizado (Chrome 90+, Firefox 88+, Edge 90+).
+  - Conexión a la red interna de la CEAA o al servidor correspondiente.
+  - Credenciales de acceso (correo electrónico y contraseña) proporcionadas
+    por el administrador del sistema.
+  - No se requiere instalar programas adicionales.
+
+
+================================================================================
+3. MÓDULO 1 — INICIO DE SESIÓN (LOGIN)
+================================================================================
+
+DESCRIPCIÓN
+-----------
+Es la primera pantalla que aparece al ingresar al sistema. Permite autenticar
+al usuario y darle acceso según su rol asignado.
+
+CAMPOS DEL FORMULARIO
+---------------------
+  - Correo electrónico : Ingrese el correo institucional registrado.
+  - Contraseña         : Ingrese su contraseña. Los caracteres se ocultan.
+  - Botón "Iniciar sesión" : Envía las credenciales para su verificación.
+
+CÓMO INGRESAR AL SISTEMA
+-------------------------
+  1. Abra su navegador e ingrese la dirección del sistema.
+  2. Escriba su correo electrónico en el campo correspondiente.
+  3. Escriba su contraseña.
+  4. Haga clic en el botón "Iniciar sesión".
+  5. Si las credenciales son correctas, será redirigido al Dashboard principal.
+
+MENSAJES DE ERROR
+-----------------
+  - "Credenciales inválidas": El correo o la contraseña son incorrectos,
+    o el usuario está desactivado. Verifique los datos e intente de nuevo.
+    Si el problema persiste, contacte al administrador del sistema.
+
+NOTA DE SEGURIDAD
+-----------------
+  Los intentos de acceso fallidos quedan registrados en la bitácora del sistema
+  con la dirección IP del equipo. No comparta sus credenciales con otras personas.
+
+
+================================================================================
+4. MÓDULO 2 — INICIO / DASHBOARD
+================================================================================
+
+DESCRIPCIÓN
+-----------
+Pantalla principal que se muestra después de iniciar sesión. Es una página de
+bienvenida informativa que identifica al usuario activo.
+
+ELEMENTOS VISIBLES
+------------------
+  - Mensaje personalizado de bienvenida según la hora del día:
+      "Buenos días / Buenas tardes / Buenas noches, [Nombre del usuario]"
+  - Rol asignado al usuario (Ej. Administrador, Capturista, Consultor).
+  - Descripción breve del sistema.
+  - Imagen institucional de fondo.
+
+NAVEGACIÓN LATERAL (SIDEBAR)
+------------------------------
+En el lado izquierdo de la pantalla se encuentra el menú principal con acceso
+a todos los módulos del sistema:
+
+  [Inicio]             — Regresa a esta pantalla.
+  [Mi Perfil]          — Gestiona sus datos personales y contraseña.
+  [Usuarios]           — Administración de usuarios (solo Administrador).
+  [Formatos/Capturas]  — Módulo principal de operaciones ECA.
+  [Inventario]         — Registro y consulta de bienes.
+  [Reportes]           — Consulta de reportes municipales y anuales.
+  [Manual Técnico]     — Abre el manual técnico del sistema en PDF.
+  [Cerrar sesión]      — Cierra la sesión activa de forma segura.
+
+La barra lateral también muestra:
+  - Foto de perfil o avatar con la inicial del nombre.
+  - Nombre completo del usuario.
+  - Rol del usuario.
+
+
+================================================================================
+5. MÓDULO 3 — MI PERFIL
+================================================================================
+
+DESCRIPCIÓN
+-----------
+Permite al usuario actualizar su información personal y cambiar su contraseña
+de acceso. Contiene dos pestañas independientes.
+
+────────────────────────────────────────────────────────────────────────────────
+PESTAÑA 1: "MIS DATOS"
+────────────────────────────────────────────────────────────────────────────────
+
+CAMPOS
+------
+  - Foto de perfil   : Haga clic en la imagen para seleccionar un archivo
+                       (JPG, PNG). La vista previa se actualiza al instante.
+  - Nombre completo  : Ingrese su nombre y apellidos.
+  - Correo electrónico: Ingrese o actualice su dirección de correo.
+  - Rol              : Se muestra como texto informativo, no es editable
+                       por el propio usuario.
+  - ID de usuario    : Identificador interno, solo lectura.
+
+BOTÓN
+-----
+  - "Guardar cambios" : Guarda el nombre, correo y/o foto actualizados.
+
+────────────────────────────────────────────────────────────────────────────────
+PESTAÑA 2: "CONTRASEÑA"
+────────────────────────────────────────────────────────────────────────────────
+
+CAMPOS
+------
+  - Contraseña actual     : Ingrese su contraseña actual para verificar
+                            su identidad antes de cambiarla.
+  - Nueva contraseña      : Ingrese la nueva contraseña deseada.
+  - Confirmar contraseña  : Repita la nueva contraseña para confirmarla.
+
+REGLAS DE CONTRASEÑA
+--------------------
+  La nueva contraseña debe cumplir TODOS estos requisitos:
+    ✔  Mínimo 8 caracteres y máximo 16.
+    ✔  Al menos una letra mayúscula (A-Z).
+    ✔  Al menos una letra minúscula (a-z).
+    ✔  Al menos un número (0-9).
+    ✔  Al menos un símbolo especial (! @ # $ % & * etc.).
+
+  El sistema muestra en tiempo real si cada regla se cumple o no.
+
+BOTÓN
+-----
+  - "Cambiar contraseña" : Aplica el cambio si todos los campos son válidos.
+
+
+================================================================================
+6. MÓDULO 4 — GESTIÓN DE USUARIOS
+================================================================================
+
+DESCRIPCIÓN
+-----------
+Permite al Administrador crear, editar y eliminar las cuentas de acceso al
+sistema. Solo usuarios con rol Administrador pueden acceder a este módulo.
+
+────────────────────────────────────────────────────────────────────────────────
+PANTALLA: LISTA DE USUARIOS
+────────────────────────────────────────────────────────────────────────────────
+
+ELEMENTOS
+---------
+  - Contador total de usuarios registrados.
+  - Botón "+ Nuevo usuario" para crear una nueva cuenta.
+  - Tabla con la información de cada usuario:
+
+    COLUMNA              DESCRIPCIÓN
+    ─────────────────    ──────────────────────────────────────────────────
+    Avatar + Nombre      Inicial del nombre en un círculo de color + nombre
+                         completo y correo electrónico.
+    Rol                  Etiqueta con el rol asignado (Administrador,
+                         Capturista, Consultor).
+    Estado               "Activo" (verde) o "Inactivo" (rojo).
+    Acciones             Botón Editar y botón Eliminar por usuario.
+
+────────────────────────────────────────────────────────────────────────────────
+PANTALLA: CREAR NUEVO USUARIO
+────────────────────────────────────────────────────────────────────────────────
+
+CAMPOS
+------
+  Sección "Información general":
+    - Nombre completo    : Nombre y apellidos del nuevo usuario (requerido,
+                           mínimo 3 caracteres).
+    - Correo electrónico : Debe ser único en el sistema (requerido).
+
+  Sección "Seguridad":
+    - Contraseña         : Mínimo 8 caracteres (requerido).
+    - Confirmar contraseña: Debe coincidir con el campo anterior.
+
+  Sección "Permisos":
+    - Rol                : Seleccione entre los roles disponibles (requerido).
+    - Usuario activo     : Casilla de verificación. Si se desmarca, el usuario
+                           no podrá iniciar sesión.
+
+BOTONES
+-------
+  - "Cancelar"       : Regresa a la lista sin guardar cambios.
+  - "Crear usuario"  : Guarda el nuevo usuario en el sistema.
+
+────────────────────────────────────────────────────────────────────────────────
+PANTALLA: EDITAR USUARIO
+────────────────────────────────────────────────────────────────────────────────
+
+Muestra el mismo formulario que "Crear usuario" pero con los datos actuales
+del usuario precargados. Se puede modificar cualquier campo. El campo de
+contraseña es opcional al editar: si se deja en blanco, la contraseña
+anterior no cambia.
+
+────────────────────────────────────────────────────────────────────────────────
+ELIMINAR USUARIO
+────────────────────────────────────────────────────────────────────────────────
+
+Al hacer clic en el botón "Eliminar", el sistema muestra una ventana de
+confirmación. Una vez confirmado, el usuario es eliminado permanentemente
+y no podrá iniciar sesión. Esta acción queda registrada en la bitácora.
+
+
+================================================================================
+7. MÓDULO 5 — FORMATOS Y CAPTURAS
+================================================================================
+
+DESCRIPCIÓN
+-----------
+Es el módulo central del sistema. Centraliza las operaciones relacionadas con
+los Espacios de Cultura del Agua (ECA): captura de fichas técnicas, consulta,
+edición y generación de reportes en PDF.
+
+────────────────────────────────────────────────────────────────────────────────
+7.1  VISTA GENERAL / ESTADÍSTICAS (índice del módulo)
+────────────────────────────────────────────────────────────────────────────────
+
+Pantalla principal del módulo que muestra un resumen visual del sistema.
+
+ACCIONES RÁPIDAS (panel lateral)
+---------------------------------
+  Desde este panel accede directamente a:
+    - Generar Reporte PDF
+    - Nueva Ficha Técnica ECA
+    - Consultar Fichas ECA
+    - Ver Inventario
+    - Ver Reportes Municipales
+    - Ver Reportes Anuales
+
+GRÁFICAS ESTADÍSTICAS
+---------------------
+  Se muestran 4 gráficas interactivas (puede cambiar entre Barras / Línea /
+  Pastel / Dona):
+
+    1. Inventario por Categoría  — Distribución de bienes según su categoría.
+    2. Estado del Bien           — Proporción de bienes en estado Bueno,
+                                   Regular, Malo o de Baja.
+    3. Inventario por Municipio  — Bienes agrupados por municipio.
+    4. Fichas ECA por Municipio  — Fichas técnicas registradas por municipio.
+
+
+────────────────────────────────────────────────────────────────────────────────
+7.2  NUEVA FICHA TÉCNICA ECA (Captura)
+────────────────────────────────────────────────────────────────────────────────
+
+DESCRIPCIÓN
+-----------
+Formulario extenso para registrar por primera vez la ficha técnica completa
+de un Espacio de Cultura del Agua. Solo accesible para Administrador y
+Capturista.
+
+SECCIONES DEL FORMULARIO
+-------------------------
+
+  SECCIÓN 1: DATOS DEL MUNICIPIO
+  --------------------------------
+    - Municipio           : Seleccione el municipio al que pertenece el ECA.
+                            Este campo es obligatorio.
+    - Organismo operador  : Seleccione el organismo operador correspondiente.
+                            La lista se filtra automáticamente al elegir el
+                            municipio.
+
+  SECCIÓN 2: INFORMACIÓN BÁSICA DEL ECA
+  ---------------------------------------
+    - Estado del ECA              : Descripción del estado actual del espacio.
+    - Fecha de apertura           : Fecha en que se inauguró el ECA.
+    - Clave del ECA               : Identificador único asignado al ECA.
+    - Municipio (texto en ficha)  : Nombre del municipio como aparece en el
+                                    documento oficial.
+    - Tipo de instancia operativa : Tipo de organismo que opera el ECA.
+    - Nombre de instancia operativa: Nombre completo del organismo.
+    - Nombre del RECA             : Nombre completo del Responsable del ECA.
+    - Correo electrónico          : Correo del RECA.
+    - Teléfono                    : Número de contacto.
+    - Días y horarios de atención : Horario en que el ECA atiende al público.
+    - Dirección                   : Calle y número donde se ubica el ECA.
+    - Número de habitantes        : Población total del municipio.
+    - Población atendida          : Personas atendidas por el ECA.
+
+  SECCIÓN 3: FORTALECIMIENTO RECIBIDO
+  -------------------------------------
+    - Recurso (Mobiliario/Equipo) : Seleccione el recurso asignado al ECA
+                                    desde el catálogo de inventario.
+    - Equipo de cómputo           : Descripción del equipo electrónico recibido.
+    - Material didáctico          : Material de apoyo educativo recibido.
+    - Fecha de último fortalecimiento: Fecha del último apoyo recibido.
+    - Observaciones               : Notas adicionales sobre el fortalecimiento.
+
+  SECCIÓN 4: INFORMES MENSUALES
+  ------------------------------
+    Para cada mes del año (Enero a Diciembre) se indica si se entregó o no el
+    informe:
+      - Seleccione "Sí" si el informe fue entregado en ese mes.
+      - Seleccione "No" si no fue entregado.
+      - Deje en blanco si no aplica.
+
+    Campos adicionales:
+    - POA       : Plan Operativo Anual (campo de texto).
+    - Diagnóstico: Campo de texto adicional.
+
+  SECCIÓN 5: CALIDAD DE INFORMES
+  --------------------------------
+    Se evalúa la calidad de los informes entregados en los siguientes rubros.
+    Para cada uno seleccione: Bueno, Regular o Malo.
+
+      - Ortografía
+      - Los totales coinciden con lo reportado
+      - Está bien escaneado / digitalizado
+      - El encabezado tiene los logos institucionales
+      - El oficio está bien redactado
+      - Las actividades reportadas son innovadoras
+
+  SECCIÓN 6: ACCIONES CEAA — CICLO ANTERIOR
+  -------------------------------------------
+    Registro de participación del RECA en acciones organizadas por la CEAA
+    en ciclos anteriores. Para cada acción indique Sí o No según si el RECA
+    asistió, y puede agregar notas en el campo de detalle.
+
+    Acciones incluidas:
+      - Capacitación "Cultura del Pago"
+      - Caravana preventiva en temporada de Estiaje
+      - Caravana temporada de lluvias
+      - Curso de "Teatro Guiñol de cultura del agua"
+      - Pláticas y juego interactivo en domo planetario
+      - Convención ANEAS y encuentro nacional
+
+  SECCIÓN 7: ACCIONES CEAA — CICLO RECIENTE
+  -------------------------------------------
+    Igual que la sección anterior pero para el ciclo más reciente:
+      - Primer Encuentro Estatal Hídrico
+      - Pláticas y juego interactivo en domo planetario
+      - Caravana preventiva virtual "Temporada de Estiaje"
+      - Curso "Diagnóstico Hídrico Municipal"
+
+  SECCIÓN 8: PROPUESTA DE FORTALECIMIENTO
+  -----------------------------------------
+    Datos de la propuesta de equipamiento para el ECA:
+      - Mobiliario y Equipo de Cómputo : Descripción del equipo propuesto.
+      - Material Didáctico             : Material educativo propuesto.
+      - Comentario general             : Observaciones adicionales de la
+                                         propuesta.
+
+BOTÓN FINAL
+-----------
+  - "Guardar ficha" : Registra toda la información en el sistema. Una vez
+                      guardada, la ficha puede consultarse y editarse desde
+                      "Consulta de Fichas ECA".
+
+
+────────────────────────────────────────────────────────────────────────────────
+7.3  CONSULTA DE FICHAS ECA
+────────────────────────────────────────────────────────────────────────────────
+
+DESCRIPCIÓN
+-----------
+Pantalla para buscar y listar las fichas técnicas registradas en el sistema.
+Accesible para todos los roles.
+
+FILTRO DE BÚSQUEDA
+------------------
+  - Municipio : Seleccione un municipio para filtrar las fichas de ese lugar.
+                Si no selecciona ninguno, se muestran todas las fichas.
+  - Botón "Buscar" : Aplica el filtro seleccionado.
+
+TARJETAS DE ESTADÍSTICAS
+-------------------------
+  Debajo del filtro se muestran tres indicadores:
+    - Total de fichas : Número total de fichas que coinciden con el filtro.
+    - Municipio       : Municipio actualmente seleccionado.
+    - Organismo       : Nombre del organismo (cuando aplica).
+
+TABLA DE RESULTADOS
+-------------------
+  Muestra las fichas encontradas con las siguientes columnas:
+
+    COLUMNA                  DESCRIPCIÓN
+    ─────────────────────    ─────────────────────────────────────────────
+    ID                       Número identificador interno de la ficha.
+    Clave ECA                Clave única del Espacio de Cultura del Agua.
+    RECA                     Nombre del Responsable del ECA.
+    Habitantes               Número de habitantes del municipio.
+    Último fortalecimiento   Fecha del último apoyo recibido.
+    Acciones                 Ver | Editar | Generar PDF
+
+BOTONES DE ACCIÓN POR FILA
+---------------------------
+  - "Ver"          : Abre la ficha completa en modo solo lectura (sección 7.4).
+  - "Editar"       : Abre el formulario de edición (sección 7.5).
+  - "Generar PDF"  : Descarga la ficha técnica como documento PDF oficial.
+
+
+────────────────────────────────────────────────────────────────────────────────
+7.4  VER FICHA ECA (Detalle completo)
+────────────────────────────────────────────────────────────────────────────────
+
+DESCRIPCIÓN
+-----------
+Muestra en modo solo lectura toda la información registrada en una ficha
+técnica ECA. Organizada en secciones con tablas para facilitar la lectura.
+
+SECCIONES MOSTRADAS
+--------------------
+  1. Información básica del ECA    (12 datos: estado, clave, municipio,
+                                    organismo, RECA, teléfono, etc.)
+  2. Fortalecimiento recibido      (mobiliario, equipo, material, observaciones)
+  3. Informes mensuales            (grid de 12 meses con indicadores Si/No)
+  4. Calidad de informes           (6 rubros evaluados)
+  5. Acciones CEAA ciclo anterior  (6 acciones con asistencia)
+  6. Acciones CEAA ciclo reciente  (4 acciones con asistencia)
+  7. Propuesta de fortalecimiento  (3 campos)
+  8. Observaciones finales         (texto libre)
+
+BOTONES DISPONIBLES
+-------------------
+  - "← Volver" : Regresa a la pantalla de consulta de fichas.
+  - "Editar"   : Abre directamente el formulario de edición de esta ficha.
+
+
+────────────────────────────────────────────────────────────────────────────────
+7.5  EDITAR FICHA ECA
+────────────────────────────────────────────────────────────────────────────────
+
+DESCRIPCIÓN
+-----------
+Formulario de edición con los mismos campos y secciones que la captura inicial
+(sección 7.2), pero con todos los datos actuales de la ficha precargados.
+
+Solo accesible para Administrador y Capturista.
+
+USO
+---
+  1. Modifique los campos que necesite actualizar.
+  2. Haga clic en "Actualizar información" al terminar.
+  3. Los cambios se guardan inmediatamente en el sistema.
+
+NOTA: Todos los cambios quedan registrados en la bitácora del sistema con el
+nombre del usuario que realizó la edición y la fecha/hora exacta.
+
+
+────────────────────────────────────────────────────────────────────────────────
+7.6  GENERAR REPORTE EN PDF
+────────────────────────────────────────────────────────────────────────────────
+
+DESCRIPCIÓN
+-----------
+Permite generar documentos PDF oficiales del inventario para entrega formal.
+Existen dos tipos de reporte.
+
+PASO 1: SELECCIONAR TIPO DE REPORTE
+-------------------------------------
+  - "Formato municipal" : Genera un reporte de los recursos asignados a un
+                          municipio y organismo específico.
+  - "Formato anual"     : Genera un reporte global de todos los recursos del
+                          año seleccionado.
+
+─────────────────────────────────────
+TIPO A: REPORTE MUNICIPAL
+─────────────────────────────────────
+  Campos adicionales que aparecen al seleccionar este tipo:
+
+    - Municipio           : Seleccione el municipio. Al seleccionarlo, la
+                            página se actualiza y carga los recursos y
+                            organismos disponibles.
+    - Organismo operador  : Seleccione el organismo del municipio elegido.
+    - Beneficiario        : Nombre del receptor del reporte (texto libre).
+    - Acción              : Descripción de la acción a la que corresponde
+                            el reporte (texto libre).
+    - Año de fortalecimiento: Año al que corresponde el inventario reportado.
+
+  TABLA DE RECURSOS
+  -----------------
+  Se muestra una tabla con todos los recursos disponibles para el municipio y
+  organismo seleccionados. Cada fila tiene:
+    - Casilla de selección (checkbox)
+    - Clave del recurso
+    - Descripción del bien
+    - Categoría
+    - Marca
+    - Modelo
+    - Número de serie
+    - Color
+
+  Seleccione los recursos que desea incluir en el reporte marcando las
+  casillas correspondientes.
+
+  BOTÓN: "Generar PDF Municipal"
+  Descarga el documento PDF con los recursos seleccionados en formato oficial.
+
+─────────────────────────────────────
+TIPO B: REPORTE ANUAL
+─────────────────────────────────────
+  Se muestra un mensaje informativo indicando que se generará un resumen
+  global de todos los recursos del año.
+
+    - Año de fortalecimiento : Ingrese el año que desea reportar.
+
+  BOTÓN: "Generar PDF Anual"
+  Descarga el documento PDF con el resumen anual completo.
+
+
+================================================================================
+8. MÓDULO 6 — INVENTARIO
+================================================================================
+
+DESCRIPCIÓN
+-----------
+Permite registrar, consultar y administrar el inventario de bienes y recursos
+del sistema. Accesible para Administrador y Capturista.
+
+────────────────────────────────────────────────────────────────────────────────
+8.1  CAPTURA RÁPIDA DE BIEN
+────────────────────────────────────────────────────────────────────────────────
+
+Formulario simplificado para dar de alta un bien de forma ágil.
+
+CAMPOS
+------
+  - No. de inventario  : Clave única del bien (Ej. 0001-2025). Requerido.
+  - Descripción del bien: Nombre o descripción del bien. Requerido.
+  - Categoría          : Seleccione la categoría del bien (Mobiliario,
+                         Cómputo, Didáctico, etc.).
+  - Cantidad           : Número de unidades. Requerido.
+  - Material           : Material del que está fabricado el bien.
+  - Unidad de medida   : Pieza, juego, litro, etc.
+  - Valor unitario MXN : Costo unitario en pesos mexicanos.
+  - Área responsable   : Dependencia o área que tiene el bien a su cargo.
+  - Ubicación física   : Lugar donde se encuentra el bien (organismo/oficina).
+  - Estado del bien    : Seleccione: Bueno, Regular, Malo, o Baja.
+  - Fecha de alta      : Fecha en que el bien ingresó al inventario.
+  - No. de serie       : Número de serie del bien (para equipo electrónico).
+  - Documento soporte  : Adjunte el documento de respaldo en PDF, JPG o PNG.
+  - Observaciones      : Información adicional relevante.
+
+BOTONES
+-------
+  - "Guardar registro" : Registra el bien en el inventario.
+  - "Limpiar"          : Borra todos los campos del formulario.
+
+
+────────────────────────────────────────────────────────────────────────────────
+8.2  FORMULARIO COMPLETO DE BIEN
+────────────────────────────────────────────────────────────────────────────────
+
+Formulario detallado con clasificación completa del bien. Se usa tanto para
+dar de alta un nuevo bien como para editar uno existente.
+
+SECCIÓN 1: IDENTIFICACIÓN DEL BIEN
+------------------------------------
+  - No. Inventario / Clave  : Identificador único del bien. Requerido.
+  - Nombre / Descripción    : Nombre del bien. Requerido.
+  - Categoría               : Seleccione la categoría.
+  - Número de serie         : Número de serie del bien.
+
+SECCIÓN 2: CLASIFICACIÓN Y CONDICIÓN
+--------------------------------------
+  - Fuente del recurso : Origen del bien: Federal o Estatal. Requerido.
+  - Cantidad total     : Número de unidades. Requerido.
+  - Unidad de medida   : Seleccione la unidad (Pieza, Juego, Litro, etc.).
+  - Estado del bien    : Bueno / Regular / Malo / Baja.
+
+SECCIÓN 3: DATOS CEAA
+----------------------
+  - Costo unitario MXN : Valor del bien en pesos.
+  - Ubicación / Organismo: Seleccione el organismo responsable.
+  - Marca              : Marca del bien (Ej. HP, Dell, Steelcase).
+  - Modelo             : Modelo específico del bien.
+  - Material           : Material predominante del bien.
+  - Color              : Color del bien.
+  - Descripción larga  : Observaciones adicionales en texto libre.
+
+BOTONES
+-------
+  - "Guardar"  : Registra el bien (o guarda los cambios si es edición).
+  - "Limpiar"  : Reinicia todos los campos.
+
+
+────────────────────────────────────────────────────────────────────────────────
+8.3  REPORTE DE INVENTARIO (Consulta y Edición)
+────────────────────────────────────────────────────────────────────────────────
+
+DESCRIPCIÓN
+-----------
+Lista de todos los bienes registrados con opciones de búsqueda, filtrado y
+edición en línea.
+
+BARRA DE BÚSQUEDA
+-----------------
+  - Busque por número de inventario o descripción del bien escribiendo en la
+    barra superior y presionando Enter o haciendo clic en el botón de búsqueda.
+
+FILTROS DISPONIBLES
+-------------------
+  - Categoría      : Filtra por categoría del bien.
+  - Estado del bien: Filtra por condición (Bueno, Regular, Malo, Baja).
+  - Año de alta    : Filtra por el año en que se registró el bien.
+  - Botón "Aplicar filtros" : Ejecuta los filtros seleccionados.
+
+TARJETAS DE RESUMEN
+-------------------
+  Cuatro indicadores muestran un conteo rápido:
+    - Total de bienes registrados
+    - Bienes en buen estado
+    - Bienes en estado regular
+    - Bienes en mal estado / baja
+
+TABLA DE INVENTARIO
+-------------------
+  Columnas mostradas:
+    - No. Inv.     : Clave del bien.
+    - Descripción  : Nombre del bien.
+    - Categoría    : Tipo de bien.
+    - Ubicación    : Organismo o área responsable.
+    - Estado       : Badge de color según condición del bien.
+    - Fecha alta   : Fecha de registro.
+    - Valor MXN    : Costo unitario.
+    - Acciones     : Botón "Editar".
+
+EDITAR BIEN
+-----------
+  Al hacer clic en "Editar", se abre un modal (ventana emergente) con el
+  formulario prellenado del bien. Modifique los campos necesarios y guarde.
+
+PAGINACIÓN
+----------
+  Si hay muchos bienes, se dividen en páginas. Use los botones de navegación
+  en la parte inferior de la tabla para cambiar de página.
+
+
+================================================================================
+9. MÓDULO 7 — REPORTES
+================================================================================
+
+DESCRIPCIÓN
+-----------
+Sección para consultar, descargar y administrar los documentos PDF que han
+sido generados previamente desde el módulo de Formatos.
+
+────────────────────────────────────────────────────────────────────────────────
+9.1  REPORTES MUNICIPALES
+────────────────────────────────────────────────────────────────────────────────
+
+DESCRIPCIÓN
+-----------
+Lista de todos los reportes municipales en PDF que han sido generados.
+
+FILTROS DE BÚSQUEDA
+-------------------
+  - Municipio    : Filtra reportes de un municipio específico.
+  - Organismo    : Filtra por organismo operador.
+  - Fecha desde  : Reportes generados a partir de esta fecha.
+  - Fecha hasta  : Reportes generados hasta esta fecha.
+  - Botón "Filtrar" : Aplica los filtros.
+  - Botón "Limpiar" : Limpia todos los filtros y muestra todos los reportes.
+
+INDICADOR DE RESULTADOS
+-----------------------
+  Se muestra el número de reportes encontrados con los filtros aplicados.
+
+TABLA DE REPORTES
+-----------------
+  Columnas:
+    - ID           : Número de identificación del reporte.
+    - Municipio    : Nombre del municipio (badge distintivo).
+    - Organismo    : Nombre del organismo (badge distintivo).
+    - Archivo      : Nombre del archivo PDF generado.
+    - Fecha        : Fecha y hora en que se generó el reporte.
+    - Acciones     : Ver PDF | Eliminar
+
+BOTONES DE ACCIÓN POR REPORTE
+------------------------------
+  - "Ver PDF"   : Abre el documento PDF en el navegador o lo descarga.
+  - "Eliminar"  : Elimina permanentemente el reporte tras confirmación.
+                  ADVERTENCIA: Esta acción no se puede deshacer.
+
+
+────────────────────────────────────────────────────────────────────────────────
+9.2  REPORTES ANUALES
+────────────────────────────────────────────────────────────────────────────────
+
+DESCRIPCIÓN
+-----------
+Lista de todos los reportes anuales generados.
+
+FILTROS DE BÚSQUEDA
+-------------------
+  - Año          : Seleccione el año para filtrar reportes de ese período.
+  - Fecha desde  : Reportes generados a partir de esta fecha.
+  - Fecha hasta  : Reportes generados hasta esta fecha.
+  - Botón "Buscar"  : Aplica los filtros.
+  - Botón "Limpiar" : Limpia los filtros y muestra todos.
+
+TABLA DE REPORTES
+-----------------
+  Columnas:
+    - ID           : Número de identificación.
+    - Año          : Año del reporte (badge).
+    - Archivo      : Enlace al nombre del archivo PDF con ícono de documento.
+    - Fecha        : Fecha de generación del reporte.
+    - Acciones     : Ver PDF | Eliminar
+
+BOTONES DE ACCIÓN
+-----------------
+  - "Ver PDF"   : Abre o descarga el documento PDF anual.
+  - "Eliminar"  : Elimina permanentemente el reporte tras confirmación.
+
+
+================================================================================
+10. MÓDULO 8 — MANUAL TÉCNICO
+================================================================================
+
+DESCRIPCIÓN
+-----------
+Abre el manual técnico del sistema directamente como un documento PDF.
+No requiere interacción adicional; al hacer clic en la opción del menú,
+el documento se abre automáticamente en el navegador.
+
+Accesible para todos los roles de usuario.
+
+
+================================================================================
+11. MÓDULO 9 — ASISTENTE VIRTUAL (CHATBOT)
+================================================================================
+
+DESCRIPCIÓN
+-----------
+Asistente virtual disponible en la esquina inferior derecha de todas las
+pantallas del sistema. Puede usarlo para resolver dudas básicas sobre el
+manejo del sistema.
+
+CÓMO USARLO
+-----------
+  1. Haga clic en el ícono flotante (burbuja de chat) en la esquina
+     inferior derecha de la pantalla.
+  2. Se abre un panel de conversación.
+  3. Escriba su pregunta en el campo de texto y envíela.
+  4. El asistente responderá con información relevante.
+
+NOTA: El chatbot proporciona apoyo informativo básico. Para problemas técnicos
+o consultas que requieran atención personalizada, contacte al administrador
+del sistema.
+
+
+================================================================================
+12. CERRAR SESIÓN
+================================================================================
+
+Para cerrar sesión de forma segura:
+  1. Haga clic en "Cerrar sesión" en la parte inferior del menú lateral.
+  2. El sistema cerrará su sesión y lo redirigirá a la pantalla de login.
+
+Se recomienda siempre cerrar sesión al terminar de usar el sistema,
+especialmente si usa un equipo compartido.
+
+NOTA: Si cierra la ventana del navegador sin cerrar sesión, la sesión
+puede permanecer activa temporalmente. Por seguridad, siempre use el botón
+de "Cerrar sesión".
+
+
+================================================================================
+13. ROLES Y PERMISOS
+================================================================================
+
+El sistema maneja tres niveles de acceso:
+
+┌─────────────────────┬────────────────────────────────────────────────────────┐
+│ ROL                 │ PERMISOS                                               │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ ADMINISTRADOR       │ Acceso completo a todos los módulos.                   │
+│                     │ Puede crear, editar y eliminar usuarios.               │
+│                     │ Puede gestionar fichas ECA, inventario y reportes.     │
+│                     │ Puede ver la bitácora de acciones.                     │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ CAPTURISTA          │ Puede crear y editar fichas ECA.                       │
+│                     │ Puede registrar y editar bienes en inventario.         │
+│                     │ Puede generar reportes PDF.                            │
+│                     │ NO puede administrar usuarios ni ver la bitácora.      │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ CONSULTOR           │ Solo puede ver información (modo lectura).             │
+│                     │ Puede consultar fichas ECA e inventario.               │
+│                     │ Puede ver y descargar reportes generados.              │
+│                     │ NO puede crear, editar ni eliminar registros.          │
+└─────────────────────┴────────────────────────────────────────────────────────┘
+
+Si necesita cambiar su rol o el de otro usuario, contacte al Administrador
+del sistema.
+
+
+================================================================================
+14. PREGUNTAS FRECUENTES
+================================================================================
+
+P: ¿Qué hago si olvidé mi contraseña?
+R: Contacte al administrador del sistema para que restablezca su contraseña.
+   No existe una opción de "recuperar contraseña" por correo en esta versión.
+
+P: ¿Por qué no puedo ver el módulo de Usuarios en el menú?
+R: El módulo de Usuarios solo es visible para usuarios con rol Administrador.
+   Si necesita acceso, solicítelo al administrador.
+
+P: ¿Puedo editar un reporte PDF ya generado?
+R: No. Los PDFs son documentos finales. Para corregir información, modifique
+   los datos en el sistema (ficha ECA o inventario) y genere un nuevo PDF.
+
+P: ¿Por qué al seleccionar un municipio en "Generar Reporte" no aparecen
+   recursos en la tabla?
+R: Puede que no haya recursos registrados para ese municipio y organismo.
+   Verifique en el módulo de Inventario que existan bienes asignados.
+
+P: ¿Los cambios que hago se guardan automáticamente?
+R: No. Siempre debe hacer clic en el botón "Guardar" o "Actualizar" para
+   confirmar los cambios. Si navega a otra página sin guardar, los cambios
+   se perderán.
+
+P: ¿Qué significan los colores en el estado del bien?
+R: Verde = Bueno | Amarillo = Regular | Rojo = Malo / Baja.
+
+P: ¿Cómo sé quién hizo un cambio en el sistema?
+R: El sistema cuenta con una bitácora de acciones que registra automáticamente
+   cada operación (crear, editar, eliminar) junto con el usuario, la fecha,
+   hora y dirección IP. Consulte con el administrador para revisar estos
+   registros.
+
+P: El botón "Generar PDF" no funciona. ¿Qué hago?
+R: Verifique que su navegador no esté bloqueando ventanas emergentes (pop-ups).
+   Si el problema persiste, intente con otro navegador o contacte al soporte.
+
+
+================================================================================
+         FIN DEL MANUAL DE USUARIO
+         Sistema de Recursos CEAA — v1.0 — Marzo 2026
+         Para soporte técnico contacte al administrador del sistema.
+================================================================================

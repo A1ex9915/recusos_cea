@@ -12,10 +12,7 @@ class ReporteController
 
     private function guard()
     {
-        if (empty($_SESSION['user'])) {
-            header('Location: ' . BASE_URI . '/index.php?controller=auth&action=login');
-            exit;
-        }
+        require_role([ROL_ADMIN, ROL_CAPTURISTA, ROL_CONSULTOR]);
     }
 
     private function render(string $vista, array $vars = [])
@@ -97,19 +94,28 @@ class ReporteController
             $this->json(['success' => false, 'error' => 'Método no permitido'], 405);
         }
 
-        $id = (int)($_POST['id'] ?? 0);
-        $archivo = $_POST['archivo'] ?? '';
+        csrf_validate();
 
-        if (!$id || !$archivo) {
+        $id = (int)($_POST['id'] ?? 0);
+        if (!$id) {
             $this->json(['success' => false, 'error' => 'Datos incompletos'], 422);
         }
 
         $pdo = DB::conn();
 
+        // Obtener el nombre real del archivo desde BD (nunca confiar en el cliente)
+        $stmtRep = $pdo->prepare('SELECT archivo FROM pdf_reportes WHERE id = ?');
+        $stmtRep->execute([$id]);
+        $row = $stmtRep->fetch();
+        if (!$row || empty($row['archivo'])) {
+            $this->json(['success' => false, 'error' => 'Reporte no encontrado'], 404);
+        }
+        $archivo = basename($row['archivo']);
+
         // Eliminar archivo físico
         $filePath = dirname(__DIR__) . '/public/pdf/' . $archivo;
         $archivoEliminado = false;
-        
+
         if (file_exists($filePath)) {
             $archivoEliminado = unlink($filePath);
         } else {
@@ -193,19 +199,28 @@ class ReporteController
             $this->json(['success' => false, 'error' => 'Método no permitido'], 405);
         }
 
-        $id = (int)($_POST['id'] ?? 0);
-        $archivo = $_POST['archivo'] ?? '';
+        csrf_validate();
 
-        if (!$id || !$archivo) {
+        $id = (int)($_POST['id'] ?? 0);
+        if (!$id) {
             $this->json(['success' => false, 'error' => 'Datos incompletos'], 422);
         }
 
         $pdo = DB::conn();
 
+        // Obtener el nombre real del archivo desde BD (nunca confiar en el cliente)
+        $stmtRep = $pdo->prepare('SELECT archivo FROM pdf_reportes_anual WHERE id = ?');
+        $stmtRep->execute([$id]);
+        $row = $stmtRep->fetch();
+        if (!$row || empty($row['archivo'])) {
+            $this->json(['success' => false, 'error' => 'Reporte no encontrado'], 404);
+        }
+        $archivo = basename($row['archivo']);
+
         // Eliminar archivo físico
         $filePath = dirname(__DIR__) . '/public/pdf/' . $archivo;
         $archivoEliminado = false;
-        
+
         if (file_exists($filePath)) {
             $archivoEliminado = unlink($filePath);
         } else {
@@ -266,24 +281,33 @@ class ReporteController
             'anio'        => $_GET['anio'] ?? '',
         ];
 
-        $inventario = Inventario::listarReporte($filtros);
+        $todosInventario = Inventario::listarReporte($filtros);
 
         $resumen = [
-            'total'   => count($inventario),
-            'bueno'   => count(array_filter($inventario, fn($i) => $i['estado_bien'] === 'bueno')),
-            'regular' => count(array_filter($inventario, fn($i) => $i['estado_bien'] === 'regular')),
-            'malo'    => count(array_filter($inventario, fn($i) => $i['estado_bien'] === 'malo')),
-            'baja'    => count(array_filter($inventario, fn($i) => $i['estado_bien'] === 'baja')),
+            'total'   => count($todosInventario),
+            'bueno'   => count(array_filter($todosInventario, fn($i) => $i['estado_bien'] === 'bueno')),
+            'regular' => count(array_filter($todosInventario, fn($i) => $i['estado_bien'] === 'regular')),
+            'malo'    => count(array_filter($todosInventario, fn($i) => $i['estado_bien'] === 'malo')),
+            'baja'    => count(array_filter($todosInventario, fn($i) => $i['estado_bien'] === 'baja')),
         ];
 
-        $municipios = Catalogo::municipios();
-        $categorias = Catalogo::categorias();
-        $organismos = Catalogo::organismos();
+        // Paginación
+        $perPage     = 15;
+        $totalItems  = count($todosInventario);
+        $totalPages  = max(1, (int)ceil($totalItems / $perPage));
+        $currentPage = max(1, min((int)($_GET['page'] ?? 1), $totalPages));
+        $offset      = ($currentPage - 1) * $perPage;
+        $inventario  = array_slice($todosInventario, $offset, $perPage);
+
+        $municipios  = Catalogo::municipios();
+        $categorias  = Catalogo::categorias();
+        $organismos  = Catalogo::organismos();
         $ubicaciones = Catalogo::ubicaciones();
 
         $this->render(
             'reportes/inventario.php',
-            compact('inventario', 'resumen', 'municipios', 'categorias', 'organismos', 'ubicaciones')
+            compact('inventario', 'resumen', 'municipios', 'categorias', 'organismos', 'ubicaciones',
+                    'currentPage', 'totalPages', 'totalItems', 'perPage', 'filtros')
         );
     }
 public function generarMunicipioPDF()

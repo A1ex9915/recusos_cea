@@ -1,8 +1,7 @@
-<?php
+﻿<?php
 
 $pdo = DB::conn();
-
-$user_id = $_SESSION['perfil_data']['user_id']; // VIENE DEL CONTROLADOR
+$user_id = $_SESSION['perfil_data']['user_id'];
 
 $stmt = $pdo->prepare("SELECT u.id, u.nombre, u.email, u.foto_perfil, r.nombre AS rol
     FROM usuarios u
@@ -16,398 +15,428 @@ if (!$user) {
     return;
 }
 
-
+$fotoUrl = !empty($user['foto_perfil'])
+    ? BASE_URI . '/' . htmlspecialchars($user['foto_perfil'])
+    : null;
+$inicial = strtoupper(mb_substr($user['nombre'], 0, 1));
 ?>
 
-
 <style>
-:root{
-  --vino:#6e0d25;
-  --vino-osc:#4b0b1b;
-  --dorado:#cba65d;
-  --bg:#f7f7f8;
-  --text:#1f2937;
-  --muted:#6b7280;
-.btn-volver {
-    display: inline-block;
-    padding: 10px 20px;
-    background: #e5e7eb;
-    color: #111;
-    border: none;
-    border-radius: 10px;
-    text-decoration: none;
-    font-weight: 600;
-    transition: all 0.2s ease;
-    cursor: pointer;
-    font-size: 14px;
-    margin-bottom: 20px;
+/* â”€â”€ Variables â”€â”€ */
+:root {
+  --vino: #7b1b3b;
+  --vino-osc: #5d1529;
+  --bg: #f4f5f7;
+  --white: #fff;
+  --text: #1e1e2e;
+  --muted: #6b7280;
+  --border: #e5e7eb;
 }
 
-.btn-volver:hover {
-    background: #d1d5db;
-    transform: translateY(-1px);
-}  --white:#fff;
-}
-
-/* ======= CONTENEDOR PRINCIPAL ======= */
-.perfil-wrapper {
-    display: flex;
-    gap: 40px;
-    padding: 30px;
-    background: var(--bg);
-    border-radius: 12px;
-    width: 100%;
-    max-width: 1100px;
+/* â”€â”€ Layout â”€â”€ */
+.prf-grid {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 24px;
+    max-width: 1060px;
     margin: 0 auto;
-    font-family: Arial, sans-serif;
-    color: var(--text);
+    align-items: start;
+}
+@media (max-width: 800px) {
+    .prf-grid { grid-template-columns: 1fr; }
 }
 
-/* ======= COLUMNA IZQUIERDA ======= */
-.perfil-lateral {
-    width: 340px;
+/* â”€â”€ Tarjeta lateral â”€â”€ */
+.prf-card-left {
     background: var(--white);
-    padding: 25px;
-    border-radius: 12px;
-    text-align: center;
-    /* SIN bordes marcados */
-    box-shadow: 0 1px 5px rgba(0,0,0,0.05);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0,0,0,.07);
 }
-
-.perfil-lateral h2 {
-    margin-top: 15px;
-    font-size: 22px;
-    font-weight: bold;
-    color: var(--vino);
+.prf-banner {
+    height: 80px;
+    background: linear-gradient(135deg, #7b1b3b 0%, #a83260 100%);
 }
-
-.perfil-lateral p {
-    margin: 8px 0;
-    font-size: 15px;
+.prf-avatar-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: -44px;
+    padding: 0 24px 28px;
 }
-
-.perfil-foto img {
-    width: 200px;
-    height: 240px; /* más alta que ancha = óvalo */
+.prf-avatar-img, .prf-avatar-inicial {
+    width: 88px; height: 88px;
+    border-radius: 50%;
+    border: 4px solid #fff;
+    box-shadow: 0 4px 14px rgba(0,0,0,.15);
     object-fit: cover;
-    border-radius: 50%; /* genera óvalo según dimensiones */
 }
+.prf-avatar-inicial {
+    background: linear-gradient(135deg, #7b1b3b, #a83260);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 34px; font-weight: 800; color: #fff;
+}
+.prf-name {
+    margin: 14px 0 4px;
+    font-size: 18px; font-weight: 700; color: var(--text);
+    text-align: center;
+}
+.prf-badge {
+    display: inline-block;
+    background: #ede9fe; color: #5b21b6;
+    padding: 3px 12px; border-radius: 20px;
+    font-size: 12px; font-weight: 700;
+    margin-bottom: 12px;
+}
+.prf-email {
+    font-size: 13px; color: var(--muted);
+    text-align: center; word-break: break-all;
+}
+.prf-divider {
+    height: 1px; background: var(--border);
+    margin: 16px 0;
+}
+.prf-stat {
+    display: flex; justify-content: space-between;
+    font-size: 13px; color: var(--muted);
+    padding: 3px 0;
+}
+.prf-stat strong { color: var(--text); }
 
-/* ======= COLUMNA DERECHA ======= */
-.perfil-formularios {
-    flex: 1;
+/* â”€â”€ Tarjeta derecha â”€â”€ */
+.prf-card-right {
     background: var(--white);
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 1px 5px rgba(0,0,0,0.05);
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0,0,0,.07);
+    overflow: hidden;
 }
 
-.perfil-formularios h3 {
-    margin-bottom: 15px;
-    font-size: 20px;
-    color: var(--vino);
+/* â”€â”€ Tabs â”€â”€ */
+.prf-tabs {
+    display: flex;
+    border-bottom: 2px solid var(--border);
+    background: #fafafa;
 }
+.prf-tab {
+    padding: 14px 24px;
+    font-size: 14px; font-weight: 600; color: var(--muted);
+    cursor: pointer; border-bottom: 2px solid transparent;
+    margin-bottom: -2px; transition: color .2s, border-color .2s;
+    user-select: none;
+    display: flex; align-items: center; gap: 7px;
+}
+.prf-tab:hover { color: var(--vino); }
+.prf-tab.active { color: var(--vino); border-bottom-color: var(--vino); }
 
-/* ======= FORMULARIOS ======= */
-.perfil-formularios label {
+/* â”€â”€ Paneles â”€â”€ */
+.prf-panel { display: none; padding: 28px 30px; }
+.prf-panel.active { display: block; }
+
+/* â”€â”€ Campos â”€â”€ */
+.prf-field { margin-bottom: 18px; }
+.prf-field label {
     display: block;
-    margin-top: 12px;
-    font-weight: bold;
-    font-size: 14px;
-    color: var(--vino-osc);
+    font-size: 12px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: .05em;
+    color: var(--muted); margin-bottom: 7px;
+}
+.prf-field input[type="text"],
+.prf-field input[type="email"],
+.prf-field input[type="password"],
+.prf-field input[type="file"] {
+    width: 100%; padding: 11px 14px;
+    border: 1.5px solid var(--border); border-radius: 10px;
+    font-size: 14px; color: var(--text); background: #fafafa;
+    transition: border-color .2s, box-shadow .2s;
+    box-sizing: border-box;
+}
+.prf-field input:focus {
+    border-color: var(--vino); background: #fff;
+    box-shadow: 0 0 0 4px rgba(123,27,59,.1); outline: none;
+}
+.prf-field input[type="file"] { padding: 8px 14px; cursor: pointer; }
+.prf-hint { font-size: 11px; color: var(--muted); margin-top: 5px; }
+
+/* â”€â”€ Botones â”€â”€ */
+.prf-btn {
+    width: 100%; padding: 12px;
+    border: none; border-radius: 10px;
+    font-size: 14px; font-weight: 700; cursor: pointer;
+    transition: opacity .2s, transform .15s;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.prf-btn:hover:not(:disabled) { opacity: .88; transform: translateY(-1px); }
+.prf-btn:disabled { opacity: .45; cursor: not-allowed; }
+.prf-btn-primary {
+    background: linear-gradient(135deg, #7b1b3b, #a83260);
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(123,27,59,.3);
+}
+.prf-btn-secondary {
+    background: #f3f4f6; color: var(--text);
 }
 
-/* Inputs suaves, SIN bordes visibles */
-.perfil-formularios input[type="text"],
-.perfil-formularios input[type="email"],
-.perfil-formularios input[type="password"],
-.perfil-formularios input[type="file"] {
-    width: 100%;
-    margin-top: 6px;
-    padding: 12px;
-    font-size: 14px;
-    border: none;              /* SIN bordes */
-    border-radius: 8px;
-    background: #f0f0f0;       /* suave */
-    color: var(--text);
-    outline: none;
+/* â”€â”€ Foto preview â”€â”€ */
+.prf-preview-wrap { display: flex; align-items: center; gap: 16px; margin-bottom: 18px; }
+.prf-preview-circle {
+    width: 64px; height: 64px; border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--border);
+}
+.prf-preview-placeholder {
+    width: 64px; height: 64px; border-radius: 50%;
+    background: linear-gradient(135deg, #7b1b3b, #a83260);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; font-weight: 800; color: #fff;
+    border: 3px solid var(--border);
 }
 
-.perfil-formularios input:focus {
-    background: #e7e7e7; /* un toque más oscuro al seleccionar */
+/* â”€â”€ Password fields â”€â”€ */
+.prf-pass-wrap { position: relative; }
+.prf-pass-wrap input { padding-right: 42px; }
+.prf-pass-toggle {
+    position: absolute; right: 12px; top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer; font-size: 16px; opacity: .5;
+    transition: opacity .2s; line-height: 1;
 }
+.prf-pass-toggle:hover { opacity: 1; }
+.pw-status { font-size: 12px; margin-top: 5px; min-height: 16px; }
+.pw-ok  { color: #059669; font-weight: 600; }
+.pw-bad { color: #dc2626; font-weight: 600; }
+.pw-rules { font-size: 11px; color: var(--muted); margin-top: 4px; }
 
-/* ======= BOTONES ======= */
-.btn-actualizar,
-.btn-password {
-    margin-top: 18px;
-    padding: 14px 15px;
-    border: none;
-    font-size: 15px;
-    border-radius: 10px;
-    cursor: pointer;
-    width: 100%;
-    font-weight: bold;
-    color: var(--white);
-}
-
-/* Botón de actualizar */
-.btn-actualizar {
-    background: var(--vino);
-}
-
-.btn-actualizar:hover {
-    background: var(--vino-osc);
-}
-
-/* Botón de cambiar contraseña */
-.btn-password {
-    background: var(--dorado);
-    color: var(--text);
-}
-
-.btn-password:hover {
-    background: var(--vino);
-    color: var(--white);
-}
-
-/* ======= MENSAJE ÉXITO ======= */
-.alert-success {
-    background: var(--dorado);
-    padding: 10px 15px;
-    border-radius: 8px;
-    color: var(--text);
+/* â”€â”€ Alert Ã©xito â”€â”€ */
+.prf-alert-ok {
+    display: flex; align-items: center; gap: 10px;
+    background: #d1fae5; border-left: 4px solid #10b981;
+    color: #065f46; padding: 12px 16px;
+    border-radius: 10px; font-size: 14px; font-weight: 600;
     margin-bottom: 20px;
-    font-size: 14px;
-}
-
-/* ======= RESPONSIVE ======= */
-@media (max-width: 900px) {
-    .perfil-wrapper {
-        flex-direction: column;
-        gap: 20px;
-        padding: 20px;
-    }
-
-    .perfil-lateral {
-        width: 100%;
-    }
 }
 </style>
 
+<div class="prf-grid">
 
-<button type="button" class="btn-volver" onclick="window.history.back()">← Volver</button>
+  <!-- â”€â”€ Tarjeta lateral â”€â”€ -->
+  <div class="prf-card-left">
+    <div class="prf-banner"></div>
+    <div class="prf-avatar-wrap">
+      <?php if ($fotoUrl): ?>
+        <img class="prf-avatar-img" id="prf-avatar-main"
+             src="<?= $fotoUrl ?>" alt="Foto de perfil">
+      <?php else: ?>
+        <div class="prf-avatar-inicial" id="prf-avatar-main"><?= $inicial ?></div>
+      <?php endif; ?>
 
-<div class="perfil-wrapper">
+      <div class="prf-name"><?= htmlspecialchars($user['nombre']) ?></div>
+      <span class="prf-badge"><?= htmlspecialchars($user['rol']) ?></span>
+      <div class="prf-email"><?= htmlspecialchars($user['email']) ?></div>
 
-    <!-- Columna izquierda -->
-    <div class="perfil-lateral">
+      <div class="prf-divider"></div>
+      <div style="width:100%">
+        <div class="prf-stat"><span>ID de usuario</span><strong>#<?= (int)$user['id'] ?></strong></div>
+        <div class="prf-stat"><span>Rol</span><strong><?= htmlspecialchars($user['rol']) ?></strong></div>
+      </div>
+    </div>
+  </div>
 
-        <div class="perfil-foto">
-            <img src="<?= BASE_URI . '/' . htmlspecialchars($user['foto_perfil']) ?>" alt="Foto de perfil">
+  <!-- â”€â”€ Tarjeta derecha con tabs â”€â”€ -->
+  <div class="prf-card-right">
+
+    <!-- Tabs -->
+    <div class="prf-tabs">
+      <div class="prf-tab active" data-tab="datos">
+        <i class="fa-solid fa-user"></i> Mis datos
+      </div>
+      <div class="prf-tab" data-tab="password">
+        <i class="fa-solid fa-lock"></i> Contrase&ntilde;a
+      </div>
+    </div>
+
+    <!-- Panel: datos -->
+    <div class="prf-panel active" id="tab-datos">
+
+      <?php if (isset($_GET['msg'])): ?>
+        <div class="prf-alert-ok">
+          <i class="fa-solid fa-circle-check"></i>
+          <?= htmlspecialchars($_GET['msg']) ?>
+        </div>
+      <?php endif; ?>
+
+      <form action="<?= BASE_URI ?>/index.php?controller=dashboard&action=actualizarPerfil"
+            method="POST" enctype="multipart/form-data">
+
+        <?= csrf_field() ?>
+
+        <!-- Preview foto -->
+        <div class="prf-preview-wrap">
+          <?php if ($fotoUrl): ?>
+            <img id="prf-foto-preview" class="prf-preview-circle" src="<?= $fotoUrl ?>" alt="Preview">
+          <?php else: ?>
+            <div id="prf-foto-preview" class="prf-preview-placeholder"><?= $inicial ?></div>
+          <?php endif; ?>
+          <div>
+            <div style="font-weight:700;font-size:14px;margin-bottom:4px">Foto de perfil</div>
+            <div class="prf-hint">JPG o PNG, m&aacute;x. 2 MB</div>
+          </div>
         </div>
 
-        <h2><?= htmlspecialchars($user['nombre']) ?></h2>
-        <p><strong>Cargo:</strong> <?= htmlspecialchars($user['rol']) ?></p>
-        <p><strong>Correo:</strong> <?= htmlspecialchars($user['email']) ?></p>
+        <div class="prf-field">
+          <label>Foto de perfil</label>
+          <input type="file" name="foto_perfil" accept="image/*" id="prf-file-input">
+        </div>
 
+        <div class="prf-field">
+          <label>Nombre completo</label>
+          <input type="text" name="nombre" required
+                 value="<?= htmlspecialchars($user['nombre']) ?>">
+        </div>
+
+        <div class="prf-field">
+          <label>Correo electr&oacute;nico</label>
+          <input type="email" name="email" required
+                 value="<?= htmlspecialchars($user['email']) ?>">
+        </div>
+
+        <button type="submit" class="prf-btn prf-btn-primary">
+          <i class="fa-solid fa-floppy-disk"></i> Guardar cambios
+        </button>
+      </form>
     </div>
 
-    <!-- Formulario actualización -->
-    <div class="perfil-formularios">
+    <!-- Panel: contrasena -->
+    <div class="prf-panel" id="tab-password">
 
-        <?php if (isset($_GET['msg'])): ?>
-            <div class="alert-success">
-                <?= htmlspecialchars($_GET['msg']); ?>
-            </div>
-        <?php endif; ?>
+      <form action="<?= BASE_URI ?>/index.php?controller=dashboard&action=cambiarPassword"
+            method="POST" id="formPassword">
 
-        <h3>Actualizar datos</h3>
+        <?= csrf_field() ?>
 
-        <form action="<?= BASE_URI ?>/index.php?controller=dashboard&action=actualizarPerfil"
-              method="POST"
-              enctype="multipart/form-data">
+        <div class="prf-field">
+          <label>Contrase&ntilde;a actual</label>
+          <div class="prf-pass-wrap">
+            <input type="password" name="current_password" id="current_password" required
+                   placeholder="Tu contrasena actual">
+            <span class="prf-pass-toggle" onclick="togglePass('current_password')">&#128065;</span>
+          </div>
+        </div>
 
-            <label>Nombre</label>
-            <input type="text" name="nombre" value="<?= htmlspecialchars($user['nombre']) ?>" required>
+        <div class="prf-field">
+          <label>Nueva contrase&ntilde;a</label>
+          <div class="prf-pass-wrap">
+            <input type="password" name="new_password" id="new_password"
+                   required maxlength="16" placeholder="Minimo 8 caracteres">
+            <span class="prf-pass-toggle" onclick="togglePass('new_password')">&#128065;</span>
+          </div>
+          <div class="pw-rules">8-16 caracteres, con may&uacute;sculas, min&uacute;sculas, n&uacute;meros y s&iacute;mbolo.</div>
+          <div class="pw-status" id="password-status"></div>
+        </div>
 
-            <label>Correo electrónico</label>
-            <input type="email" name="email" value="<?= htmlspecialchars($user['email']) ?>" required>
+        <div class="prf-field">
+          <label>Confirmar nueva contrase&ntilde;a</label>
+          <div class="prf-pass-wrap">
+            <input type="password" name="confirm_password" id="confirm_password"
+                   required placeholder="Repite la contrasena">
+            <span class="prf-pass-toggle" onclick="togglePass('confirm_password')">&#128065;</span>
+          </div>
+          <div class="pw-status" id="confirm-status"></div>
+        </div>
 
-            <label>Cambiar foto de perfil</label>
-            <input type="file" name="foto_perfil" accept="image/*">
-
-            <button class="btn-actualizar">Actualizar perfil</button>
-        </form>
-
-        <hr>
-
-       <h3>Cambiar contraseña</h3>
-
-<form action="<?= BASE_URI ?>/index.php?controller=dashboard&action=cambiarPassword"
-      method="POST"
-      id="formPassword">
-
-    <!-- CONTRASEÑA ACTUAL -->
-    <label>Contraseña actual</label>
-    <div class="input-pass">
-        <input type="password" name="current_password" id="current_password" required>
-        <span class="toggle" onclick="togglePass('current_password')">👁️</span>
-    </div>
-    <div id="estado_actual" class="pw-info">Escribe tu contraseña actual.</div>
-
-
-    <!-- NUEVA CONTRASEÑA -->
-    <label>Nueva contraseña</label>
-    <div class="input-pass">
-        <input type="password" name="new_password" id="new_password" required maxlength="16">
-        <span class="toggle" onclick="togglePass('new_password')">👁️</span>
+        <button type="submit" class="prf-btn prf-btn-primary" id="btnGuardar" disabled>
+          <i class="fa-solid fa-key"></i> Cambiar contrase&ntilde;a
+        </button>
+      </form>
     </div>
 
-    <div class="pw-info">
-        La contraseña debe tener entre <b>8 y 16 caracteres</b>, incluir mayúsculas, minúsculas, números y símbolos.
-    </div>
+  </div><!-- /prf-card-right -->
+</div><!-- /prf-grid -->
 
-    <div id="password-status" class="pw-status"></div>
-
-
-    <!-- CONFIRMAR -->
-    <label>Confirmar nueva contraseña</label>
-    <div class="input-pass">
-        <input type="password" name="confirm_password" id="confirm_password" required>
-        <span class="toggle" onclick="togglePass('confirm_password')">👁️</span>
-    </div>
-
-    <div id="confirm-status" class="pw-status"></div>
-
-    <button class="btn-password" id="btnGuardar" disabled>Cambiar contraseña</button>
-</form>
-
-
-<!-- ========= SCRIPT DINÁMICO ========== -->
 <script>
+/* â”€â”€ Tabs â”€â”€ */
+document.querySelectorAll('.prf-tab').forEach(function(tab) {
+  tab.addEventListener('click', function() {
+    document.querySelectorAll('.prf-tab').forEach(function(t){ t.classList.remove('active'); });
+    document.querySelectorAll('.prf-panel').forEach(function(p){ p.classList.remove('active'); });
+    tab.classList.add('active');
+    document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
+  });
+});
+
+/* â”€â”€ Preview foto â”€â”€ */
+document.getElementById('prf-file-input').addEventListener('change', function(){
+  const file = this.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e){
+    let preview = document.getElementById('prf-foto-preview');
+    if (preview.tagName === 'DIV') {
+      // reemplazar placeholder con img
+      const img = document.createElement('img');
+      img.id = 'prf-foto-preview';
+      img.className = 'prf-preview-circle';
+      img.src = e.target.result;
+      preview.parentNode.replaceChild(img, preview);
+    } else {
+      preview.src = e.target.result;
+    }
+  };
+  reader.readAsDataURL(file);
+});
+
+/* â”€â”€ Toggle password â”€â”€ */
 function togglePass(id){
-    const input = document.getElementById(id);
-    input.type = (input.type === "password") ? "text" : "password";
+  const input = document.getElementById(id);
+  input.type = (input.type === 'password') ? 'text' : 'password';
 }
 
-const actual = document.getElementById("current_password");
-const nueva = document.getElementById("new_password");
-const confirmar = document.getElementById("confirm_password");
+/* â”€â”€ ValidaciÃ³n contraseÃ±a â”€â”€ */
+const actual    = document.getElementById('current_password');
+const nueva     = document.getElementById('new_password');
+const confirmar = document.getElementById('confirm_password');
+const statusNueva   = document.getElementById('password-status');
+const statusConfirm = document.getElementById('confirm-status');
+const btnGuardar    = document.getElementById('btnGuardar');
 
-const estadoActual = document.getElementById("estado_actual");
-const statusNueva = document.getElementById("password-status");
-const statusConfirm = document.getElementById("confirm-status");
+function validarTodo(){
+  const pass = nueva.value;
+  const reglas = {
+    length: pass.length >= 8 && pass.length <= 16,
+    mayus:  /[A-Z]/.test(pass),
+    minus:  /[a-z]/.test(pass),
+    numero: /\d/.test(pass),
+    simbolo:/[\W_]/.test(pass)
+  };
+  const pendientes = [];
+  if (!reglas.length)  pendientes.push('8-16 caracteres');
+  if (!reglas.mayus)   pendientes.push('may\u00fascula');
+  if (!reglas.minus)   pendientes.push('min\u00fascula');
+  if (!reglas.numero)  pendientes.push('n\u00famero');
+  if (!reglas.simbolo) pendientes.push('s\u00edmbolo');
 
-const btnGuardar = document.getElementById("btnGuardar");
+  if (pass.length === 0) {
+    statusNueva.innerHTML = '';
+  } else if (pendientes.length === 0) {
+    statusNueva.innerHTML = "<span class='pw-ok'>&#10004; Contrase&ntilde;a v&aacute;lida</span>";
+  } else {
+    statusNueva.innerHTML = "Falta: <b>" + pendientes.join(', ') + "</b>";
+  }
 
-function validarTodo() {
-
-    let pass = nueva.value;
-
-    // Reglas
-    let reglas = {
-        length: pass.length >= 8 && pass.length <= 16,
-        mayus: /[A-Z]/.test(pass),
-        minus: /[a-z]/.test(pass),
-        numero: /\d/.test(pass),
-        simbolo: /[\W_]/.test(pass)
-    };
-
-    let pendientes = [];
-
-    if (!reglas.length) pendientes.push("8–16 caracteres");
-    if (!reglas.mayus) pendientes.push("mayúscula");
-    if (!reglas.minus) pendientes.push("minúscula");
-    if (!reglas.numero) pendientes.push("número");
-    if (!reglas.simbolo) pendientes.push("símbolo");
-
-    // Mostrar qué falta
-    if (pass.length === 0) {
-        statusNueva.innerHTML = "";
-    } else if (pendientes.length === 0) {
-        statusNueva.innerHTML = "<span class='ok'>Contraseña válida ✔</span>";
+  if (confirmar.value.length > 0) {
+    if (confirmar.value === pass) {
+      statusConfirm.innerHTML = "<span class='pw-ok'>&#10004; Las contrase&ntilde;as coinciden</span>";
     } else {
-        statusNueva.innerHTML = "Falta: <b>" + pendientes.join(", ") + "</b>";
+      statusConfirm.innerHTML = "<span class='pw-bad'>&#10008; Las contrase&ntilde;as no coinciden</span>";
     }
+  } else {
+    statusConfirm.innerHTML = '';
+  }
 
-    // Confirmación
-    if (confirmar.value.length > 0) {
-        if (confirmar.value === pass) {
-            statusConfirm.innerHTML = "<span class='ok'>Las contraseñas coinciden ✔</span>";
-        } else {
-            statusConfirm.innerHTML = "<span class='bad'>Las contraseñas no coinciden</span>";
-        }
-    } else {
-        statusConfirm.innerHTML = "";
-    }
-
-    // Validar si puede enviar
-    const cumpleTodo = pendientes.length === 0 && confirmar.value === pass && actual.value.length > 0;
-
-    btnGuardar.disabled = !cumpleTodo;
+  btnGuardar.disabled = !(pendientes.length === 0 && confirmar.value === pass && actual.value.length > 0);
 }
 
-nueva.addEventListener("input", validarTodo);
-confirmar.addEventListener("input", validarTodo);
-actual.addEventListener("input", validarTodo);
+nueva.addEventListener('input', validarTodo);
+confirmar.addEventListener('input', validarTodo);
+actual.addEventListener('input', validarTodo);
 </script>
 
-
-<!-- ========= ESTILOS ========== -->
-<style>
-.input-pass {
-    position: relative;
-    display: flex;
-    align-items: center;
-}
-
-.input-pass input {
-    width: 100%;
-    padding-right: 35px;
-    font-size: 14px;
-    font-weight: 300; /* letra delgada */
-}
-
-.input-pass .toggle {
-    position: absolute;
-    right: 10px;
-    cursor: pointer;
-    opacity: .6;
-    transition: .2s;
-    font-size: 15px;
-}
-
-.input-pass .toggle:hover {
-    opacity: 1;
-}
-
-.pw-info {
-    font-size: 12px;
-    font-weight: 300;
-    color: var(--muted);
-    margin: 4px 0 8px;
-}
-
-.pw-status {
-    font-size: 13px;
-    font-weight: 300;
-    margin-bottom: 10px;
-}
-
-.ok {
-    color: green;
-    font-weight: 400;
-}
-
-.bad {
-    color: var(--vino);
-    font-weight: 400;
-}
-</style>
-
-        </form>
-
-    </div>
-
-</div>

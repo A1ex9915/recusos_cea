@@ -1,4 +1,5 @@
 <?php
+date_default_timezone_set('America/Mexico_City');
 session_start();
 
 /* Helpers de ruta para assets */
@@ -27,6 +28,7 @@ spl_autoload_register(function ($class) {
 /* Config/DB */
 require_once __DIR__ . '/../config/config.php';
 require_once __DIR__ . '/../config/database.php';
+require_once __DIR__ . '/../config/helpers.php';
 
 /* Router */
 $controller = $_GET['controller'] ?? 'auth';
@@ -41,6 +43,8 @@ $map = [
     'reportes'   => 'ReporteController',
     'reporte'    => 'ReporteController',  // ← AGREGAR ESTA LÍNEA
     'manual'     => 'ManualController',
+    'chatbot'    => 'ChatbotController',
+    'bitacora'   => 'BitacoraController',
 ];
 
 

@@ -1,6 +1,18 @@
 <?php
 if (session_status() === PHP_SESSION_NONE) session_start();
 
+// Verificar autenticación y CSRF
+if (empty($_SESSION['user'])) {
+    header('Location: ' . BASE_URI . '/index.php?controller=auth&action=login');
+    exit;
+}
+csrf_validate();
+
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    header('Location: ' . BASE_URI . '/index.php?controller=dashboard&action=perfil');
+    exit;
+}
+
 $pdo = DB::conn();
 
 $user_id = (int) $_SESSION['user']['id'];

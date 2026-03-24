@@ -1,112 +1,47 @@
 <style>
-/* ==========================
-   ESTILOS INSTITUCIONALES CEAA
-   ========================== */
 .formatos-page{
-  padding:25px;
-  font-family:"Segoe UI",sans-serif;
+  padding:20px 24px;
   background:#f4f4f4;
 }
-
-/* ==========================
-   CONTENEDOR GENERAL
-   ========================== */
 .formatos-grid{
   display:grid;
   grid-template-columns:260px 1fr;
-  gap:25px;
-}
-
-@media(max-width:900px){
-  .formatos-grid{
-    grid-template-columns:1fr;
-  }
-}
-
-/* ==========================
-   SIDEBAR
-   ========================== */
-.formatos-sidebar{
-  background:white;
-  padding:20px;
-  border-radius:14px;
-  box-shadow:0 4px 14px rgba(0,0,0,.12);
-}
-
-.formatos-sidebar h3{
-  color:#7a0d1c;
-  font-weight:700;
-  margin-bottom:10px;
-}
-
-/* ==========================
-   BOTONES CEAA (MEJORADOS)
-   ========================== */
-.btn-ceaa-outline{
-  display:block;
-  padding:10px 14px;
-  border:2px solid #7a0d1c;
-  color:#7a0d1c;
-  border-radius:8px;
-  margin-bottom:12px;
-  font-weight:600;
-  text-align:center;
-  text-decoration:none;
-  transition:.2s;
-}
-
-.btn-ceaa-outline:hover{
-  background:#7a0d1c;
-  color:#fff;
-}
-
-/* ==========================
-   TARJETA PRINCIPAL
-   ========================== */
-.dashboard-card{
-  background:white;
-  padding:25px;
-  border-radius:16px;
-  box-shadow:0 4px 12px rgba(0,0,0,.10);
-}
-
-.dashboard-card h2{
-  color:#7a0d1c;
-  font-weight:700;
-  margin-bottom:20px;
-}
-
-/* ==========================
-   GRID DE GRÁFICAS
-   ========================== */
-.chart-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit, minmax(320px, 1fr));
   gap:20px;
 }
-
-/* ==========================
-   TARJETAS DE GRÁFICAS
-   ========================== */
+@media(max-width:900px){
+  .formatos-grid{ grid-template-columns:1fr; }
+}
+.chart-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+  gap:18px;
+}
 .chart-box{
-  background:#fafafa;
+  background:#fff;
   border-radius:14px;
-  padding:15px;
-  box-shadow:0 3px 9px rgba(0,0,0,.08);
-  height:380px;
+  padding:18px 16px;
+  box-shadow:0 4px 14px rgba(15,23,42,.07);
+  height:360px;
   display:flex;
   flex-direction:column;
-  position:relative;
+  border-top:3px solid #7b1b3b;
 }
-
-.chart-box h3{
-  color:#7a0d1c;
-  font-size:16px;
-  margin-bottom:10px;
+.chart-box-title{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin-bottom:12px;
   flex-shrink:0;
 }
-
-/* Contenedor del canvas */
+.chart-box-title i{
+  color:#7b1b3b;
+  font-size:0.85rem;
+}
+.chart-box-title span{
+  font-size:0.9rem;
+  font-weight:700;
+  color:#1f2933;
+}
 .chart-box canvas{
   flex:1;
   min-height:0;
@@ -119,75 +54,89 @@
 
 <section class="formatos-page">
 
+  <!-- ===== HERO ===== -->
+  <div class="fmt-hero">
+    <div class="fmt-hero-content">
+      <div class="fmt-hero-left">
+        <span class="fmt-hero-icon"><i class="fa-solid fa-chart-column"></i></span>
+        <div>
+          <h2 class="fmt-hero-title">Formatos y Capturas</h2>
+          <p class="fmt-hero-sub">Estad&iacute;sticas generales e informaci&oacute;n del sistema CEAA.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="formatos-grid">
 
     <!-- SIDEBAR -->
     <aside class="formatos-sidebar">
 
-      <h3>Acciones rápidas</h3>
+      <p class="fmt-sidebar-label"><i class="fa-solid fa-bolt"></i> Acciones r&aacute;pidas</p>
 
-      <a href="<?= BASE_URI ?>/index.php?controller=formatos&action=generarReporte" class="btn-ceaa-outline">
-        Generar reporte
+      <a href="<?= BASE_URI ?>/index.php?controller=formatos&action=generarReporte" class="fmt-btn-action">
+        <i class="fa-solid fa-file-arrow-down"></i> Generar reporte
       </a>
 
-      <a href="<?= BASE_URI ?>/index.php?controller=formatos&action=capturaECA" class="btn-ceaa-outline">
-        Nueva Ficha Técnica ECA
+      <a href="<?= BASE_URI ?>/index.php?controller=formatos&action=capturaECA" class="fmt-btn-action">
+        <i class="fa-solid fa-plus"></i> Nueva Ficha T&eacute;cnica ECA
       </a>
 
-      <a href="<?= BASE_URI ?>/index.php?controller=formatos&action=consultaECA" class="btn-ceaa-outline">
-        Consultar Fichas ECA
+      <a href="<?= BASE_URI ?>/index.php?controller=formatos&action=consultaECA" class="fmt-btn-action">
+        <i class="fa-solid fa-magnifying-glass"></i> Consultar Fichas ECA
       </a>
 
-      <a href="<?= BASE_URI ?>/index.php?controller=reportes&action=inventario" class="btn-ceaa-outline">
-        Inventario
+      <a href="<?= BASE_URI ?>/index.php?controller=reportes&action=inventario" class="fmt-btn-action">
+        <i class="fa-solid fa-boxes-stacked"></i> Inventario
       </a>
 
-      <a href="<?= BASE_URI ?>/index.php?controller=reportes&action=listarReportesMunicipales" class="btn-ceaa-outline">
-        Ver Reportes Municipales
+      <a href="<?= BASE_URI ?>/index.php?controller=reportes&action=listarReportesMunicipales" class="fmt-btn-action">
+        <i class="fa-solid fa-map-location-dot"></i> Ver Reportes Municipales
       </a>
 
-      <a href="<?= BASE_URI ?>/index.php?controller=reportes&action=listarReportesAnuales" class="btn-ceaa-outline">
-        Ver Reportes Anuales
+      <a href="<?= BASE_URI ?>/index.php?controller=reportes&action=listarReportesAnuales" class="fmt-btn-action">
+        <i class="fa-solid fa-calendar-days"></i> Ver Reportes Anuales
       </a>
 
-      <hr>
+      <div class="fmt-sidebar-divider"></div>
 
-      <h3>Tipo de gráfica</h3>
-      <select id="tipoGrafica" class="form-select" style="padding:8px;border-radius:6px;border:1px solid #ccc;">
+      <p class="fmt-sidebar-label"><i class="fa-solid fa-sliders"></i> Tipo de gr&aacute;fica</p>
+      <select id="tipoGrafica" class="fmt-select">
         <option value="bar">Barras</option>
-        <option value="line">Línea</option>
+        <option value="line">L&iacute;nea</option>
         <option value="pie">Pie</option>
         <option value="doughnut">Dona</option>
       </select>
 
     </aside>
 
-
-
     <!-- CONTENIDO PRINCIPAL -->
     <div class="dashboard-card">
 
-      <h2>Estadísticas Generales</h2>
+      <div class="fmt-stats-header">
+        <span class="fmt-stats-icon"><i class="fa-solid fa-chart-pie"></i></span>
+        <h2>Estad&iacute;sticas Generales</h2>
+      </div>
 
       <div class="chart-grid">
 
         <div class="chart-box">
-          <h3>Inventario por Categoría</h3>
+          <div class="chart-box-title"><i class="fa-solid fa-tag"></i><span>Inventario por Categor&iacute;a</span></div>
           <canvas id="chartCategoria"></canvas>
         </div>
 
         <div class="chart-box">
-          <h3>Estado del Bien</h3>
+          <div class="chart-box-title"><i class="fa-solid fa-circle-check"></i><span>Estado del Bien</span></div>
           <canvas id="chartEstado"></canvas>
         </div>
 
         <div class="chart-box">
-          <h3>Inventario por Municipio</h3>
+          <div class="chart-box-title"><i class="fa-solid fa-map-location-dot"></i><span>Inventario por Municipio</span></div>
           <canvas id="chartMunicipio"></canvas>
         </div>
 
         <div class="chart-box">
-          <h3>Fichas ECA — Por Municipio</h3>
+          <div class="chart-box-title"><i class="fa-solid fa-water"></i><span>Fichas ECA &mdash; Por Municipio</span></div>
           <canvas id="chartFicha"></canvas>
         </div>
 

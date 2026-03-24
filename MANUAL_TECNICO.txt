@@ -1,0 +1,1184 @@
+================================================================================
+         MANUAL TÉCNICO — SISTEMA DE RECURSOS CEAA
+         Comisión Estatal del Agua y Alcantarillado
+         Versión 1.0 | Marzo 2026
+================================================================================
+
+ÍNDICE
+------
+  1.  Descripción general del sistema
+  2.  Requisitos del servidor
+  3.  Estructura de directorios del proyecto
+  4.  Configuración del entorno
+       4.1  Archivo config/config.php
+       4.2  Archivo config/database.php
+  5.  Arquitectura de la aplicación (MVC)
+       5.1  Front Controller y Router (public/index.php)
+       5.2  Autoload de clases
+       5.3  Flujo de una petición HTTP
+  6.  Módulo de autenticación y sesiones
+       6.1  Inicio de sesión
+       6.2  Cierre de sesión
+       6.3  Protección de controladores (guardas)
+  7.  Sistema de roles y permisos
+  8.  Protección CSRF
+  9.  Capa de acceso a datos (modelos)
+       9.1  Clase DB (singleton PDO)
+       9.2  Modelo User
+       9.3  Modelo Inventario
+       9.4  Modelo EcaFicha
+       9.5  Modelo Catalogo
+       9.6  Modelo Role, Municipio, Organismo, Reporte
+  10. Controladores
+       10.1 AuthController
+       10.2 DashboardController
+       10.3 UserController
+       10.4 FormatoController
+       10.5 InventarioController
+       10.6 ReporteController
+       10.7 ManualController
+       10.8 ChatbotController
+  11. Vistas y layout
+       11.1 Plantilla maestra (views/dashboard.php)
+       11.2 Organización de vistas
+       11.3 Carga condicional de hojas de estilo
+  12. Generación de PDFs
+       12.1 Reportes municipales (mPDF)
+       12.2 Reportes anuales (mPDF)
+       12.3 Ficha técnica ECA (dompdf)
+  13. Exportación a Excel (PhpSpreadsheet)
+  14. Sistema de bitácora (auditoría)
+       14.1 Clase Bitacora
+       14.2 Tabla bitacora_acciones
+       14.3 Eventos registrados
+  15. Subida de archivos
+  16. Esquema de base de datos
+       16.1 Tablas principales
+       16.2 Relaciones clave
+  17. Dependencias externas (Composer)
+  18. Estructura de assets
+  19. Scripts de mantenimiento
+  20. Seguridad aplicada
+  21. Errores comunes y soluciones
+  22. Guía de despliegue y actualización
+
+
+================================================================================
+1. DESCRIPCIÓN GENERAL DEL SISTEMA
+================================================================================
+
+El Sistema de Recursos CEAA es una aplicación web desarrollada en PHP puro
+siguiendo el patrón de diseño MVC (Modelo-Vista-Controlador), sin uso de
+frameworks externos.
+
+  - Lenguaje      : PHP 8.x
+  - Base de datos : MariaDB 10.4 / MySQL 8.x
+  - Servidor web  : Apache 2.4 (XAMPP)
+  - Dependencias  : phpoffice/phpspreadsheet, dompdf/dompdf, mpdf/mpdf
+  - Gestión deps  : Composer
+  - Base URL      : http://localhost/ceaa_recursos/public/
+  - Nombre BD     : sistema_ceaa
+
+
+================================================================================
+2. REQUISITOS DEL SERVIDOR
+================================================================================
+
+  Software requerido:
+    - PHP 8.0 o superior
+    - Extensiones PHP: pdo, pdo_mysql, mbstring, gd, fileinfo, zip, curl,
+                       openssl, json, intl
+    - Apache 2.4+ con mod_rewrite habilitado
+    - MariaDB 10.4+ o MySQL 8.0+
+    - Composer 2.x (para instalar y actualizar dependencias)
+
+  Hardware mínimo:
+    - 2 GB de RAM disponibles
+    - 1 GB de espacio en disco para la aplicación y PDFs generados
+
+  Recomendado en producción:
+    - Habilitar HTTPS (SSL/TLS)
+    - PHP con OPcache habilitado para mejor rendimiento
+    - Límite de memoria PHP: 256M o superior (requerido por mPDF)
+
+
+================================================================================
+3. ESTRUCTURA DE DIRECTORIOS DEL PROYECTO
+================================================================================
+
+ceaa_recursos/
+├── composer.json               Dependencias del proyecto
+├── vendor/                     Librerías instaladas por Composer
+├── config/
+│   ├── config.php              Configuración general (app_name, base_url)
+│   ├── database.php            Clase DB — conexión PDO a MySQL
+│   └── helpers.php             Funciones globales (asset(), csrf_token(),
+│                               csrf_validate(), require_role())
+├── controllers/
+│   ├── AuthController.php      Login, logout
+│   ├── DashboardController.php Inicio, perfil, cambio de contraseña
+│   ├── UserController.php      CRUD usuarios (solo admin)
+│   ├── FormatoController.php   Fichas ECA, captura, consulta, edición, PDF
+│   ├── InventarioController.php CRUD inventario de bienes
+│   ├── ReporteController.php   Lista y elimina reportes municipales/anuales
+│   ├── ManualController.php    Sirve el manual técnico en PDF
+│   ├── ChatbotController.php   Respuestas del asistente virtual
+│   ├── actualizar_perfil.php   Acción AJAX para actualizar datos de perfil
+│   ├── cambiar_password.php    Acción AJAX para cambiar contraseña
+│   └── export/
+│       ├── InventarioFormatoAnual.php       Excel inventario anual
+│       ├── InventarioFormatoAnualPDF.php    PDF inventario anual
+│       ├── InventarioFormatoMunicipio.php   Excel inventario municipal
+│       ├── InventarioFormatoMunicipioPDF.php PDF inventario municipal
+│       └── pdf_eca.php                      PDF ficha técnica ECA
+├── models/
+│   ├── Bitacora.php            Registro de auditoría en BD
+│   ├── Catalogo.php            Catálogos (categorías, unidades, organismos...)
+│   ├── EcaFicha.php            CRUD fichas técnicas ECA
+│   ├── Formato.php             Formatos genéricos
+│   ├── FormatoModel.php        Lógica de formatos PDF
+│   ├── Inventario.php          CRUD bienes del inventario
+│   ├── Municipio.php           Catálogo de municipios
+│   ├── Organismo.php           Catálogo de organismos
+│   ├── Reporte.php             Gestión de reportes generados
+│   ├── Role.php                Catálogo de roles del sistema
+│   └── User.php                CRUD usuarios
+├── views/
+│   ├── dashboard.php           Plantilla maestra (layout principal)
+│   ├── auth/
+│   │   └── login.php
+│   ├── dashboard/
+│   │   ├── inicio.php
+│   │   └── perfil.php
+│   ├── formatos/
+│   │   ├── index.php           Dashboard de formatos con Chart.js
+│   │   ├── captura_eca.php     Alta de nueva ficha ECA
+│   │   ├── eca_consulta.php    Búsqueda y listado de fichas
+│   │   ├── ver_eca.php         Detalle de ficha (solo lectura)
+│   │   ├── editar_eca.php      Edición de ficha ECA
+│   │   └── reporte.php         Generador de reportes PDF
+│   ├── inventario/
+│   │   ├── captura.php         Alta rápida de bien
+│   │   └── form.php            Formulario completo de bien
+│   ├── layouts/                Vistas parciales reutilizables
+│   ├── reportes/
+│   │   ├── municipales.php     Listado de reportes municipales
+│   │   ├── anuales.php         Listado de reportes anuales
+│   │   └── inventario.php      Inventario con búsqueda y edición modal
+│   └── users/
+│       ├── index.php           Lista de usuarios
+│       ├── create.php          Formulario de nuevo usuario
+│       └── form.php            Formulario de edición
+├── public/
+│   ├── index.php               Front Controller — punto de entrada único
+│   └── assets/
+│       ├── css/                Hojas de estilo por módulo
+│       ├── js/                 Scripts JavaScript
+│       ├── img/                Imágenes estáticas
+│       ├── formatos/           Plantillas de formatos
+│       └── uploads/perfiles/   Fotos de perfil de usuarios
+├── sql_updates/                Scripts SQL de actualizaciones de esquema
+├── scripts/                    Scripts de migración y utilidades
+└── Chatbotweb/                 Módulo del chatbot (independiente)
+    ├── index.php
+    ├── enviar-correo.php
+    └── vendor/                 Librerías del chatbot (PHPMailer)
+
+
+================================================================================
+4. CONFIGURACIÓN DEL ENTORNO
+================================================================================
+
+────────────────────────────────────────────────────────────────────────────────
+4.1  config/config.php
+────────────────────────────────────────────────────────────────────────────────
+
+Retorna un array asociativo con configuración básica:
+
+    <?php
+    return [
+      'app_name'     => 'CEAA — Recursos',
+      'base_url'     => rtrim(dirname($_SERVER['SCRIPT_NAME']), '/'),
+      'session_name' => 'ceaa_sess'
+    ];
+
+  PARÁMETROS
+  ----------
+  app_name      Nombre de la aplicación (mostrado en el título del navegador).
+  base_url      URL base calculada dinámicamente desde el servidor.
+                En XAMPP local: /ceaa_recursos/public
+  session_name  Nombre de la cookie de sesión.
+
+  CONSTANTE DEFINIDA en public/index.php:
+    define('BASE_URI', rtrim(dirname($_SERVER['SCRIPT_NAME']), '/'))
+  Disponible globalmente. Se usa para construir URLs absolutas dentro del
+  sistema.
+
+────────────────────────────────────────────────────────────────────────────────
+4.2  config/database.php
+────────────────────────────────────────────────────────────────────────────────
+
+Contiene la clase DB con patrón Singleton para la conexión PDO:
+
+    class DB {
+      private static $pdo = null;
+      public static function conn() {
+        if (!self::$pdo) {
+          $dsn = 'mysql:host=localhost;dbname=sistema_ceaa;charset=utf8mb4';
+          self::$pdo = new PDO($dsn, 'root', '', [
+            PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+          ]);
+        }
+        return self::$pdo;
+      }
+    }
+
+  ATRIBUTOS DE CONEXIÓN
+  ----------------------
+  host          localhost
+  dbname        sistema_ceaa
+  charset       utf8mb4 (soporta caracteres especiales y emojis)
+  usuario       root
+  password      (vacío — ajustar en producción con credenciales seguras)
+  errmode       ERRMODE_EXCEPTION — las fallas de BD lanzan excepciones PHP
+  fetch_mode    FETCH_ASSOC — los resultados se obtienen como array asociativo
+
+  IMPORTANTE PARA PRODUCCIÓN:
+  - Cambiar 'root' y '' por credenciales del usuario de BD con permisos
+    mínimos necesarios (solo SELECT/INSERT/UPDATE/DELETE en sistema_ceaa).
+  - Nunca usar root sin contraseña en un servidor de producción.
+  - Considerar mover credenciales a variables de entorno o archivo .env.
+
+
+================================================================================
+5. ARQUITECTURA DE LA APLICACIÓN (MVC)
+================================================================================
+
+────────────────────────────────────────────────────────────────────────────────
+5.1  Front Controller y Router (public/index.php)
+────────────────────────────────────────────────────────────────────────────────
+
+Todas las peticiones web deben entrar a través de:
+  http://servidor/ceaa_recursos/public/index.php
+
+El enrutamiento usa dos parámetros GET:
+  - controller : identifica qué controlador manejar la petición
+  - action     : identifica qué método del controlador ejecutar
+
+Ejemplo de URL:
+  index.php?controller=formatos&action=capturaECA
+  → Instancia FormatoController y llama al método capturaECA()
+
+MAPA DE CONTROLLERS:
+  controller    → Clase PHP
+  ─────────────────────────────────────────
+  auth          → AuthController
+  dashboard     → DashboardController
+  users         → UserController
+  formatos      → FormatoController
+  inventario    → InventarioController
+  reportes      → ReporteController
+  reporte       → ReporteController  (alias)
+  manual        → ManualController
+  chatbot       → ChatbotController
+
+Si el controlador o la acción no existen, el sistema responde con HTTP 404.
+
+────────────────────────────────────────────────────────────────────────────────
+5.2  Autoload de clases
+────────────────────────────────────────────────────────────────────────────────
+
+Se registra un autoloader con spl_autoload_register que busca archivos de
+clase en estas rutas (en orden):
+
+  1. __DIR__ . '/../app/controllers/'
+  2. __DIR__ . '/../app/models/'
+  3. __DIR__ . '/../controllers/'
+  4. __DIR__ . '/../models/'
+
+Para añadir una nueva clase basta con crear el archivo NombreClase.php en la
+carpeta controllers/ o models/, con class NombreClase { } adentro. El sistema
+la cargará automáticamente sin configuración adicional.
+
+────────────────────────────────────────────────────────────────────────────────
+5.3  Flujo de una petición HTTP
+────────────────────────────────────────────────────────────────────────────────
+
+  1. Navegador envía GET/POST a public/index.php
+  2. index.php inicia sesión (session_start)
+  3. index.php define BASE_URI y la función asset()
+  4. index.php carga config.php, database.php, helpers.php
+  5. index.php lee ?controller y ?action de $_GET
+  6. index.php busca la clase en el mapa y la instancia
+  7. index.php llama al método $action() en la instancia
+  8. El método del controlador:
+       a. Verifica autenticación / rol (guardar o redirigir)
+       b. Llama a modelos para obtener datos
+       c. Llama a la vista con extract() + require
+  9. La vista incluye dashboard.php (layout) que inyecta el HTML final
+ 10. El HTML se devuelve al navegador
+
+
+================================================================================
+6. MÓDULO DE AUTENTICACIÓN Y SESIONES
+================================================================================
+
+────────────────────────────────────────────────────────────────────────────────
+6.1  Inicio de sesión (AuthController::doLogin)
+────────────────────────────────────────────────────────────────────────────────
+
+Flujo:
+  1. POST a ?controller=auth&action=doLogin con email y password.
+  2. Se busca el usuario con User::findByEmail($email).
+  3. Se verifica con password_verify($pass, $user['password_hash']).
+  4. Se verifica que el campo activo = 1.
+  5. Si falla cualquier paso → se registra en bitácora como 'login_fallido'
+     y se redirige al login con mensaje flash.
+  6. Si todo es correcto → se almacena en sesión:
+
+    $_SESSION['user'] = [
+      'id'          => $user['id'],
+      'nombre'      => $user['nombre'],
+      'email'       => $user['email'],
+      'rol_id'      => $user['rol_id'],
+      'foto_perfil' => $user['foto_perfil'] ?? '',
+    ];
+
+  7. Se registra en bitácora como 'login' y se redirige al dashboard.
+
+  Las contraseñas se almacenan con PHP PASSWORD_DEFAULT (bcrypt).
+  Nunca se almacena ni transmite la contraseña en texto plano.
+
+────────────────────────────────────────────────────────────────────────────────
+6.2  Cierre de sesión (AuthController::logout)
+────────────────────────────────────────────────────────────────────────────────
+
+  1. Se registra en bitácora como 'logout'.
+  2. Se destruye la sesión con session_destroy().
+  3. Se redirige al login.
+
+────────────────────────────────────────────────────────────────────────────────
+6.3  Protección de controladores
+────────────────────────────────────────────────────────────────────────────────
+
+Cada controlador que requiere autenticación llama a uno de estos helpers
+definidos en config/helpers.php:
+
+  require_role([ROL_ADMIN])
+    → Verifica que $_SESSION['user'] exista Y que rol_id esté en el array.
+    → Si no está autenticado: redirige al login.
+    → Si no tiene el rol requerido: HTTP 403 "No autorizado".
+
+  require_role([ROL_ADMIN, ROL_CAPTURISTA])
+    → Permite acceso a los dos roles indicados.
+
+CONSTANTES DE ROLES (definidas en helpers.php):
+  define('ROL_ADMIN',      1);
+  define('ROL_CAPTURISTA', 2);
+  define('ROL_CONSULTOR',  3);
+
+Ejemplo de uso en controlador:
+  private function guard(){
+      require_role([ROL_ADMIN, ROL_CAPTURISTA]);
+  }
+
+
+================================================================================
+7. SISTEMA DE ROLES Y PERMISOS
+================================================================================
+
+Los roles se almacenan en la tabla 'roles' de la base de datos.
+El rol del usuario se almacena en usuarios.rol_id (FK a roles.id).
+
+  ID  | Nombre       | Accesos
+  ────|──────────────|────────────────────────────────────────────────────
+    1 | Administrador| Todos los módulos, CRUD completo, gestión de usuarios
+    2 | Capturista   | Crear y editar ECA, inventario, y generar PDFs
+    3 | Consultor    | Solo lectura: ver fichas ECA, inventario y reportes
+
+Tabla 'roles' en BD:
+  CREATE TABLE roles (
+    id     INT PRIMARY KEY AUTO_INCREMENT,
+    nombre VARCHAR(50) NOT NULL
+  );
+
+Los controladores que son exclusivos del administrador usan guardAdmin()
+que verifica explícitamente rol_id = 1:
+  if ((int)$_SESSION['user']['rol_id'] !== 1){
+      http_response_code(403); exit('No autorizado');
+  }
+
+
+================================================================================
+8. PROTECCIÓN CSRF
+================================================================================
+
+El sistema implementa protección CSRF (Cross-Site Request Forgery) en todos
+los formularios que modifican datos (POST).
+
+GENERACIÓN DEL TOKEN (helpers.php — función csrf_token()):
+  - Si no existe `$_SESSION['csrf_token']`, genera uno con bin2hex(random_bytes(32)).
+  - Devuelve el token como string hexadecimal de 64 caracteres.
+
+USO EN VISTAS:
+  En cada formulario POST se incluye:
+    <input type="hidden" name="csrf_token" value="<?= csrf_token() ?>">
+
+VALIDACIÓN (helpers.php — función csrf_validate()):
+  - Obtiene el token del POST ($_POST['csrf_token']).
+  - Compara con el token guardado en sesión usando hash_equals().
+  - Si no coinciden: HTTP 403 y detiene la ejecución.
+
+El uso de hash_equals() previene ataques de timing comparison.
+Se llama csrf_validate() al inicio de TODOS los métodos store/update/destroy.
+
+
+================================================================================
+9. CAPA DE ACCESO A DATOS (MODELOS)
+================================================================================
+
+────────────────────────────────────────────────────────────────────────────────
+9.1  Clase DB (config/database.php)
+────────────────────────────────────────────────────────────────────────────────
+
+Singleton que provee una única instancia PDO reutilizable.
+Se accede con: DB::conn()
+
+  $stmt = DB::conn()->prepare("SELECT * FROM tabla WHERE id = ?");
+  $stmt->execute([$id]);
+  $fila = $stmt->fetch(); // array asociativo
+
+Todas las consultas usan prepared statements parametrizados para prevenir
+inyección SQL.
+
+────────────────────────────────────────────────────────────────────────────────
+9.2  Modelo User (models/User.php)
+────────────────────────────────────────────────────────────────────────────────
+
+Métodos estáticos disponibles:
+
+  User::findByEmail($email)       Busca usuario por email. Devuelve array o null.
+  User::all()                     Lista todos los usuarios con JOIN a roles.
+  User::find($id)                 Busca usuario por ID. Devuelve array o null.
+  User::create($data)             Inserta nuevo usuario. Hashea contraseña
+                                  automáticamente con PASSWORD_DEFAULT.
+  User::update($id, $data)        Actualiza nombre, email, rol, activo.
+                                  Si $data['password'] no está vacío, también
+                                  actualiza la contraseña (nuevo hash).
+  User::delete($id)               Elimina al usuario por ID.
+
+Columnas de la tabla 'usuarios':
+  id, nombre, email, password_hash, rol_id, activo, foto_perfil, created_at
+
+────────────────────────────────────────────────────────────────────────────────
+9.3  Modelo Inventario (models/Inventario.php)
+────────────────────────────────────────────────────────────────────────────────
+
+Métodos:
+  Inventario::listar($q)          Lista bienes. Acepta término de búsqueda
+                                  opcional por clave o nombre.
+  Inventario::buscar($id)         Busca un bien por ID.
+  Inventario::crear($data)        Alta de un nuevo bien (todos los campos
+                                  del formulario en $_POST).
+  Inventario::actualizar($id,$d)  Actualiza un bien existente.
+  Inventario::eliminar($id)       Elimina un bien.
+
+Tabla asociada: 'recursos' (inventario de bienes).
+
+────────────────────────────────────────────────────────────────────────────────
+9.4  Modelo EcaFicha (models/EcaFicha.php)
+────────────────────────────────────────────────────────────────────────────────
+
+Gestiona las fichas técnicas completas de los Espacios de Cultura del Agua.
+
+Métodos principales:
+  EcaFicha::todas($municipio_id)  Lista fichas, opcionalmente filtradas.
+  EcaFicha::buscar($id)           Obtiene una ficha completa por ID.
+  EcaFicha::crear($data)          Inserta nueva ficha con todos los campos
+                                  de las 8 secciones del formulario.
+  EcaFicha::actualizar($id,$d)    Actualiza una ficha existente.
+  EcaFicha::eliminar($id)         Elimina una ficha.
+
+Tabla asociada: 'eca_fichas' (ficha técnica de cada ECA).
+
+────────────────────────────────────────────────────────────────────────────────
+9.5  Modelo Catalogo (models/Catalogo.php)
+────────────────────────────────────────────────────────────────────────────────
+
+Provee listas de opciones para los formularios (todos los métodos devuelven
+arrays para poblar <select>).
+
+  Catalogo::categorias()          Lista de categorías de bienes.
+  Catalogo::unidades()            Unidades de medida (Pieza, Juego, etc.).
+  Catalogo::organismos()          Organismos operadores.
+  Catalogo::municipios()          Municipios del estado.
+  Catalogo::proveedores()         Proveedores registrados.
+  Catalogo::ubicaciones()         Ubicaciones físicas.
+
+────────────────────────────────────────────────────────────────────────────────
+9.6  Otros modelos
+────────────────────────────────────────────────────────────────────────────────
+
+  Role::all()           Lista todos los roles disponibles.
+  Role::find($id)       Busca un rol por ID. Usado en validación de usuarios.
+
+  Municipio::all()      Lista municipios (id, nombre).
+  Organismo::all()      Lista organismos (id, nombre, municipio_id).
+  Organismo::porMunicipio($mun_id)  Filtra organismos por municipio.
+
+  Reporte::todos()      Lista reportes (municipales y anuales).
+  Reporte::eliminar($id) Elimina un reporte y su archivo PDF del disco.
+
+
+================================================================================
+10. CONTROLADORES
+================================================================================
+
+────────────────────────────────────────────────────────────────────────────────
+10.1  AuthController
+────────────────────────────────────────────────────────────────────────────────
+
+  Archivo    : controllers/AuthController.php
+  Acciones   :
+
+  login()     GET  → Muestra el formulario de login. Si ya hay sesión activa,
+                     redirige al dashboard.
+  doLogin()   POST → Valida credenciales, abre sesión, registra en bitácora.
+  logout()    GET  → Destruye la sesión, registra en bitácora, redirige.
+
+────────────────────────────────────────────────────────────────────────────────
+10.2  DashboardController
+────────────────────────────────────────────────────────────────────────────────
+
+  Archivo    : controllers/DashboardController.php
+  Acciones   :
+
+  inicio()    GET  → Muestra la pantalla de bienvenida.
+  perfil()    GET  → Muestra el formulario de perfil (datos + contraseña).
+
+  (Los cambios de perfil y contraseña se manejan desde archivos separados
+  en controllers/actualizar_perfil.php y controllers/cambiar_password.php,
+  invocados vía petición POST desde la vista.)
+
+────────────────────────────────────────────────────────────────────────────────
+10.3  UserController
+────────────────────────────────────────────────────────────────────────────────
+
+  Archivo    : controllers/UserController.php
+  Protección : Solo rol_id = 1 (Administrador)
+  Acciones   :
+
+  index()     GET  → Lista todos los usuarios.
+  create()    GET  → Muestra formulario de nuevo usuario.
+  store()     POST → Valida y guarda nuevo usuario. Registra en bitácora.
+  edit()      GET  → Muestra formulario de edición (precargado).
+  update()    POST → Valida y actualiza usuario. Registra en bitácora.
+  destroy()   POST → Elimina usuario por ID. Registra en bitácora.
+
+  Validaciones implementadas:
+    - nombre: mínimo 3 caracteres.
+    - email: formato válido con filter_var(FILTER_VALIDATE_EMAIL).
+    - email: único en BD (con excepción del propio usuario en edición).
+    - password: mínimo 8 caracteres.
+    - password_confirm: debe coincidir con password.
+    - rol_id: debe existir en la tabla roles.
+
+────────────────────────────────────────────────────────────────────────────────
+10.4  FormatoController
+────────────────────────────────────────────────────────────────────────────────
+
+  Archivo    : controllers/FormatoController.php
+  Acciones   :
+
+  index()        GET  → Dashboard de formatos con datos para gráficas Chart.js.
+  capturaECA()   GET  → Formulario de nueva ficha ECA.
+  storeECA()     POST → Guarda nueva ficha ECA.
+  consultaECA()  GET  → Lista/busca fichas con filtro por municipio.
+  verECA()       GET  → Muestra detalle de una ficha (solo lectura).
+  editarECA()    GET  → Formulario de edición prellenado.
+  updateECA()    POST → Actualiza ficha ECA existente.
+  reporte()      GET  → Muestra el generador de reportes PDF.
+  generarPDF()   POST → Genera y descarga el PDF según tipo (municipal/anual).
+
+────────────────────────────────────────────────────────────────────────────────
+10.5  InventarioController
+────────────────────────────────────────────────────────────────────────────────
+
+  Archivo    : controllers/InventarioController.php
+  Protección : ROL_ADMIN o ROL_CAPTURISTA
+  Acciones   :
+
+  index()    GET  → Lista bienes con búsqueda por texto.
+  form()     GET  → Formulario de alta/edición (carga catálogos de BD).
+  store()    POST → Valida y guarda nuevo bien. Registra en bitácora.
+  update()   POST → Actualiza bien existente. Registra en bitácora.
+  delete()   GET  → Elimina bien por ID. Registra en bitácora.
+  edit()     GET  → Devuelve JSON con datos del bien (para modal AJAX).
+
+  Respuestas JSON (para AJAX):
+    edit() devuelve Content-Type: application/json con el registro del bien
+    o {"error": "Recurso no encontrado"} con HTTP 404.
+
+────────────────────────────────────────────────────────────────────────────────
+10.6  ReporteController
+────────────────────────────────────────────────────────────────────────────────
+
+  Archivo    : controllers/ReporteController.php
+  Acciones   :
+
+  municipales()  GET  → Lista reportes municipales con filtros opcionales.
+  anuales()      GET  → Lista reportes anuales con filtros por año/fecha.
+  inventario()   GET  → Vista de inventario con búsqueda, filtros y paginación.
+  eliminar()     POST → Elimina un reporte y su archivo PDF. CSRF protegido.
+                        Registra en bitácora.
+
+────────────────────────────────────────────────────────────────────────────────
+10.7  ManualController
+────────────────────────────────────────────────────────────────────────────────
+
+  Archivo    : controllers/ManualController.php
+  Acciones   :
+
+  ver()      GET  → Sirve el archivo PDF técnico con headers apropiados
+                    (Content-Type: application/pdf). El archivo se lee desde
+                    public/manuales/ con readfile().
+
+────────────────────────────────────────────────────────────────────────────────
+10.8  ChatbotController
+────────────────────────────────────────────────────────────────────────────────
+
+  Archivo    : controllers/ChatbotController.php
+  Acciones   :
+
+  responder()    POST → Recibe mensaje del usuario, devuelve respuesta JSON.
+  rating()       POST → Guarda la calificación del chatbot.
+  inventarioEstados() GET → Devuelve JSON con estados del inventario (para
+                             consultas del asistente).
+
+
+================================================================================
+11. VISTAS Y LAYOUT
+================================================================================
+
+────────────────────────────────────────────────────────────────────────────────
+11.1  Plantilla maestra (views/dashboard.php)
+────────────────────────────────────────────────────────────────────────────────
+
+Todas las páginas internas del sistema usan esta plantilla como layout.
+Los controladores la incluyen de esta forma:
+
+  $_SESSION['vista'] = 'formatos/eca_consulta.php';
+  require dirname(__DIR__) . '/views/dashboard.php';
+
+La plantilla:
+  1. Verifica autenticación (si no hay sesión, redirige al login).
+  2. Lee la foto de perfil actualizada directamente desde la BD.
+  3. Renderiza el <head> con metadatos y CSS base.
+  4. Carga selectivamente CSS adicionales según el controlador activo
+     (ver sección 11.3).
+  5. Renderiza el Header con el logo institucional.
+  6. Renderiza el Sidebar con datos del usuario y menú de navegación.
+  7. Incluye la vista definida en $_SESSION['vista'] dentro del contenedor
+     principal.
+  8. Incluye el widget del chatbot (botón flotante + ventana).
+
+────────────────────────────────────────────────────────────────────────────────
+11.2  Organización de vistas
+────────────────────────────────────────────────────────────────────────────────
+
+  views/auth/         Vistas del módulo de autenticación
+  views/dashboard/    Inicio y perfil
+  views/formatos/     Todas las vistas relacionadas con fichas ECA y reportes
+  views/inventario/   Alta y formulario de bienes
+  views/reportes/     Listados de reportes generados e inventario
+  views/users/        Gestión de usuarios
+  views/layouts/      Fragmentos HTML reutilizables (si existen)
+
+────────────────────────────────────────────────────────────────────────────────
+11.3  Carga condicional de hojas de estilo
+────────────────────────────────────────────────────────────────────────────────
+
+El layout dashboard.php solo carga los CSS necesarios para cada módulo:
+
+  controller=formatos
+    → public/assets/css/formatos.css
+
+  controller=inventario
+    → public/assets/css/inventario-captura.css
+    → public/assets/css/inventario-reporte.css
+
+  controller=reportes, action=inventario
+    → public/assets/css/inventario-reporte.css
+    → public/assets/css/excel-modal.css
+
+  controller=formatos, action=capturaECA
+    → public/assets/css/captura-eca.css
+
+  Siempre:
+    → public/assets/css/dashboard.css (estilos base + sidebar + header)
+    → public/assets/css/chatbot-soporte.css
+    → Font Awesome 6.5.0 (CDN)
+
+Para forzar recarga del caché en desarrollo, los CSS se cargan con parámetros
+de versión: css/dashboard.css?v=3.
+
+
+================================================================================
+12. GENERACIÓN DE PDFs
+================================================================================
+
+El sistema usa dos librerías distintas para generar PDFs:
+
+  - mPDF (mpdf/mpdf)     → Reportes de inventario municipales y anuales.
+  - dompdf (dompdf/dompdf) → Fichas técnicas ECA.
+
+Ambas se instalan vía Composer y están en el directorio vendor/.
+
+────────────────────────────────────────────────────────────────────────────────
+12.1  Reportes municipales (controllers/export/InventarioFormatoMunicipioPDF.php)
+────────────────────────────────────────────────────────────────────────────────
+
+  Flujo:
+    1. FormatoController recibe via POST: municipio_id, organismo_id,
+       beneficiario, accion, anio, y los IDs de recursos seleccionados.
+    2. Consulta los recursos en BD.
+    3. Genera HTML con la tabla de bienes.
+    4. Crea instancia de \Mpdf\Mpdf y escribe el HTML.
+    5. Devuelve el PDF como descarga (Content-Disposition: attachment).
+
+  El PDF se guarda en: public/pdf/ con nombre generado dinámicamente.
+  El registro del archivo se guarda en la tabla 'reportes' de la BD.
+
+────────────────────────────────────────────────────────────────────────────────
+12.2  Reportes anuales (controllers/export/InventarioFormatoAnualPDF.php)
+────────────────────────────────────────────────────────────────────────────────
+
+  Similar al municipal pero consolida todos los recursos del año indicado,
+  sin filtro de municipio/organismo.
+
+────────────────────────────────────────────────────────────────────────────────
+12.3  Ficha técnica ECA (controllers/export/pdf_eca.php)
+────────────────────────────────────────────────────────────────────────────────
+
+  Flujo:
+    1. Recibe el ID de la ficha ECA via GET.
+    2. Carga todos los datos de la ficha desde EcaFicha::buscar($id).
+    3. Construye HTML estructurado con todas las 8 secciones.
+    4. Genera el PDF con dompdf.
+    5. Devuelve descarga directa.
+
+
+================================================================================
+13. EXPORTACIÓN A EXCEL (PhpSpreadsheet)
+================================================================================
+
+Disponible para el inventario.
+
+  Archivos:
+    controllers/export/InventarioFormatoMunicipio.php  → Excel municipal
+    controllers/export/InventarioFormatoAnual.php      → Excel anual global
+
+  Flujo general:
+    1. Se instancia \PhpOffice\PhpSpreadsheet\Spreadsheet.
+    2. Se construye la hoja con encabezados y filas de datos.
+    3. Se escribe via \PhpOffice\PhpSpreadsheet\Writer\Xlsx.
+    4. Se devuelve con Content-Type: application/vnd.openxmlformats-
+       officedocument.spreadsheetml.sheet y Content-Disposition: attachment.
+
+
+================================================================================
+14. SISTEMA DE BITÁCORA (AUDITORÍA)
+================================================================================
+
+────────────────────────────────────────────────────────────────────────────────
+14.1  Clase Bitacora (models/Bitacora.php)
+────────────────────────────────────────────────────────────────────────────────
+
+Método único:
+  Bitacora::registrar(string $accion, string $modulo, string $detalle = '', array $metadata = [])
+
+  Parámetros:
+    $accion     Tipo de acción: 'login', 'logout', 'login_fallido',
+                'crear', 'actualizar', 'eliminar', etc.
+    $modulo     Módulo donde ocurrió: 'auth', 'usuarios', 'inventario',
+                'formatos', 'reportes', etc.
+    $detalle    Descripción legible de la acción.
+    $metadata   Array con datos extra que se serializa a JSON.
+
+  Captura automáticamente:
+    - user_id      : desde $_SESSION['user']['id']
+    - ip           : desde $_SERVER['REMOTE_ADDR']
+    - user_agent   : desde $_SERVER['HTTP_USER_AGENT']
+    - creado_en    : timestamp con NOW()
+
+  Los errores se silencian (catch vacío) para no interrumpir el flujo
+  de la aplicación si la bitácora falla.
+
+────────────────────────────────────────────────────────────────────────────────
+14.2  Tabla bitacora_acciones
+────────────────────────────────────────────────────────────────────────────────
+
+  CREATE TABLE bitacora_acciones (
+    id            BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    user_id       INT DEFAULT NULL,
+    accion        VARCHAR(100) NOT NULL,
+    modulo        VARCHAR(100) NOT NULL,
+    detalle       TEXT,
+    ip            VARCHAR(45) DEFAULT NULL,
+    user_agent    VARCHAR(500) DEFAULT NULL,
+    metadata_json TEXT DEFAULT NULL,
+    creado_en     DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
+    INDEX idx_user_id   (user_id),
+    INDEX idx_modulo    (modulo),
+    INDEX idx_creado_en (creado_en)
+  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+  NOTA: ip VARCHAR(45) soporta tanto IPv4 como IPv6.
+
+────────────────────────────────────────────────────────────────────────────────
+14.3  Eventos registrados por módulo
+────────────────────────────────────────────────────────────────────────────────
+
+  Módulo       | Acción              | Cuándo ocurre
+  ─────────────|─────────────────────|─────────────────────────────────────────
+  auth         | login               | Inicio de sesión exitoso
+  auth         | login_fallido       | Credenciales incorrectas o usuario inactivo
+  auth         | logout              | Cierre de sesión explícito
+  usuarios     | crear               | Nuevo usuario creado
+  usuarios     | actualizar          | Datos de usuario modificados
+  usuarios     | eliminar            | Usuario eliminado
+  inventario   | crear               | Nuevo bien registrado
+  inventario   | actualizar          | Bien modificado
+  inventario   | eliminar            | Bien eliminado
+  formatos     | crear_eca           | Nueva ficha ECA guardada
+  formatos     | actualizar_eca      | Ficha ECA modificada
+  formatos     | generar_pdf         | PDF generado y descargado
+  reportes     | eliminar            | Reporte PDF eliminado
+
+
+================================================================================
+15. SUBIDA DE ARCHIVOS
+================================================================================
+
+El sistema gestiona dos tipos de archivos subidos:
+
+A) FOTOS DE PERFIL
+  - Campo HTML     : <input type="file" name="foto_perfil">
+  - Válidos        : JPG, JPEG, PNG (validado por $_FILES['type'] y extensión)
+  - Destino        : public/assets/uploads/perfiles/
+  - Nombre archivo : perfil_{user_id}_{timestamp}.{ext}
+  - Se actualiza en BD : UPDATE usuarios SET foto_perfil = ? WHERE id = ?
+  - El layout (dashboard.php) lee directamente desde BD para evitar
+    inconsistencias de caché de sesión.
+
+B) DOCUMENTOS DE INVENTARIO
+  - Campo HTML     : <input type="file" name="documento">
+  - Válidos        : PDF, JPG, PNG
+  - Destino        : public/uploads/ o subcarpeta configurada
+  - Nombre archivo : doc_{recurso_id}_{timestamp}.{ext}
+  - Se almacena la ruta relativa en la tabla recursos.
+
+RECOMENDACIÓN DE SEGURIDAD:
+  - Validar siempre tanto el MIME type real (finfo_file) como la extensión.
+  - Nunca ejecutar archivos subidos — almacenarlos en un directorio sin
+    permisos de ejecución del servidor web.
+  - Considerar mover el directorio de uploads fuera del webroot en producción.
+
+
+================================================================================
+16. ESQUEMA DE BASE DE DATOS
+================================================================================
+
+────────────────────────────────────────────────────────────────────────────────
+16.1  Tablas principales
+────────────────────────────────────────────────────────────────────────────────
+
+  TABLA               DESCRIPCIÓN
+  ──────────────────  ───────────────────────────────────────────────────────
+  roles               Catálogo de roles (id, nombre)
+  usuarios            Cuentas de acceso (id, nombre, email, password_hash,
+                      rol_id FK, activo, foto_perfil, created_at)
+  municipios          Municipios del estado (id, nombre, clave)
+  organismos          Organismos operadores (id, nombre, municipio_id FK)
+  eca_fichas          Fichas técnicas ECA — tabla central del sistema.
+                      Relacionada con municipios y organismos.
+  recursos            Inventario de bienes (clave, nombre, categoría, estado,
+                      municipio_id, organismo_id, costo, marca, serie, etc.)
+  categorias          Catálogo de categorías de bienes
+  unidades_medida     Catálogo de unidades de medida
+  proveedores         Catálogo de proveedores
+  reportes            Registro de PDFs generados (tipo, archivo, municipio_id,
+                      organismo_id, anio, created_at)
+  bitacora_acciones   Auditoría de todas las acciones del sistema
+
+────────────────────────────────────────────────────────────────────────────────
+16.2  Relaciones clave
+────────────────────────────────────────────────────────────────────────────────
+
+  usuarios.rol_id          → roles.id
+  organismos.municipio_id  → municipios.id
+  eca_fichas.municipio_id  → municipios.id
+  eca_fichas.organismo_id  → organismos.id
+  recursos.municipio_id    → municipios.id
+  recursos.organismo_id    → organismos.id
+  bitacora_acciones.user_id → usuarios.id (sin FK formal — registro permisivo)
+
+Los scripts de actualización de esquema se encuentran en sql_updates/:
+  - agregar_cambios_inventario.sql     : Columnas adicionales para recursos
+  - 2026-03-02_operativa_*.sql         : Índices para bitácora
+  - Ver sql_updates/README.md          : Historial de cambios
+
+Para aplicar una actualización:
+  mysql -u root sistema_ceaa < sql_updates/nombre_del_script.sql
+
+
+================================================================================
+17. DEPENDENCIAS EXTERNAS (COMPOSER)
+================================================================================
+
+Archivo: composer.json
+
+  {
+    "require": {
+      "phpoffice/phpspreadsheet": "^5.2",
+      "dompdf/dompdf":            "^3.1",
+      "mpdf/mpdf":                "^8.2"
+    }
+  }
+
+  LIBRERÍA                  USO EN EL SISTEMA
+  ────────────────────────  ─────────────────────────────────────────────────
+  phpoffice/phpspreadsheet  Generación de archivos Excel (.xlsx) para los
+                            reportes de inventario municipales y anuales.
+  dompdf/dompdf             Renderizado de HTML a PDF. Usado para las fichas
+                            técnicas ECA (pdf_eca.php).
+  mpdf/mpdf                 Generación avanzada de PDF con soporte UTF-8 y
+                            tablas complejas. Usado para reportes de inventario.
+
+INSTALAR DEPENDENCIAS (primera vez o tras clonar el proyecto):
+  cd c:\xampp\htdocs\ceaa_recursos
+  composer install
+
+ACTUALIZAR:
+  composer update
+
+El directorio vendor/ NO debe subirse al control de versiones.
+Asegúrese de tener un archivo .gitignore con: vendor/
+
+
+================================================================================
+18. ESTRUCTURA DE ASSETS
+================================================================================
+
+public/assets/
+├── css/
+│   ├── dashboard.css           Estilos globales: sidebar, header, layout
+│   ├── chatbot-soporte.css     Estilos del widget chatbot
+│   ├── formatos.css            Módulo de formatos/ECA
+│   ├── captura-eca.css         Formulario de captura ECA (8 secciones)
+│   ├── inventario-captura.css  Formulario de alta de bienes
+│   ├── inventario-reporte.css  Tabla de inventario con filtros y paginación
+│   └── excel-modal.css         Modal de edición en inventario
+├── js/
+│   ├── dashboard.js            Interactividad general (sidebar toggle, etc.)
+│   ├── formatos.js             Gráficas Chart.js del módulo formatos
+│   └── [otros módulos].js
+├── img/
+│   ├── Logotipo1.png           Logo del header
+│   ├── logoo.png               Favicon
+│   └── [otras imágenes].png
+├── formatos/                   Plantillas de documentos descargables
+└── uploads/perfiles/           Fotos de perfil de usuarios (generadas dinámicamente)
+
+public/pdf/                     PDFs generados por el sistema (reportes)
+public/manuales/                Manual técnico en PDF
+
+
+================================================================================
+19. SCRIPTS DE MANTENIMIENTO
+================================================================================
+
+Los scripts de utilidades se encuentran en la carpeta scripts/:
+
+  migrar_passwords.php
+    Migra contraseñas en texto plano a hashes bcrypt con PASSWORD_DEFAULT.
+    Ejecutar UNA sola vez si se importaron usuarios con contraseñas sin hashear.
+    Uso: php scripts/migrar_passwords.php
+
+  seeder_recursos_equipo_2025.php / .sql
+    Carga masiva de bienes del inventario para el año 2025 desde el CSV.
+    Uso: php scripts/seeder_recursos_equipo_2025.php
+
+  seeder_log.txt / seeder_output.txt
+    Logs generados por el seeder para verificar resultados.
+
+  scripts/err.txt / scripts/out.txt
+    Salidas capturadas de ejecuciones anteriores.
+
+
+================================================================================
+20. SEGURIDAD APLICADA
+================================================================================
+
+  MEDIDA                     IMPLEMENTACIÓN
+  ─────────────────────────  ──────────────────────────────────────────────────
+  SQL Injection              Todos los queries usan PDO prepared statements
+                             con parámetros enlazados (?).
+  XSS                        Las vistas usan htmlspecialchars() para toda salida
+                             de datos del usuario.
+  CSRF                       Token único por sesión en todos los formularios
+                             POST. Validado con hash_equals().
+  Acceso no autorizado       Cada controlador llama a require_role() o guardAdmin()
+                             antes de ejecutar cualquier lógica.
+  Contraseñas                Almacenadas con bcrypt (PASSWORD_DEFAULT).
+                             Verificadas con password_verify().
+                             Nunca en texto plano ni en logs.
+  Sesiones                   La sesión se inicia con session_start() una sola vez.
+                             Se destruye con session_destroy() al cerrar sesión.
+  Datos de sesión            Solo se guarda id, nombre, email, rol_id y foto_perfil.
+                             Nunca la contraseña.
+  Auditoría                  Todos los accesos (exitosos y fallidos) y cambios
+                             de datos quedan en bitacora_acciones.
+  Uploads                    Se valida extensión y tipo de archivo antes de
+                             mover a destino.
+  Cache de CSS/JS            Se añaden parámetros ?v=N para forzar recarga
+                             tras actualizaciones sin exponer rutas reales.
+
+  PENDIENTES RECOMENDADOS PARA PRODUCCIÓN:
+    - Habilitar HTTPS con certificado SSL válido.
+    - Cambiar credenciales de BD (usuario root sin contraseña).
+    - Configurar Content Security Policy (CSP) en headers HTTP.
+    - Habilitar rate limiting en la acción doLogin() para prevenir fuerza bruta.
+    - Mover la carpeta uploads fuera del webroot.
+    - Deshabilitar display_errors en php.ini de producción.
+    - Configurar un log de errores PHP en archivo (log_errors = On).
+
+
+================================================================================
+21. ERRORES COMUNES Y SOLUCIONES
+================================================================================
+
+PROBLEMA: "Controlador no encontrado" en la URL
+  CAUSA   : El parámetro ?controller no coincide con ninguna entrada del mapa.
+  SOLUCIÓN: Verificar que el nombre en la URL coincida exactamente con las
+            claves del mapa en public/index.php (minúsculas y sin acentos).
+
+PROBLEMA: "No se encontró la clase 'XController'"
+  CAUSA   : El archivo del controlador no existe o el nombre de la clase
+            dentro del archivo no coincide exactamente con el nombre del archivo.
+  SOLUCIÓN: Verificar que el archivo sea controllers/NombreController.php y
+            que declare class NombreController { }.
+
+PROBLEMA: El PDF descargado está en blanco o muestra errores
+  CAUSA   : Falta de memoria PHP o conflicto de librerías PDF.
+  SOLUCIÓN: Aumentar memory_limit en php.ini a 256M o más. Verificar que
+            vendor/ esté actualizado con composer install.
+
+PROBLEMA: Las fotos de perfil no se muestran
+  CAUSA   : Ruta relativa de la foto almacenada en BD no coincide con la
+            ruta real en disco, o el directorio uploads/perfiles/ no tiene
+            permisos de escritura.
+  SOLUCIÓN: Verificar permisos del directorio (chmod 755 en Linux).
+            Verificar que las rutas en BD inicien sin barra: assets/uploads/...
+
+PROBLEMA: Error "SQLSTATE[HY000]: Can't connect to MySQL server"
+  CAUSA   : MySQL/MariaDB no está en ejecución o sus credenciales cambiaron.
+  SOLUCIÓN: Iniciar el servicio MySQL desde el Panel de Control de XAMPP.
+            Si las credenciales cambiaron, actualizar config/database.php.
+
+PROBLEMA: Sesión expira o se pierde al navegar
+  CAUSA   : PHP session garbage collection o configuración de php.ini.
+  SOLUCIÓN: Aumentar session.gc_maxlifetime en php.ini (ej. 7200 para 2 horas).
+            Verificar que session.save_path tenga permisos de escritura.
+
+PROBLEMA: Error CSRF "token inválido" al enviar formulario
+  CAUSA   : La sesión expiró entre la carga del formulario y el envío,
+            o el formulario no incluye el campo csrf_token.
+  SOLUCIÓN: Recargar la página y volver a enviar. Si ocurre frecuentemente,
+            aumentar el tiempo de sesión. Verificar que la vista incluya
+            <?= csrf_token() ?> en el campo hidden.
+
+PROBLEMA: No aparecen registros en la bitácora
+  CAUSA   : La tabla bitacora_acciones no fue creada en la BD.
+  SOLUCIÓN: Ejecutar:
+    mysql -u root sistema_ceaa < sql_updates/2026-03-02_operativa_bitacora_indices.sql
+  O crear la tabla manualmente con el script del manual.
+
+
+================================================================================
+22. GUÍA DE DESPLIEGUE Y ACTUALIZACIÓN
+================================================================================
+
+────────────────────────────────────────────────────────────────────────────────
+INSTALACIÓN INICIAL
+────────────────────────────────────────────────────────────────────────────────
+
+  1. Copiar el proyecto al directorio del servidor web:
+       C:\xampp\htdocs\ceaa_recursos\        (XAMPP)
+       /var/www/html/ceaa_recursos/           (Apache en Linux)
+
+  2. Instalar dependencias Composer:
+       cd ceaa_recursos
+       composer install
+
+  3. Crear la base de datos:
+       mysql -u root -p -e "CREATE DATABASE sistema_ceaa CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+
+  4. Importar el esquema:
+       mysql -u root sistema_ceaa < sistema_ceaa.sql
+
+  5. Aplicar scripts de actualización (en orden cronológico):
+       mysql -u root sistema_ceaa < sql_updates/agregar_cambios_inventario.sql
+       mysql -u root sistema_ceaa < sql_updates/2026-03-02_operativa_bitacora_indices.sql
+
+  6. Configurar credenciales de BD en config/database.php.
+
+  7. Verificar permisos de escritura en:
+       public/assets/uploads/perfiles/
+       public/pdf/
+
+  8. Acceder a: http://localhost/ceaa_recursos/public/
+
+────────────────────────────────────────────────────────────────────────────────
+ACTUALIZACIÓN DEL SISTEMA
+────────────────────────────────────────────────────────────────────────────────
+
+  1. Hacer respaldo de la BD antes de cualquier actualización:
+       mysqldump -u root sistema_ceaa > backup_AAAA-MM-DD.sql
+
+  2. Reemplazar archivos del proyecto (excluir vendor/ y config/database.php).
+
+  3. Si se añadieron nuevas dependencias Composer:
+       composer install
+
+  4. Si hay nuevos scripts en sql_updates/, aplicarlos:
+       mysql -u root sistema_ceaa < sql_updates/nuevo_script.sql
+
+  5. Si se actualizaron CSS o JS, incrementar el parámetro ?v=N en
+     las referencias dentro de views/dashboard.php para invalidar caché.
+
+────────────────────────────────────────────────────────────────────────────────
+RESPALDO Y RECUPERACIÓN
+────────────────────────────────────────────────────────────────────────────────
+
+  Respaldo completo (BD + archivos):
+    mysqldump -u root sistema_ceaa > backup_sistema_ceaa.sql
+    xcopy /E /I ceaa_recursos ceaa_recursos_backup   (Windows)
+    tar czf ceaa_recursos_backup.tar.gz ceaa_recursos/ (Linux)
+
+  Restaurar la BD:
+    mysql -u root sistema_ceaa < backup_sistema_ceaa.sql
+
+  Incluir en la política de respaldo los directorios:
+    public/pdf/                 PDFs generados
+    public/assets/uploads/      Fotos de perfil
+
+
+================================================================================
+         FIN DEL MANUAL TÉCNICO
+         Sistema de Recursos CEAA — v1.0 — Marzo 2026
+         Cualquier modificación al sistema debe documentarse en este archivo
+         y en el historial de sql_updates/README.md.
+================================================================================

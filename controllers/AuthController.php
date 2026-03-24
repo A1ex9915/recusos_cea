@@ -32,26 +32,32 @@ class AuthController {
 
     $user = User::findByEmail($email);
 
-    // Validar con password_verify para seguridad
-    if ($user && password_verify($pass, $user['password_hash']) && $user['activo']) {
-        $_SESSION['user'] = [
-            'id'     => $user['id'],
-            'nombre' => $user['nombre'],
-            'email'  => $user['email'],
-            'rol_id' => $user['rol_id']
-        ];
-
-      $_SESSION['flash_saludo'] = $this->saludoPorHorario($user['nombre']);
-      Bitacora::registrar('login', 'auth', 'Inicio de sesión exitoso', [
-        'email' => $user['email']
-      ]);
-
-        header('Location: index.php?controller=dashboard&action=inicio');
+    // Verificar credenciales — log si falla
+    if (!$user || !password_verify($pass, $user['password_hash'] ?? '') || !($user['activo'] ?? 0)) {
+        Bitacora::registrar('login_fallido', 'auth', 'Intento de acceso fallido', [
+            'email_intento' => $email,
+            'ip'            => $_SERVER['REMOTE_ADDR'] ?? null,
+        ]);
+        $_SESSION['flash'] = 'Credenciales inválidas';
+        header('Location: index.php?controller=auth&action=login');
         exit;
     }
 
-    $_SESSION['flash'] = 'Credenciales inválidas';
-    header('Location: index.php?controller=auth&action=login');
+    // Login exitoso
+    $_SESSION['user'] = [
+        'id'          => $user['id'],
+        'nombre'      => $user['nombre'],
+        'email'       => $user['email'],
+        'rol_id'      => $user['rol_id'],
+        'foto_perfil' => $user['foto_perfil'] ?? '',
+    ];
+
+    $_SESSION['flash_saludo'] = $this->saludoPorHorario($user['nombre']);
+    Bitacora::registrar('login', 'auth', 'Inicio de sesión exitoso', [
+        'email' => $user['email'],
+    ]);
+
+    header('Location: index.php?controller=dashboard&action=inicio');
     exit;
 }
 

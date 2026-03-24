@@ -11,17 +11,17 @@ class UserController {
     }
   }
 
-  /** Renderiza dentro del layout principal (dashboard.php) usando $_SESSION['vista'] */
+
   private function renderVista(string $vistaRelativa, array $vars = []){
-    if ($vars) extract($vars, EXTR_SKIP);
-    $_SESSION['vista'] = $vistaRelativa;                              // p.ej. 'users/index.php'
+    if ($vars) extract($vars, EXTR_OVERWRITE);
+    $_SESSION['vista'] = $vistaRelativa;
     require dirname(__DIR__) . '/views/dashboard.php';
     return null;
   }
 
   public function index(){
     $this->guardAdmin();
-    $usuarios = User::all();                                          // Debe traer rol como 'rol'
+    $usuarios = User::all();                                         
     return $this->renderVista('users/index.php', compact('usuarios'));
   }
 
@@ -34,6 +34,7 @@ class UserController {
 
   public function store(){
     $this->guardAdmin();
+    csrf_validate();
 
     $data = [
       'nombre'           => trim($_POST['nombre'] ?? ''),
@@ -107,15 +108,16 @@ class UserController {
 
   public function edit(){
     $this->guardAdmin();
-    $id       = (int)($_GET['id'] ?? 0);
-    $usuario  = User::find($id);
-    if (!$usuario){ header('Location: ' . BASE_URI . '/index.php?controller=users&action=index'); exit; }
-    $roles    = Role::all();
-    return $this->renderVista('users/form.php', compact('usuario','roles'));
+    $id          = (int)($_GET['id'] ?? 0);
+    $editUsuario = User::find($id);
+    if (!$editUsuario){ header('Location: ' . BASE_URI . '/index.php?controller=users&action=index'); exit; }
+    $roles       = Role::all();
+    return $this->renderVista('users/form.php', compact('editUsuario','roles'));
   }
 
   public function update(){
     $this->guardAdmin();
+    csrf_validate();
 
     $id = (int)($_POST['id'] ?? 0);
     if (!$id){ header('Location: ' . BASE_URI . '/index.php?controller=users&action=index'); exit; }
@@ -206,6 +208,7 @@ class UserController {
 
   public function destroy(){
     $this->guardAdmin();
+    csrf_validate();
     $id = (int)($_POST['id'] ?? 0);
     if ($id) {
       User::delete($id);

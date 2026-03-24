@@ -5,13 +5,20 @@ $actionUrl = BASE_URI . '/index.php?controller=inventario&action=' . ($isEdit ? 
 
 <section class="inv-wrapper">
 
-  <header class="inv-header">
-    <div>
-      <h2><?= $isEdit ? 'Editar recurso de inventario' : 'Captura de inventario' ?></h2>
-      <p><?= $isEdit ? 'Modifica los datos del recurso.' : 'Registra nuevos bienes de inventario en el sistema.' ?></p>
+  <div class="inv-hero">
+    <div class="inv-hero-content">
+      <div class="inv-hero-left">
+        <span class="inv-hero-icon"><i class="fa-solid fa-box-archive"></i></span>
+        <div>
+          <h2 class="inv-hero-title"><?= $isEdit ? 'Editar recurso de inventario' : 'Captura de inventario' ?></h2>
+          <p class="inv-hero-sub"><?= $isEdit ? 'Modifica los datos del bien seleccionado.' : 'Registra nuevos bienes de inventario en el sistema.' ?></p>
+        </div>
+      </div>
+      <button type="button" class="inv-hero-back" onclick="window.history.back()">
+        <i class="fa-solid fa-arrow-left"></i> Volver
+      </button>
     </div>
-    <button type="button" class="btn-volver" onclick="window.history.back()">← Volver</button>
-  </header>
+  </div>
 
   <div class="inv-card">
 
@@ -25,9 +32,13 @@ $actionUrl = BASE_URI . '/index.php?controller=inventario&action=' . ($isEdit ? 
 
     <form class="inv-form" method="post" action="<?= $actionUrl ?>">
 
+      <?= csrf_field() ?>
+
       <?php if ($isEdit): ?>
         <input type="hidden" name="id" value="<?= (int)$recurso['id'] ?>">
       <?php endif; ?>
+
+      <p class="inv-section-label"><i class="fa-solid fa-tag"></i> Identificaci&oacute;n del bien</p>
 
       <!-- ================== FILA 1 ================== -->
       <div class="form-row">
@@ -68,6 +79,8 @@ $actionUrl = BASE_URI . '/index.php?controller=inventario&action=' . ($isEdit ? 
                  placeholder="Ej. 123456789">
         </div>
       </div>
+
+      <p class="inv-section-label"><i class="fa-solid fa-layer-group"></i> Clasificaci&oacute;n y condici&oacute;n</p>
 
       <!-- ================== FILA 3 ================== -->
       <div class="form-row">
@@ -142,7 +155,7 @@ $actionUrl = BASE_URI . '/index.php?controller=inventario&action=' . ($isEdit ? 
       </div>
 
       <!-- ================== DATOS CEAA BÁSICOS ================== -->
-      <h3 style="margin-top:20px;color:#800033;">Datos CEAA</h3>
+      <p class="inv-section-label" style="margin-top:4px;"><i class="fa-solid fa-building"></i> Datos CEAA</p>
 
       <div class="form-row">
         <div class="form-group">
@@ -183,8 +196,8 @@ $actionUrl = BASE_URI . '/index.php?controller=inventario&action=' . ($isEdit ? 
 
       <!-- ================== ACCIONES ================== -->
       <div class="form-actions">
-        <button class="btn-primario"><?= $isEdit ? 'Guardar cambios' : 'Guardar en inventario' ?></button>
-        <button type="reset" class="btn-secundario">Limpiar</button>
+        <button class="btn-primario"><i class="fa-solid fa-floppy-disk"></i> <?= $isEdit ? 'Guardar cambios' : 'Guardar en inventario' ?></button>
+        <button type="reset" class="btn-secundario"><i class="fa-solid fa-rotate-left"></i> Limpiar</button>
       </div>
 
     </form>
