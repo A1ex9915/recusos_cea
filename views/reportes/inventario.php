@@ -373,6 +373,12 @@ function filtrarCard(estado) {
 }
 
 // Abrir modal de edición
+// Mover el modal al <body> para escapar del stacking context del .contenido con transform
+(function() {
+    var m = document.getElementById('editModal');
+    if (m && m.parentElement !== document.body) document.body.appendChild(m);
+})();
+
 function openEditModal(id) {
     fetch(BASE_URL + '?controller=inventario&action=edit&id=' + id)
         .then(r => r.json())
@@ -516,10 +522,9 @@ function guardarCambiosInventario(e) {
     box-shadow: 0 4px 12px rgba(0,0,0,0.07);
 }
 
-/* Sobreescritura puntual: ancho máximo específico de esta vista */
+/* ancho mínimo forzado para grilla de 2 columnas */
 #editModal .excel-modal-content {
-    max-width: 680px;
-    padding: 28px;
+    min-width: 0;
 }
 </style>
 

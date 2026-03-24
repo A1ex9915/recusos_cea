@@ -284,7 +284,7 @@ body{font-family:'Montserrat',Arial,Helvetica,sans-serif;height:100vh;overflow:a
 
 /* Sutileza */
 .fade-in-up{animation:fadeInUp .4s ease both}
-@keyframes fadeInUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
 
 /* ====== Cards, tablas y botones para módulos internos ====== */
 .card{
