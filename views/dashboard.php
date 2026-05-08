@@ -155,9 +155,15 @@ $currentCtrl = $_GET['controller'] ?? '';
     </a>
 
     <a href="<?= BASE_URI ?>/index.php?controller=manual&action=ver"
-       class="<?= ($currentCtrl === 'manual') ? 'activo' : '' ?>">
+       class="<?= ($currentCtrl === 'manual' && ($currentPage === 'ver' || $currentPage === '')) ? 'activo' : '' ?>">
       <i class="fa-solid fa-book"></i>
       <span class="menu-text">Manual de usuario</span>
+    </a>
+
+    <a href="<?= BASE_URI ?>/index.php?controller=manual&action=verTecnico" target="_blank" rel="noopener noreferrer"
+       class="">
+      <i class="fa-solid fa-screwdriver-wrench"></i>
+      <span class="menu-text">Manual técnico</span>
     </a>
 
     <?php if (($usuario['email'] ?? '') === 'luis.roldangamero@gmail.com'): ?>
@@ -258,6 +264,6 @@ $currentCtrl = $_GET['controller'] ?? '';
     csrfToken: '<?= csrf_token() ?>'
   };
 </script>
-<script src="<?= asset('js/chatbot-soporte.js') ?>?v=3"></script>
+<script src="<?= asset('js/chatbot-soporte.js') ?>?v=5"></script>
 </body>
 </html>

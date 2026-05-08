@@ -5,6 +5,7 @@ class ManualController
     private function findManualPath(): ?string
     {
         $preferred = [
+            dirname(__DIR__) . '/public/manuales/Manual de Usuario.pdf',
             dirname(__DIR__) . '/public/manuales/manual_usuario_ceaa.pdf',
             dirname(__DIR__) . '/public/manuales/manual_tecnico_ceaa2.pdf',
             dirname(__DIR__) . '/public/manuales/manual_tecnico_ceaa.pdf',
@@ -52,6 +53,51 @@ class ManualController
         $fileName = basename($filePath);
         header('Content-Type: application/pdf');
         header('Content-Disposition: inline; filename="' . $fileName . '"');
+        header('Content-Length: ' . filesize($filePath));
+
+        readfile($filePath);
+        exit;
+    }
+
+    public function verTecnico(): void
+    {
+        $dir = dirname(__DIR__) . '/public/manuales/';
+
+        // Buscar por nombre exacto primero, luego por patrón (evita problemas con tildes en Windows)
+        $preferred = [
+            $dir . 'MANUAL TÉCNICO.pdf',
+            $dir . 'MANUAL TECNICO.pdf',
+            $dir . 'manual_tecnico_ceaa2.pdf',
+            $dir . 'manual_tecnico_ceaa.pdf',
+        ];
+
+        $filePath = null;
+        foreach ($preferred as $p) {
+            if (is_file($p)) {
+                $filePath = $p;
+                break;
+            }
+        }
+
+        // Fallback: cualquier PDF que contenga "TECNICO" o "tecnico" en el nombre
+        if (!$filePath) {
+            $candidates = array_merge(
+                glob($dir . '*TECNICO*.pdf') ?: [],
+                glob($dir . '*tecnico*.pdf') ?: []
+            );
+            if (!empty($candidates)) {
+                $filePath = $candidates[0];
+            }
+        }
+
+        if (!$filePath || !is_file($filePath)) {
+            http_response_code(404);
+            echo 'No se encontró el manual técnico. Colócalo en /public/manuales/ con el nombre MANUAL TECNICO.pdf';
+            exit;
+        }
+
+        header('Content-Type: application/pdf');
+        header('Content-Disposition: inline; filename="MANUAL TECNICO CEAA.pdf"');
         header('Content-Length: ' . filesize($filePath));
 
         readfile($filePath);

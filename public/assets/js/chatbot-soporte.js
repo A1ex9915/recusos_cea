@@ -56,7 +56,7 @@
     {
       id: 'saludo',
       kw: ['hola','buenos','buenas','hey','saludos','hi','que tal','qué tal','inicio','empezar'],
-      followUps: ['¿Cómo agrego un recurso?','Generar reporte PDF','No puedo iniciar sesión','Abrir manual técnico'],
+      followUps: ['¿Cómo agrego un recurso?','Generar reporte PDF','No puedo iniciar sesión','Manual de usuario'],
       resp: function () {
         return {
           text: greeting() + ', ' + config.userName + '. Estoy aquí para ayudarte. ¿Qué necesitas hoy?',
@@ -68,7 +68,7 @@
     {
       id: 'login',
       kw: ['no puedo iniciar','login','iniciar sesion','credencial','acceso','no entro','no me deja','contraseña incorrecta','usuario incorrecto','bloqueo','sesion expirada','sesión expirada'],
-      followUps: ['Cambiar contraseña','¿Qué rol tengo?','Abrir manual técnico'],
+      followUps: ['Cambiar contraseña','¿Qué rol tengo?','Manual técnico'],
       resp: function () {
         return {
           text: 'Sigue estos pasos para resolver el problema de acceso:',
@@ -88,7 +88,7 @@
     {
       id: 'password',
       kw: ['password','contrasena','contraseña','recuperar','cambiar clave','olvide','olvidé','cambiar password','nueva contraseña','resetear'],
-      followUps: ['No puedo iniciar sesión','Actualizar mi perfil','Abrir manual técnico'],
+      followUps: ['No puedo iniciar sesión','Actualizar mi perfil','Manual técnico'],
       resp: function () {
         return {
           text: 'Para cambiar tu contraseña:',
@@ -169,7 +169,7 @@
     {
       id: 'excel',
       kw: ['excel','exportar','xlsx','descargar excel','exportar excel','tabla excel','tabla'],
-      followUps: ['Filtrar inventario','Generar reporte PDF','Ver manual técnico'],
+      followUps: ['Filtrar inventario','Generar reporte PDF','Manual técnico'],
       resp: function () {
         return {
           text: 'Para exportar el inventario a Excel:',
@@ -188,7 +188,7 @@
     {
       id: 'eca',
       kw: ['eca','ficha','ficha tecnica','ficha eca','capturar eca','formato eca','espacio cultura','cultura del agua','editar eca','ver eca','consultar eca'],
-      followUps: ['Generar reporte PDF','Ver inventario','Abrir manual técnico'],
+      followUps: ['Generar reporte PDF','Ver inventario','Manual técnico'],
       resp: function () {
         return {
           text: 'Para trabajar con Fichas ECA (Espacios de Cultura del Agua):',
@@ -209,7 +209,7 @@
     {
       id: 'usuarios',
       kw: ['usuario','usuarios','gestion usuario','nuevo usuario','crear usuario','editar usuario','rol','permiso','administrador','acceso negado','403','no autorizado','sin permiso','desactivar usuario'],
-      followUps: ['Cambiar contraseña','Cambiar mi rol','Abrir manual técnico'],
+      followUps: ['Cambiar contraseña','Cambiar mi rol','Manual técnico'],
       resp: function () {
         if (isAdmin) {
           return {
@@ -241,8 +241,8 @@
     },
     {
       id: 'manual',
-      kw: ['manual','guia','documentacion','documentación','instructivo','como uso','cómo uso','ayuda sistema','tutorial','ver manual','manual usuario','manual de usuario','manual tecnico'],
-      followUps: ['No puedo iniciar sesión','¿Cómo agrego recursos?','Generar reporte PDF'],
+      kw: ['manual','guia','documentacion','documentación','instructivo','como uso','cómo uso','ayuda sistema','tutorial','ver manual','manual usuario','manual de usuario'],
+      followUps: ['Manual técnico','No puedo iniciar sesión','Generar reporte PDF'],
       resp: function () {
         return {
           text: 'El manual de usuario describe cada módulo e interfaz del sistema con instrucciones paso a paso.',
@@ -259,9 +259,28 @@
       }
     },
     {
+      id: 'manual_tecnico',
+      kw: ['manual tecnico','manual técnico','documentacion tecnica','documentación técnica','tecnico','técnico','guia tecnica','configuracion sistema','arquitectura','base de datos','desarrollador','soporte tecnico','soporte técnico','abrir manual tecnico'],
+      followUps: ['Manual de usuario','No puedo iniciar sesión','¿Cómo agrego recursos?'],
+      resp: function () {
+        return {
+          text: 'El manual técnico contiene la arquitectura del sistema, estructura de la base de datos y guías para administradores y desarrolladores.',
+          steps: [
+            'Describe la arquitectura MVC del sistema y la organización de carpetas.',
+            'Incluye el modelo de datos: tablas, relaciones y campos clave.',
+            'Detalla los controladores, vistas y flujos de cada módulo.',
+            'Útil para soporte técnico, mantenimiento y futuras integraciones.'
+          ],
+          links: [
+            '<a class="cb-lnk" href="' + url('controller=manual&action=verTecnico') + '" target="_blank" rel="noopener noreferrer">🛠️ Abrir manual técnico (PDF)</a>'
+          ]
+        };
+      }
+    },
+    {
       id: 'municipio_organismo',
       kw: ['municipio','organismo','operador','catalogo','catálogo','municipios','organismos','filtrar municipio','buscar municipio'],
-      followUps: ['Filtrar inventario por municipio','Reporte por municipio','Abrir manual técnico'],
+      followUps: ['Filtrar inventario por municipio','Reporte por municipio','Manual técnico'],
       resp: function () {
         return {
           text: 'Municipios y organismos son catálogos del sistema CEAA.',
@@ -339,9 +358,9 @@
   /* ── Quick options según rol ─────────────────────────────── */
   function defaultQuick() {
     if (isAdmin) {
-      return ['Crear usuario','Generar reporte PDF','Ver fichas ECA','Exportar a Excel','Abrir manual técnico'];
+      return ['Crear usuario','Generar reporte PDF','Ver fichas ECA','Exportar a Excel','Manual técnico'];
     }
-    return ['No puedo iniciar sesión','Cambiar contraseña','¿Cómo agrego un recurso?','Generar reporte PDF','Abrir manual técnico'];
+    return ['No puedo iniciar sesión','Cambiar contraseña','¿Cómo agrego un recurso?','Generar reporte PDF','Manual técnico'];
   }
 
   /* ── Sugerencias proactivas por módulo activo (URL) ─────── */
@@ -354,7 +373,7 @@
     var map = {
       'inventario': ['Estado del inventario','Buscar por folio','Exportar a Excel','Generar reporte PDF','Filtrar por municipio'],
       'reportes':   ['Generar reporte PDF','Exportar a Excel','Listar reportes municipales','Reporte anual PDF'],
-      'formatos':   ['Capturar Ficha ECA','Consultar fichas ECA','Generar reporte PDF','Ver manual técnico'],
+      'formatos':   ['Capturar Ficha ECA','Consultar fichas ECA','Generar reporte PDF','Manual técnico'],
       'users':      isAdmin
                       ? ['Crear usuario','Editar usuario','Cambiar contraseña','¿Qué es el rol administrador?']
                       : ['¿Qué rol tengo?','Cambiar contraseña','No puedo iniciar sesión'],
@@ -607,9 +626,16 @@
     input.focus();
 
     // Manual: abre tab externa sin delay
-    if (normalize(trimmed).indexOf('manual') !== -1 || normalize(trimmed).indexOf('abrir manual') !== -1) {
+    var normTrimmed = normalize(trimmed);
+    if (normTrimmed.indexOf('manual tecnico') !== -1 || normTrimmed.indexOf('manual t') !== -1) {
+      window.open(url('controller=manual&action=verTecnico'), '_blank', 'noopener,noreferrer');
+      addMessage('bot', { text: 'Abrí el <strong>manual técnico</strong> en una pestaña nueva. ¿Algo más?', steps: null, links: [] });
+      setQuick(pageContext());
+      return;
+    }
+    if (normTrimmed === 'manual de usuario' || normTrimmed === 'manual usuario' || normTrimmed === 'manual') {
       window.open(manualUrl(), '_blank', 'noopener,noreferrer');
-      addMessage('bot', { text: 'Abrí el manual técnico en una pestaña nueva. ¿Algo más?', steps: null, links: [] });
+      addMessage('bot', { text: 'Abrí el <strong>manual de usuario</strong> en una pestaña nueva. ¿Algo más?', steps: null, links: [] });
       setQuick(pageContext());
       return;
     }
